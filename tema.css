@@ -1,0 +1,71 @@
+/* tema.css — identidade "dossiê de investigação" do Open RPG.
+   Compartilhado por index.html, ficha.html e mesa.html. */
+:root{
+  --tabua:#1b2221;--tabua2:#232c2a;--tabua3:#2d3836;
+  --papel:#e8dfc6;--papel2:#f3ecd8;--papel3:#d6caa8;--pasta:#d4b87a;--pasta2:#bf9f5c;
+  --tinta:#1f1b16;--tinta2:#51493b;--lapis:#7a705d;
+  --giz:#b8b09b;--giz2:#ddd5bf;
+  --carimbo:#b3261e;--carimbo2:#d23a2c;--carimbo-sombra:#6b160f;
+  --caneta:#2b4a94;--fita:#dcc66a;--ok:#3f7d4a;
+  --maq:'Special Elite','Courier New',ui-monospace,monospace;
+  --mao:'Caveat','Segoe Print','Bradley Hand',cursive;
+  --corpo:'Hanken Grotesk',system-ui,-apple-system,'Segoe UI',Roboto,sans-serif;
+  --ease:cubic-bezier(.2,.8,.2,1);--mola:cubic-bezier(.34,1.56,.64,1);
+  --grao:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 .22 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>");
+  --graoc:url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='180' height='180'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.8' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 1 0 0 0 0 1 0 0 0 0 1 0 0 0 .5 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")
+}
+
+/* mesa de trabalho: o fundo de todas as telas */
+.quadro{background-color:var(--tabua);background-image:radial-gradient(ellipse at 50% 0,#2a3533 0,transparent 70%),var(--graoc);background-size:auto,180px;background-blend-mode:normal,soft-light}
+
+/* papel */
+.papel{position:relative;background-color:var(--papel);background-image:var(--grao);background-size:180px;background-blend-mode:multiply;color:var(--tinta);box-shadow:0 1px 0 #ffffff55 inset,0 2px 0 #00000026,0 14px 26px -14px #000c}
+.papel2{background-color:var(--papel2)}
+.fichario{background-color:var(--papel2);background-image:linear-gradient(90deg,transparent 34px,#c4473b66 34px,#c4473b66 36px,transparent 36px),repeating-linear-gradient(180deg,transparent 0,transparent 25px,#4a6fa533 25px,#4a6fa533 26px),var(--grao);background-size:auto,auto,180px;background-blend-mode:normal,normal,multiply}
+
+/* tachinha e fita */
+.pin::before{content:"";position:absolute;left:50%;top:-7px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff9a8c 0,#d23a2c 38%,#7a1710 100%);box-shadow:0 5px 5px -2px #0009,0 1px 0 #ffffff55 inset;z-index:3;transition:transform .2s var(--mola)}
+.pin:hover::before,.pin:active::before{transform:translateY(2px) scale(.88)}
+.fita::after{content:"";position:absolute;left:50%;top:-11px;width:74px;height:22px;margin-left:-37px;background:#dcc66ab0;transform:rotate(-3deg);box-shadow:0 1px 2px #0004;z-index:3;clip-path:polygon(0 8%,4% 0,8% 10%,12% 0,100% 0,96% 25%,100% 50%,96% 75%,100% 100%,10% 100%,6% 90%,0 100%,3% 60%,0 40%,3% 20%)}
+
+/* carimbo: botão principal */
+.btn{position:relative;display:inline-flex;align-items:center;justify-content:center;gap:8px;font:400 16px/1 var(--maq);letter-spacing:.12em;text-transform:uppercase;color:var(--papel2);background:var(--carimbo);border:0;border-radius:5px;padding:14px 22px 13px;cursor:pointer;box-shadow:0 5px 0 var(--carimbo-sombra),inset 0 0 0 2px #ffffff22,0 12px 18px -8px #000a;transform:rotate(-.6deg);transition:transform .18s var(--mola),box-shadow .18s var(--ease),background .2s;text-decoration:none;overflow:hidden;-webkit-user-select:none;user-select:none}
+.btn:hover{background:var(--carimbo2);transform:rotate(.5deg) translateY(-2px);box-shadow:0 7px 0 var(--carimbo-sombra),inset 0 0 0 2px #ffffff22,0 16px 20px -8px #000a}
+.btn:active,.btn.press{transform:rotate(-.3deg) translateY(4px);box-shadow:0 1px 0 var(--carimbo-sombra),inset 0 0 0 2px #ffffff22,0 4px 8px -4px #000a;transition-duration:.06s}
+.btn:disabled{opacity:.5;pointer-events:none}
+.btn .tinta{position:absolute;border-radius:50%;background:#ffffff40;transform:scale(0);animation:tinta .6s var(--ease) forwards;pointer-events:none}
+@keyframes tinta{to{transform:scale(1);opacity:0}}
+.btn.papel-b{background:var(--papel);color:var(--tinta);background-image:var(--grao);background-blend-mode:multiply;box-shadow:0 5px 0 #8c8167,inset 0 0 0 2px #00000012,0 12px 18px -8px #000a}
+.btn.papel-b:hover{background-color:var(--papel2)}.btn.papel-b:active{box-shadow:0 1px 0 #8c8167,inset 0 0 0 2px #00000012}
+.btn.perigo{background:#3a1a17;color:#ffb4a9;box-shadow:0 5px 0 #1c0a08,inset 0 0 0 2px #ffffff14}
+.btn.perigo:hover{background:#4a201c}
+.fino{background:none;border:0;color:inherit;font:400 15px var(--maq);cursor:pointer;padding:10px 12px;border-radius:4px;text-decoration:underline;text-decoration-style:dashed;text-underline-offset:5px;text-decoration-thickness:1.5px;transition:background .2s,transform .15s var(--mola)}
+.fino:hover{background:#00000014;transform:translateY(-1px)}.papel .fino:hover,.fino.claro:hover{background:#ffffff14}
+
+/* carimbo decorativo (papel de etiqueta) */
+.etq{display:inline-block;font:400 13px/1 var(--maq);letter-spacing:.14em;text-transform:uppercase;color:var(--carimbo);border:2px solid currentColor;border-radius:4px;padding:5px 8px 4px;transform:rotate(-3deg);opacity:.92;mix-blend-mode:multiply}
+.etq.azul{color:var(--caneta)}.etq.verde{color:var(--ok)}
+
+/* abas: divisórias de pasta */
+.divisorias{display:flex;gap:3px;padding:0 10px;align-items:flex-end;position:relative;z-index:2}
+.divisorias button{position:relative;flex:1;background:var(--pasta2);color:#3b3118;font:400 15px var(--maq);padding:11px 8px 9px;border:0;border-radius:10px 10px 0 0;cursor:pointer;transform:translateY(5px);transition:transform .25s var(--mola),background .2s;box-shadow:0 -2px 0 #00000022 inset}
+.divisorias button:hover{transform:translateY(1px)}
+.divisorias button.on{background:var(--papel);transform:translateY(0);color:var(--tinta);z-index:2;box-shadow:none}
+.divisorias small{margin-left:5px;font:400 12px var(--maq);opacity:.65}
+.folha{border-radius:4px 4px 10px 10px;padding:18px 16px 22px;position:relative;z-index:1}
+
+/* formulários sobre papel */
+.papel input,.papel select,.papel textarea,.form input,.form select{background:transparent;color:var(--caneta);border:0;border-bottom:2px dashed var(--lapis);border-radius:0;padding:8px 2px 6px;font:500 17px var(--corpo);width:100%;transition:border-color .2s,background .2s}
+.papel input:focus,.papel select:focus,.papel textarea:focus,.form input:focus,.form select:focus{outline:0;border-bottom:2px solid var(--carimbo);background:#c4473b12}
+.papel input::placeholder{color:#7a705d99;font-style:italic}
+.papel select{appearance:none;background-image:linear-gradient(45deg,transparent 50%,var(--tinta2) 50%),linear-gradient(135deg,var(--tinta2) 50%,transparent 50%);background-position:calc(100% - 14px) 55%,calc(100% - 8px) 55%;background-size:6px 6px;background-repeat:no-repeat;padding-right:26px}
+.papel option{background:var(--papel2);color:var(--tinta)}
+
+/* nota adesiva (avisos) */
+.nota-adesiva{position:fixed;z-index:60;left:50%;top:calc(12px + env(safe-area-inset-top));max-width:min(92%,380px);background:#f2df7c;color:#3d3510;font:600 22px/1.1 var(--mao);padding:14px 20px 16px;box-shadow:0 14px 22px -10px #000c,0 2px 0 #0002;transform:translate(-50%,-260%) rotate(-3deg);transform-origin:50% 0;transition:transform .5s var(--mola);pointer-events:none}
+.nota-adesiva::after{content:"";position:absolute;right:0;bottom:0;width:22px;height:22px;background:linear-gradient(135deg,transparent 50%,#0002 50%,#f9ecaa 52%);}
+.nota-adesiva.on{transform:translate(-50%,0) rotate(-2deg)}
+.nota-adesiva b{font-weight:700}
+
+/* respeita quem prefere menos movimento */
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}

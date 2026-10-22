@@ -1,0 +1,47 @@
+/* tema-mesa.css — o tabletop no estilo "dossiê": painéis de quadro escuro, papel e carimbos */
+:root{--bg:#151b1a;--p:#1f2826;--p2:#2d3836;--m:#b8b09b;--a:#dcc66a}
+body{font-family:var(--corpo);background:#151b1a}
+.fl{background:#1b2321f2;border:1px solid #ffffff1c;border-radius:6px;box-shadow:0 2px 0 #0006,0 18px 30px -12px #000;backdrop-filter:none}
+.fl::before{content:"";position:absolute;left:14px;right:14px;top:-1px;height:2px;background:repeating-linear-gradient(90deg,#dcc66a55 0 8px,transparent 8px 14px);pointer-events:none}
+#dcb,#mpb,#tb,#tb button{border-radius:6px}
+#dcb,#mpb{border-radius:50%}
+button{border-radius:5px;font-family:var(--maq);font-size:14px;transition:transform .18s var(--mola),background .2s,color .2s}
+button:hover{background:#dcc66a1c;transform:translateY(-1px)}button:active{transform:translateY(2px) scale(.96)}
+button.on,.chip.on,#dt button.on,#mptabs button.on,.obi.on{color:var(--fita);background:#dcc66a22}
+:focus-visible{outline:3px solid var(--fita);outline-offset:2px}
+input,select,textarea{background:#00000040;color:var(--giz2);border:0;border-bottom:2px dashed #ffffff40;border-radius:3px 3px 0 0;font-family:var(--corpo)}
+input:focus,select:focus,textarea:focus{outline:0;border-bottom-color:var(--fita);background:#dcc66a14}
+h5{font:400 12px var(--maq);letter-spacing:.14em;color:var(--fita)}
+#mh,#ew h3,#mx-pick h2,#mpn{font-family:var(--maq);font-weight:400}
+#mh{letter-spacing:.06em}
+#mw,#ew,#mx-pick .box{background-color:#1f2826;background-image:var(--graoc);background-blend-mode:soft-light;border:1px solid #ffffff22;border-radius:6px;box-shadow:0 30px 60px -20px #000}
+#mw,#ew{animation:mj .45s var(--mola)}@keyframes mj{from{opacity:0;transform:translateY(40px) rotate(1.2deg)}}
+#mx-pick{background:#151b1a radial-gradient(ellipse at 50% 20%,#2d3a37 0,transparent 70%)}
+#mx-pick button[data-m]{background:var(--papel2);color:var(--tinta);border-radius:3px;font:400 17px var(--maq);box-shadow:0 4px 0 #8c8167;transition:transform .2s var(--mola)}
+#mx-pick button[data-m]:hover{background:var(--papel);transform:translateY(-2px) rotate(-.4deg)}
+#mx-pick button[data-m]:active{transform:translateY(3px);box-shadow:0 1px 0 #8c8167}
+#mx-pick button[data-m] small{color:var(--tinta2)}
+.add{background:var(--carimbo);color:var(--papel2);font:400 15px var(--maq);letter-spacing:.12em;text-transform:uppercase;border-radius:5px;box-shadow:0 4px 0 var(--carimbo-sombra),inset 0 0 0 2px #ffffff22;transform:rotate(-.5deg)}
+.add:hover{background:var(--carimbo2);transform:rotate(.4deg) translateY(-2px)}.add:active{transform:translateY(3px);box-shadow:0 1px 0 var(--carimbo-sombra)}
+#mf button{border:2px solid var(--fita);color:var(--fita);border-radius:5px;font-family:var(--maq)}
+#mt button.on{color:var(--tinta);background:var(--papel)}
+#mt{border-bottom:2px dashed #ffffff22}
+.chip{border-radius:4px;background:var(--p2);font-family:var(--maq);font-size:12px}
+.chip.on{background:var(--papel);color:var(--tinta)}
+.th,.cd,.pad,.pzi{border-radius:3px}
+.th{border:3px solid #f3ecd8}.th.sc{border:0}.cd{border:6px solid #ece4cf;border-bottom-width:26px;background:#2d3836;transition:transform .25s var(--mola),box-shadow .25s}
+.cd:hover{outline:0;transform:rotate(-1.2deg) translateY(-4px);box-shadow:0 16px 20px -10px #000}
+.cd span{background:none;color:var(--tinta);font:400 13px var(--maq);padding:0 36px 0 8px;bottom:-22px;line-height:22px}
+.cd u{bottom:-24px;right:-2px;color:var(--tinta);padding:4px}.cd u:hover{background:#0001}
+.pad{background:var(--papel2);color:var(--tinta);box-shadow:0 3px 0 #8c8167;transition:transform .15s var(--mola)}.pad:active{background:var(--pasta);transform:translateY(2px) scale(.97)}
+.pad b{font:400 14px var(--maq)}.pad i{background:#0001;color:var(--tinta2)}
+.cur{outline:3px solid var(--fita)}
+#da,.np,.cod{color:var(--fita)}
+.ctl #mpl{background:var(--carimbo);color:var(--papel2);border-radius:50%}
+.mdv blockquote{border-left-color:var(--fita)}
+.gm{border-radius:3px;font-family:var(--maq);background:var(--fita);color:var(--tinta)}
+#log{border-radius:3px;font-family:var(--maq)}
+.pzi.sel{border-color:var(--fita)}
+#toast,.toast{font-family:var(--mao)}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;transition-duration:.01ms!important}}
+[style*="bb99ff" i],.fl a{color:var(--fita)!important}
