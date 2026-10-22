@@ -153,3 +153,22 @@ input[type=checkbox]{accent-color:var(--carimbo);width:18px;height:18px}
 #rmb svg{color:var(--fita)!important}
 /* celular: o painel da mesa não cobre os botões de música e dados */
 @media(max-width:700px){#rm{max-width:calc(100vw - 124px);overflow:hidden}#rm #pl{max-height:calc(100dvh - 190px);overflow:auto}#pl .pr{flex-wrap:wrap}#rm:has(#pl:not(.hid)){max-width:calc(100vw - 16px);top:calc(64px + env(safe-area-inset-top));z-index:7}}
+
+/* ---------- música compartilhada (jogador) ---------- */
+#mx-musica{position:fixed;left:50%;top:calc(10px + env(safe-area-inset-top));z-index:9;translate:-50% 0;display:flex;align-items:center;gap:10px;padding:8px 12px;max-width:calc(100vw - 150px);background:var(--papel2);color:var(--tinta);border-radius:3px;box-shadow:0 3px 0 #8c8167,0 16px 24px -10px #000;rotate:-.8deg;animation:sobe-pill .5s var(--mola)}
+@keyframes sobe-pill{from{opacity:0;translate:-50% -40px}}
+#mx-musica::before{content:"";position:absolute;left:50%;top:-8px;width:54px;height:16px;margin-left:-27px;background:#dcc66ab8;transform:rotate(-2deg)}
+#mx-musica .nm{font:400 14px var(--maq);overflow:hidden;text-overflow:ellipsis;white-space:nowrap;max-width:34vw}
+#mx-musica .eq{display:flex;gap:2px;align-items:flex-end;height:18px;flex:none}
+#mx-musica .eq i{width:3px;height:30%;background:var(--carimbo);border-radius:1px}
+#mx-musica.on .eq i{animation:eq .9s ease-in-out infinite}
+#mx-musica.on .eq i:nth-child(2){animation-delay:.2s}#mx-musica.on .eq i:nth-child(3){animation-delay:.4s}#mx-musica.on .eq i:nth-child(4){animation-delay:.1s}
+@keyframes eq{50%{height:100%}}
+#mx-musica .mm{color:var(--tinta);padding:4px;border-radius:50%;min-height:0;width:30px;height:30px;justify-content:center}.mm svg{width:18px;height:18px}
+#mx-musica .mm:hover{background:#0001}
+#mx-musica input[type=range]{width:70px;padding:0;background:none;border:0}
+#mx-musica .tocar{display:none;background:var(--carimbo);color:var(--papel2);border-radius:4px;padding:6px 12px;min-height:0;box-shadow:0 3px 0 var(--carimbo-sombra)}
+#mx-musica.bloq .tocar{display:inline-flex;animation:pulso-b 1.2s infinite}
+@keyframes pulso-b{50%{transform:scale(1.08)}}
+@media(max-width:700px){#mx-musica{top:calc(70px + env(safe-area-inset-top));max-width:calc(100vw - 20px)}#mx-musica input[type=range]{width:56px}}
+.mtx{padding:8px 2px;font:400 13px var(--maq);color:var(--giz)}

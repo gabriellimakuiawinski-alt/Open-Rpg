@@ -28,6 +28,7 @@ const IC={
 '☑':'<rect x="4" y="4" width="16" height="16" rx="2"/><path d="m8 12 3 3 5-6"/>',
 '✓':'<path d="m5 12 5 5 9-10"/>'
 };
+const st=document.createElement('style');st.id='mx-ie-css';st.textContent='.ie{display:inline-flex;width:1.15em;height:1.15em;vertical-align:-.2em;flex:none}.ie svg{width:100%!important;height:100%!important}';document.head.append(st);
 const re=new RegExp('('+Object.keys(IC).join('|')+')️?','g');
 const SKIP=new Set(['SCRIPT','STYLE','TEXTAREA','INPUT','OPTION','SELECT','TITLE']);
 function troca(root){
