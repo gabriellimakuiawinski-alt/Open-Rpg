@@ -151,3 +151,5 @@ input[type=checkbox]{accent-color:var(--carimbo);width:18px;height:18px}
 /* barra de rolagem discreta */
 *{scrollbar-width:thin;scrollbar-color:#dcc66a55 transparent}
 #rmb svg{color:var(--fita)!important}
+/* celular: o painel da mesa não cobre os botões de música e dados */
+@media(max-width:700px){#rm{max-width:calc(100vw - 124px);overflow:hidden}#rm #pl{max-height:calc(100dvh - 190px);overflow:auto}#pl .pr{flex-wrap:wrap}#rm:has(#pl:not(.hid)){max-width:calc(100vw - 16px);top:calc(64px + env(safe-area-inset-top));z-index:7}}
