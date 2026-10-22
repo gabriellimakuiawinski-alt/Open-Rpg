@@ -39,28 +39,33 @@
     const s = document.createElement('style');
     s.id = 'mx-css';
     s.textContent = `
-#mx-login{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 28%,#232850 0,#12142a 65%);display:flex;align-items:center;justify-content:center;padding:16px;font:15px Roboto,system-ui,sans-serif;color:#fff}
-#mx-login .mx-box{background:#242946;border-radius:28px;padding:26px 24px;width:min(400px,100%);display:flex;flex-direction:column;gap:10px;box-shadow:0 18px 50px -12px #000c}
-#mx-login .mx-logo{width:74px;height:74px;margin:0 auto 4px;filter:drop-shadow(0 0 14px rgba(185,155,255,.45))}
+#mx-login{position:fixed;inset:0;z-index:100;background:#1b2221 radial-gradient(ellipse at 50% 20%,#2d3a37 0,transparent 70%);display:flex;align-items:center;justify-content:center;padding:16px;font:16px 'Hanken Grotesk',system-ui,sans-serif;color:#1f1b16;overflow:auto}
+#mx-login .mx-box{position:relative;background:#f3ecd8;background-image:repeating-linear-gradient(180deg,transparent 0,transparent 31px,#4a6fa522 31px,#4a6fa522 32px);border-radius:3px;padding:34px 26px 24px;width:min(400px,100%);display:flex;flex-direction:column;gap:12px;box-shadow:0 2px 0 #0003,0 30px 50px -20px #000;transform:rotate(-.8deg);animation:mxj .7s cubic-bezier(.34,1.56,.64,1)}
+@keyframes mxj{from{opacity:0;transform:translateY(60px) rotate(5deg)}}
+#mx-login .mx-box::before{content:"";position:absolute;left:50%;top:-11px;width:84px;height:24px;margin-left:-42px;background:#dcc66ab8;transform:rotate(-3deg);box-shadow:0 1px 2px #0004}
+#mx-login .mx-logo{width:70px;height:70px;margin:0 auto 2px}
 #mx-login .mx-logo svg{width:100%;height:100%;overflow:visible}
-#mx-login .mx-logo .t{fill:none;stroke:#b99bff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
-#mx-login .mx-logo .o{fill:#12142a;stroke:#b99bff;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:mxp 7s 2s infinite}
-#mx-login .mx-logo .i{fill:#b99bff}#mx-login .mx-logo .p{fill:#12142a}
+#mx-login .mx-logo .t{fill:none;stroke:#1f1b16;stroke-width:2.8;stroke-linecap:round;stroke-linejoin:round}
+#mx-login .mx-logo .o{fill:#f3ecd8;stroke:#1f1b16;stroke-width:2.2;transform-box:fill-box;transform-origin:center;animation:mxp 7s 2s infinite}
+#mx-login .mx-logo .i{fill:#c42f23}#mx-login .mx-logo .p{fill:#111}
 @keyframes mxp{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
-#mx-login h2{text-align:center}
-#mx-login h2{margin:0;font-weight:800;font-size:28px;color:#fff;text-transform:none;letter-spacing:-.01em;font-family:'Bricolage Grotesque',system-ui,sans-serif}
-#mx-login h2 b{color:#b99bff}
-#mx-login .mx-m{margin:0 0 6px;color:#9aa0bd;text-align:center}
-#mx-login input{background:#1d2133;color:#fff;border:1px solid #454b6b;border-radius:12px;padding:12px;font:inherit;font-size:16px;width:100%}
-#mx-login input:focus-visible,#mx-login button:focus-visible{outline:2px solid #bb99ff}
-#mx-login button{background:transparent;color:#fff;border:0;border-radius:14px;padding:12px;cursor:pointer;font:inherit}
-#mx-login button:hover{background:#ffffff14}
-#mx-login .mx-pri{background:linear-gradient(90deg,#b99bff,#d1a8f5);color:#1d1030;font-weight:700}
-#mx-login .mx-pri:hover{background:linear-gradient(90deg,#c9adff,#e8b8f5)}
+#mx-login h2{margin:0;text-align:center;font:400 30px 'Special Elite','Courier New',monospace;letter-spacing:.14em;text-transform:uppercase;color:#1f1b16}
+#mx-login h2 b{font-weight:400;color:#b3261e}
+#mx-login .mx-m{margin:0 0 6px;color:#51493b;text-align:center;font:700 21px/1.05 'Caveat','Segoe Print',cursive}
+#mx-login input{background:transparent;color:#2b4a94;border:0;border-bottom:2px dashed #7a705d;border-radius:0;padding:10px 2px 7px;font:700 22px 'Caveat','Segoe Print',cursive;width:100%;transition:background .2s}
+#mx-login input::placeholder{color:#7a705d99;font-weight:500}
+#mx-login input:focus{outline:0;border-bottom:2px solid #b3261e;background:#c4473b12}
+#mx-login button{position:relative;overflow:hidden;background:transparent;color:#51493b;border:0;border-radius:5px;padding:12px;cursor:pointer;font:400 15px 'Special Elite','Courier New',monospace;transition:transform .18s cubic-bezier(.34,1.56,.64,1),background .2s}
+#mx-login button:hover{background:#00000012}
+#mx-login button:focus-visible{outline:3px solid #dcc66a;outline-offset:2px}
+#mx-login .mx-pri{background:#b3261e;color:#f3ecd8;letter-spacing:.14em;text-transform:uppercase;padding:15px 12px 14px;margin-top:6px;transform:rotate(-.5deg);box-shadow:0 5px 0 #6b160f,inset 0 0 0 2px #ffffff22}
+#mx-login .mx-pri:hover{background:#d23a2c;transform:rotate(.4deg) translateY(-2px)}
+#mx-login .mx-pri:active{transform:translateY(4px);box-shadow:0 1px 0 #6b160f,inset 0 0 0 2px #ffffff22}
 #mx-login .mx-pri:disabled{opacity:.5}
-#mx-login .mx-link{color:#9aa0bd;font-size:13px;padding:6px}
-#mx-msg{min-height:20px;font-size:14px;color:#ff8a8a}#mx-msg.ok{color:#8be28b}`;
+#mx-login .mx-link{color:#51493b;font-size:13px;padding:6px;text-decoration:underline dashed;text-underline-offset:5px}
+#mx-msg{min-height:20px;font:400 14px 'Special Elite',monospace;color:#b3261e}#mx-msg.ok{color:#3f7d4a}`;
     document.head.append(s);
+    if(!document.querySelector('link[href*="Special+Elite"]')){const l=document.createElement('link');l.rel='stylesheet';l.href='https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap';document.head.append(l)}
   }
 
   function telaLogin() {
