@@ -1,0 +1,259 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Ficha</title>
+<style>
+:root{--bg:#1d2133;--p:#2a2e44;--p2:#343954;--m:#9aa0bd;--a:#bb99ff}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+body{margin:0;background:var(--bg);color:#fff;font:15px Roboto,system-ui,sans-serif;padding-bottom:90px}
+header{position:sticky;top:0;z-index:5;background:var(--p);padding:10px 12px;display:flex;gap:6px;flex-wrap:wrap;align-items:center;box-shadow:0 4px 16px #0006}
+header select{flex:1;min-width:140px;max-width:280px}
+button{background:transparent;color:#fff;border:0;border-radius:12px;padding:8px 12px;cursor:pointer;font:inherit}
+button:hover{background:#ffffff14}button.on{color:var(--a);background:#bb99ff22}
+input,select,textarea{background:var(--bg);color:#fff;border:1px solid #454b6b;border-radius:10px;padding:8px 10px;font:inherit;min-width:0;width:100%}
+input[type=color]{width:34px;height:34px;padding:2px;flex:none}input[type=number]{width:70px;text-align:center}
+:focus-visible{outline:2px solid var(--a)}
+.hid{display:none!important}
+.m{color:var(--m)}.sp{flex:1}#st{font-size:12px;color:var(--m)}#who{color:var(--m);font-size:13px;max-width:160px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
+#tabs{display:flex;gap:2px;overflow-x:auto;padding:8px 12px 0;max-width:900px;margin:0 auto}
+#tabs button{flex:none;border-radius:12px 12px 0 0;color:var(--m);padding:12px 16px}#tabs button.on{color:#fff;background:var(--p)}
+main{max-width:900px;margin:0 auto;padding:0 12px}
+.card{background:var(--p);border-radius:0 18px 18px 18px;padding:14px;margin:0 0 12px}
+h2{margin:0 0 10px;font-size:12px;color:var(--m);font-weight:500;text-transform:uppercase;letter-spacing:.06em}
+.fld{display:flex;flex-direction:column;gap:4px;margin-bottom:10px;color:var(--m);font-size:12px}.fld input{font-size:18px;color:#fff}.fld select{color:#fff}
+.g2{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:8px;margin-bottom:8px}
+.kv{display:flex;gap:4px;align-items:center}.k{color:var(--m);width:42%!important;flex:none;font-size:13px}
+.x{color:#ff8a8a;padding:6px 8px;flex:none}
+.add{color:var(--a);border:1px dashed #bb99ff66;width:100%;margin-top:6px}
+.st{margin-bottom:12px}.sth{display:flex;gap:6px;align-items:center}.sth .k{width:90px!important;font-weight:600;color:#fff}
+.bar{height:8px;background:#000;border-radius:6px;overflow:hidden;margin:6px 0}.bar i{display:block;height:100%;width:0;transition:width .2s}
+.ctl{display:flex;gap:6px;align-items:center;flex-wrap:wrap}.ctl button{background:#ffffff0d;width:40px;height:40px;padding:0;font-size:18px}
+.ats{display:grid;grid-template-columns:repeat(auto-fill,minmax(120px,1fr));gap:8px}
+.at{background:var(--p2);border-radius:14px;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;position:relative}
+.at .k{width:100%!important;text-align:center;font-weight:600;color:#fff}.at .big{width:64px;font-size:28px;height:54px;padding:0}.at .x{position:absolute;top:0;right:0}
+.sk{display:flex;gap:4px;align-items:center;padding:5px 0;border-bottom:1px solid #ffffff14}.sk .sn{flex:2;min-width:90px}.sk select{flex:1;min-width:70px;padding:8px 4px}.sk input[type=number]{width:58px;flex:none}
+.sk b{width:74px;text-align:right;font-weight:500;color:var(--a);font-size:13px;flex:none}.roll{background:#bb99ff22;width:40px;height:40px;padding:0;flex:none}
+.it{background:var(--p2);border-radius:14px;padding:8px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px}.itr{display:flex;gap:6px;align-items:center}
+.in{font-weight:600}.sm{display:flex;align-items:center;gap:4px;color:var(--m);font-size:12px;flex:none}
+#ct{margin:4px 0 10px;color:var(--m)}#ct.over{color:#ff8a8a;font-weight:600}
+.po{background:var(--p2);border-radius:14px;padding:8px;margin-bottom:8px;display:flex;flex-direction:column;gap:6px}textarea{resize:vertical;min-height:70px}
+.ra{display:flex;gap:6px;margin-top:6px}
+#md{position:fixed;inset:0;background:#000b;display:flex;align-items:center;justify-content:center;z-index:20;padding:12px}
+.mb{background:var(--p);border-radius:22px;padding:18px;width:min(480px,100%);max-height:90vh;overflow:auto;display:flex;flex-direction:column;gap:10px}.mb h3{margin:0}
+.mz{background:var(--p2);border-radius:14px;padding:10px;display:flex;flex-direction:column;gap:4px}.cod{font-family:ui-monospace,Consolas,monospace;letter-spacing:.1em;color:var(--a)}
+#toast{position:fixed;left:50%;bottom:calc(16px + env(safe-area-inset-bottom));transform:translate(-50%,20px);background:var(--p);border-radius:18px;padding:12px 18px;box-shadow:0 6px 24px #000a;opacity:0;pointer-events:none;transition:.2s;max-width:92%;z-index:90}
+#toast.show{opacity:1;transform:translate(-50%,0)}
+@media(max-width:600px){input,select,textarea{font-size:16px}.sk{flex-wrap:wrap}.sk .sn{flex-basis:calc(100% - 90px)}}
+</style></head><body>
+<header><select id="sel"></select><button data-act="new">＋ Nova</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><button data-act="delf" class="x">Excluir</button><span class="sp"></span><span id="st"></span><button data-act="mesas">Mesas</button><button data-act="sair" id="who" title="Sair da conta"></button></header>
+<nav id="tabs"></nav><main id="app"></main><div id="toast"></div>
+<div id="md" class="hid"><div id="mb" class="mb"></div></div>
+<input type="file" id="fi" accept=".json,application/json" hidden>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="comum.js"></script>
+<script>
+if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px;font-size:16px">Não consegui carregar o login. Confira a internet e se o arquivo <b>comum.js</b> está na mesma pasta deste arquivo.</p>';throw new Error('Mesa indisponível')}
+const db=Mesa.db;
+
+/* ============ UTILIDADES ============ */
+const $=s=>document.querySelector(s),uid=()=>Math.random().toString(36).slice(2,9),
+uuid=()=>crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c=='x'?r:(r&3|8)).toString(16)}),
+esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),fmt=n=>Math.round(n*100)/100,
+ss=o=>JSON.stringify(o,(k,v)=>v&&typeof v=='object'&&!Array.isArray(v)?Object.keys(v).sort().reduce((a,x)=>(a[x]=v[x],a),{}):v); // texto estável (o banco reordena as chaves)
+
+/* ============ MODELO (exemplo: Ordem Paranormal) ============
+   Tudo é dado, nada é fixo no código: atributos, perícias, campos, barras e itens
+   são listas editáveis. Para outro sistema, basta mudar o modelo abaixo. */
+const ATTRS=[['agi','AGI'],['for','FOR'],['int','INT'],['pre','PRE'],['vig','VIG']];
+const PERICIAS=[['Acrobacia','agi'],['Adestramento','pre'],['Artes','pre'],['Atletismo','for'],['Atualidades','int'],['Ciências','int'],['Crime','agi'],['Diplomacia','pre'],['Enganação','pre'],['Fortitude','vig'],['Furtividade','agi'],['Iniciativa','agi'],['Intimidação','pre'],['Intuição','pre'],['Investigação','int'],['Luta','for'],['Medicina','int'],['Ocultismo','int'],['Percepção','pre'],['Pilotagem','agi'],['Pontaria','agi'],['Profissão','int'],['Reflexos','agi'],['Religião','pre'],['Sobrevivência','int'],['Tática','int'],['Tecnologia','int'],['Vontade','pre']];
+const TREINO=[[0,'Destreinado'],[5,'Treinado +5'],[10,'Veterano +10'],[15,'Expert +15']];
+function nova(nome,demo){
+  const f={v:1,id:uuid(),nome,
+    info:['Jogador','Origem','Classe','Trilha','NEX','Patente','Defesa','Deslocamento'].map(n=>({n,v:''})),
+    attrs:ATTRS.map(([id,n])=>({id,n,v:1})),
+    stats:[{id:'pv',n:'PV',cur:0,max:0,c:'#ee4444'},{id:'pe',n:'PE',cur:0,max:0,c:'#b980ff'},{id:'san',n:'SAN',cur:0,max:0,c:'#44aaff'}],
+    skills:PERICIAS.map(([n,a])=>({id:uid(),n,a,t:0,o:0})),
+    inv:{capAttr:'for',capMult:5,capExtra:0,items:[]},poderes:[],notas:''};
+  if(demo){
+    const set=(n,v)=>f.info.find(x=>x.n==n).v=v;
+    set('Jogador','Seu nome');set('Origem','Policial');set('Classe','Combatente');set('NEX','5%');set('Defesa','12');set('Deslocamento','9 m');
+    [2,3,1,1,3].forEach((v,i)=>f.attrs[i].v=v);
+    [[20,20],[6,6],[12,12]].forEach(([c,m],i)=>{f.stats[i].cur=c;f.stats[i].max=m});
+    ['Luta','Pontaria','Fortitude','Percepção'].forEach(n=>f.skills.find(s=>s.n==n).t=5);
+    f.skills.find(s=>s.n=='Luta').o=2;
+    f.inv.items=[{id:uid(),n:'Pistola',cat:'Arma',esp:1,qtd:1,desc:'Exemplo: preencha dano, crítico e alcance'},{id:uid(),n:'Munição',cat:'Munição',esp:1,qtd:2,desc:''},{id:uid(),n:'Colete',cat:'Proteção',esp:2,qtd:1,desc:''},{id:uid(),n:'Kit de primeiros socorros',cat:'Consumível',esp:1,qtd:1,desc:''},{id:uid(),n:'Lanterna',cat:'Geral',esp:1,qtd:1,desc:''}];
+    f.poderes=[{id:uid(),n:'Poder de exemplo',desc:'Descrição editável. Cada poder, ritual ou habilidade vira um cartão.'}];
+    f.notas='Anotações livres do jogador.'}
+  return f}
+
+/* ============ ESTADO ============
+   Cada ficha na tela é o conteúdo de "personagens.dados" + metadados com "_"
+   (_mesa, _dono, _donoNome) que NÃO são gravados dentro de dados. */
+let ME=null,ALL=[],MESAS=[],SEL=localStorage.mesa_ficha_sel,tab='g',tt;const PEND=new Map(),NOMES={};
+const dadosDe=f=>{const{_mesa,_dono,_donoNome,...d}=f;return d},
+fromRow=r=>({...(r.dados||{}),id:r.id,nome:r.nome,_mesa:r.mesa_id,_dono:r.user_id,_donoNome:NOMES[r.user_id]||''}),
+curF=()=>ALL.find(f=>f.id==SEL),av=(f,id)=>{const a=f.attrs.find(a=>a.id==id);return a?+a.v||0:0},
+getP=(o,p)=>p.split('.').reduce((t,k)=>t==null?t:t[k],o),
+setP=(o,p,v)=>{const k=p.split('.');let t=o;for(let i=0;i<k.length-1;i++)t=t[k[i]];t[k[k.length-1]]=v},
+listOf=(f,l)=>l=='items'?f.inv.items:f[l],
+ordenar=()=>ALL.sort((x,y)=>(x._dono==ME.id?0:1)-(y._dono==ME.id?0:1));
+function toast(h){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),6000)}
+const status=t=>$('#st').textContent=t;
+
+/* ============ NUVEM (Supabase) ============ */
+async function carregarNomes(){const r=await db.from('profiles').select('id,nome');if(r.error)throw r.error;r.data.forEach(p=>NOMES[p.id]=p.nome);ALL.forEach(f=>f._donoNome=NOMES[f._dono]||'')}
+async function carregar(){
+  const[a,m]=await Promise.all([db.from('personagens').select('id,user_id,mesa_id,nome,dados').order('criado_em'),db.from('mesas').select('id,nome,codigo,mestre_id').order('criado_em')]);
+  if(a.error)throw a.error;if(m.error)throw m.error;
+  MESAS=m.data;await carregarNomes();ALL=a.data.map(fromRow);ordenar()}
+async function inserir(f){
+  const{error}=await db.from('personagens').insert({id:f.id,user_id:ME.id,mesa_id:f._mesa||null,nome:f.nome||'',dados:dadosDe(f)});
+  if(error)throw error;f._dono=ME.id;f._donoNome=''}
+function erro(e){status('erro ao salvar');toast('Não consegui salvar: '+esc(e.message||e))}
+async function gravar(f){PEND.delete(f.id);
+  const{data,error}=await db.from('personagens').update({nome:f.nome||'',dados:dadosDe(f),mesa_id:f._mesa||null}).eq('id',f.id).select('id');
+  if(error)return erro(error);if(!data||!data.length)return erro('sem permissão para alterar esta ficha');
+  if(!PEND.size)status('salvo ✓')}
+function touch(f=curF()){if(!f)return;clearTimeout(PEND.get(f.id));status('salvando…');PEND.set(f.id,setTimeout(()=>gravar(f),700))}
+function flush(){[...PEND.keys()].forEach(id=>{const f=ALL.find(x=>x.id==id);clearTimeout(PEND.get(id));if(f)gravar(f);else PEND.delete(id)})}
+addEventListener('pagehide',flush);document.addEventListener('visibilitychange',()=>{if(document.hidden)flush()});
+async function criarPadrao(){const n=nova('Agente Exemplo',true);await inserir(n);ALL.push(n);SEL=n.id}
+async function migrarLocal(){ // uma vez só: leva para a conta as fichas que estavam só neste navegador
+  let loc=[];try{loc=JSON.parse(localStorage.getItem('mesa_fichas_v1')||'[]')}catch(e){}
+  loc=loc.filter(x=>x&&x.attrs&&x.skills&&x.inv&&x.stats&&x.info);
+  for(const x of loc){x.id=uuid();x._mesa=null;await inserir(x);ALL.push(x)}
+  localStorage.mesa_migrado='1';return loc.length}
+
+/* tempo real: se a ficha mudar em outro lugar (ex.: o mestre no tabletop), atualiza aqui */
+const sig=f=>[f.info,f.attrs,f.stats,f.skills,f.poderes,f.inv&&f.inv.items].map(a=>(a||[]).length).join();
+function patch(f){document.querySelectorAll('#app [data-p]').forEach(el=>{if(el===document.activeElement)return;const v=getP(f,el.dataset.p);if(v!==undefined&&el.value!=v)el.value=v});derive()}
+function aplicar(novo){
+  const i=ALL.findIndex(x=>x.id==novo.id);
+  if(i<0){ALL.push(novo);ordenar();render();return}
+  const cur=ALL[i];
+  if(ss(dadosDe(cur))==ss(dadosDe(novo))&&cur._mesa==novo._mesa)return; // eco da nossa própria gravação
+  if(PEND.has(cur.id))return; // temos edição local ainda não enviada: ela prevalece
+  const a=document.activeElement,foco=!!(a&&$('#app').contains(a)),eraSel=cur.id==SEL;
+  if(eraSel&&foco&&sig(cur)!=sig(novo)){toast('Esta ficha foi alterada por outra pessoa. Saia do campo em que está digitando para atualizar.');return}
+  ALL[i]=novo;
+  if(!eraSel)renderSel();else if(foco){renderSel();patch(novo)}else render()}
+function ouvir(){
+  db.channel('fichas').on('postgres_changes',{event:'*',schema:'public',table:'personagens'},async p=>{
+    try{
+      if(p.eventType=='DELETE'){const id=p.old.id;if(!ALL.some(x=>x.id==id))return;ALL=ALL.filter(x=>x.id!=id);if(!ALL.length)await criarPadrao();if(SEL==id||!curF())SEL=ALL[0].id;render();return}
+      let r=p.new;
+      if(!r.dados||!Object.keys(r.dados).length){const q=await db.from('personagens').select('id,user_id,mesa_id,nome,dados').eq('id',r.id).maybeSingle();if(!q.data)return;r=q.data}
+      if(!(r.user_id in NOMES))await carregarNomes();
+      aplicar(fromRow(r))
+    }catch(e){}
+  }).subscribe(s=>{if(s=='CHANNEL_ERROR'||s=='TIMED_OUT')toast('Atualização ao vivo indisponível no momento. Suas edições continuam sendo salvas.')})}
+
+/* ============ TELAS ============ */
+const inp=(p,v,ex='')=>`<input data-p="${p}" value="${esc(v)}" ${ex}>`,num=(p,v,ex='')=>`<input type="number" data-p="${p}" data-n value="${+v||0}" ${ex}>`,
+attrOpts=(f,sel)=>'<option value="">—</option>'+f.attrs.map(a=>`<option value="${a.id}" ${a.id==sel?'selected':''}>${esc(a.n)}</option>`).join('');
+const TABS=[['g','Geral'],['p','Perícias'],['i','Inventário'],['n','Poderes e notas']];
+function vGeral(f){const meu=f._dono==ME.id;return `${meu?'':`<p class=m style="margin:0 0 10px">Ficha de <b>${esc(f._donoNome||'outro jogador')}</b>. Você a edita como mestre da mesa.</p>`}<section class=card><h2>Identificação</h2>
+<label class=fld>Nome do personagem${inp('nome',f.nome)}</label>
+${meu?`<label class=fld>Mesa<select data-mesa><option value="">— nenhuma —</option>${MESAS.map(m=>`<option value="${m.id}" ${m.id==f._mesa?'selected':''}>${esc(m.nome)}</option>`).join('')}</select></label>`:''}
+<div class=g2>${f.info.map((x,i)=>`<div class=kv>${inp(`info.${i}.n`,x.n,'class=k')}${inp(`info.${i}.v`,x.v)}<button class=x data-act=del data-l=info data-i=${i}>✕</button></div>`).join('')}</div>
+<button class=add data-act=add data-l=info>＋ Campo</button></section>
+<section class=card><h2>Condição</h2>${f.stats.map((s,i)=>`<div class=st><div class=sth>${inp(`stats.${i}.n`,s.n,'class=k')}<input type=color data-p="stats.${i}.c" value="${esc(s.c)}"><span class=sp></span><button class=x data-act=del data-l=stats data-i=${i}>✕</button></div>
+<div class=bar><i id="sb${i}"></i></div>
+<div class=ctl><button data-act=sd data-i=${i} data-d=-1>−</button>${num(`stats.${i}.cur`,s.cur)}<span class=m>/</span>${num(`stats.${i}.max`,s.max)}<button data-act=sd data-i=${i} data-d=1>＋</button></div></div>`).join('')}
+<button class=add data-act=add data-l=stats>＋ Barra</button></section>
+<section class=card><h2>Atributos</h2><div class=ats>${f.attrs.map((a,i)=>`<div class=at>${inp(`attrs.${i}.n`,a.n,'class=k')}${num(`attrs.${i}.v`,a.v,'min=0 class=big')}<button class=x data-act=del data-l=attrs data-i=${i}>✕</button></div>`).join('')}</div>
+<button class=add data-act=add data-l=attrs>＋ Atributo</button></section>`}
+function vPericias(f){return `<section class=card><h2>Perícias</h2><p class=m style="margin:0 0 8px;font-size:12px">Role o número do atributo em d20 e fique com o maior (atributo 0: dois dados, fica o menor), mais treino e bônus.</p>
+${f.skills.map((s,i)=>`<div class=sk><button class=roll data-act=roll data-i=${i} title=Rolar>🎲</button>${inp(`skills.${i}.n`,s.n,'class=sn')}<select data-p="skills.${i}.a">${attrOpts(f,s.a)}</select><select data-p="skills.${i}.t" data-n>${TREINO.map(([v,l])=>`<option value=${v} ${s.t==v?'selected':''}>${l}</option>`).join('')}</select>${num(`skills.${i}.o`,s.o,'title="Outros bônus"')}<b id="sk${i}"></b><button class=x data-act=del data-l=skills data-i=${i}>✕</button></div>`).join('')}
+<button class=add data-act=add data-l=skills>＋ Perícia</button></section>`}
+function vInv(f){const v=f.inv;return `<section class=card><h2>Carga</h2><div class=bar><i id=cb></i></div><div id=ct></div>
+<div class=ctl><span class=m>Capacidade =</span><select data-p="inv.capAttr" style="width:auto">${attrOpts(f,v.capAttr)}</select><span class=m>×</span>${num('inv.capMult',v.capMult)}<span class=m>+</span>${num('inv.capExtra',v.capExtra)}</div></section>
+<section class=card><h2>Itens</h2><datalist id=cats>${['Arma','Proteção','Munição','Consumível','Equipamento','Paranormal','Geral'].map(c=>`<option value="${c}">`).join('')}</datalist>
+${v.items.map((it,i)=>`<div class=it><div class=itr>${inp(`inv.items.${i}.n`,it.n,'placeholder="Nome do item" class=in')}<button class=x data-act=del data-l=items data-i=${i}>✕</button></div>
+<div class=itr>${inp(`inv.items.${i}.cat`,it.cat,'list=cats placeholder=Categoria')}<label class=sm>Esp.${num(`inv.items.${i}.esp`,it.esp,'min=0 step=.5')}</label><label class=sm>Qtd${num(`inv.items.${i}.qtd`,it.qtd,'min=0')}</label></div>
+${inp(`inv.items.${i}.desc`,it.desc,'placeholder="Descrição e notas"')}</div>`).join('')||'<p class=m>Inventário vazio.</p>'}
+<button class=add data-act=add data-l=items>＋ Item</button></section>`}
+function vNotas(f){return `<section class=card><h2>Poderes, rituais e habilidades</h2>${f.poderes.map((p,i)=>`<div class=po><div class=itr>${inp(`poderes.${i}.n`,p.n,'placeholder=Nome class=in')}<button class=x data-act=del data-l=poderes data-i=${i}>✕</button></div><textarea data-p="poderes.${i}.desc" placeholder="Descrição">${esc(p.desc)}</textarea></div>`).join('')}<button class=add data-act=add data-l=poderes>＋ Poder</button></section>
+<section class=card><h2>Notas</h2><textarea data-p=notas style="min-height:160px">${esc(f.notas)}</textarea></section>`}
+
+function derive(){const f=curF();if(!f)return;
+  f.stats.forEach((s,i)=>{const e=$('#sb'+i);if(e){e.style.width=(s.max>0?Math.max(0,Math.min(100,s.cur/s.max*100)):0)+'%';e.style.background=s.c}});
+  f.skills.forEach((s,i)=>{const e=$('#sk'+i);if(e){const n=av(f,s.a),b=(+s.t||0)+(+s.o||0);e.textContent=(n>0?n:2)+'d20'+(n>0?'':'↓')+(b?(b>0?' +':' ')+b:'')}});
+  const ct=$('#ct');if(ct){const used=f.inv.items.reduce((t,it)=>t+(+it.esp||0)*(+it.qtd||0),0),cap=av(f,f.inv.capAttr)*(+f.inv.capMult||0)+(+f.inv.capExtra||0),cb=$('#cb');
+    ct.textContent=`${fmt(used)} / ${fmt(cap)} espaços`+(used>cap?' — sobrecarregado':'');ct.className=used>cap?'over':'m';cb.style.width=(cap>0?Math.min(100,used/cap*100):used>0?100:0)+'%';cb.style.background=used>cap?'#e44':'var(--a)'}}
+const rotulo=x=>(x.nome||'Sem nome')+(x._dono!=ME.id?' — '+(x._donoNome||'outro'):'');
+function renderSel(){$('#sel').innerHTML=ALL.map(x=>`<option value="${x.id}" ${x.id==SEL?'selected':''}>${esc(rotulo(x))}</option>`).join('')}
+function render(){const f=curF();renderSel();
+  $('#tabs').innerHTML=TABS.map(([k,l])=>`<button data-tab=${k} class="${tab==k?'on':''}">${l}</button>`).join('');
+  $('#app').innerHTML=f?({g:vGeral,p:vPericias,i:vInv,n:vNotas}[tab])(f):'';derive()}
+
+/* ============ MESAS ============ */
+function htmlMesas(mb){return `<h3>Mesas</h3>`+(MESAS.map(m=>{const eu=m.mestre_id==ME.id,js=mb.filter(x=>x.mesa_id==m.id&&x.papel!='mestre');
+  return `<div class=mz><div class=itr><b class=in>${esc(m.nome)}</b><span class=m>${eu?'Mestre':'Jogador'}</span><span class=sp></span>${eu?`<button class=x data-act=mdel data-id=${m.id}>Excluir</button>`:`<button class=x data-act=msair data-id=${m.id}>Sair</button>`}</div>
+${eu?`<div class=m>Código de convite: <b class=cod>${esc(m.codigo)}</b> <button data-act=mcopy data-c="${esc(m.codigo)}">Copiar</button></div>`:`<div class=m>Mestre: ${esc(NOMES[m.mestre_id]||'')}</div>`}
+<div class=m>Jogadores: ${js.map(x=>esc(NOMES[x.user_id]||'?')).join(', ')||'ninguém ainda'}</div></div>`}).join('')||'<p class=m>Você ainda não está em nenhuma mesa.</p>')+
+`<div class=ra><button class=add data-act=mnew>＋ Criar mesa</button><button class=add data-act=mjoin>Entrar com código</button></div><div class=ra><span class=sp></span><button data-act=mclose>Fechar</button></div>`}
+async function abrirMesas(){
+  const q=await db.from('membros').select('mesa_id,user_id,papel'),m=await db.from('mesas').select('id,nome,codigo,mestre_id').order('criado_em');
+  if(q.error)throw q.error;if(m.error)throw m.error;MESAS=m.data;await carregarNomes();
+  $('#mb').innerHTML=htmlMesas(q.data);$('#md').classList.remove('hid')}
+async function acaoMesa(a,d){
+  if(a=='mclose'){$('#md').classList.add('hid');return}
+  if(a=='mcopy'){try{await navigator.clipboard.writeText(d.c);toast('Código copiado.')}catch(e){toast('Código: <b>'+esc(d.c)+'</b>')}return}
+  if(a=='mnew'){const n=(prompt('Nome da mesa')||'').trim();if(!n)return;const{error}=await db.from('mesas').insert({nome:n,mestre_id:ME.id});if(error)throw error}
+  else if(a=='mjoin'){const c=(prompt('Código de convite')||'').trim();if(!c)return;const{error}=await db.rpc('entrar_na_mesa',{p_codigo:c});if(error)throw error}
+  else if(a=='msair'){if(!confirm('Sair desta mesa? Suas fichas ligadas a ela ficam sem mesa.'))return;const{error}=await db.from('membros').delete().eq('mesa_id',d.id).eq('user_id',ME.id);if(error)throw error}
+  else if(a=='mdel'){if(!confirm('Excluir esta mesa para todos? As fichas dos jogadores continuam existindo, só perdem o vínculo.'))return;const{error}=await db.from('mesas').delete().eq('id',d.id);if(error)throw error}
+  await carregar();if(!curF()&&ALL.length)SEL=ALL[0].id;render();await abrirMesas()}
+
+/* ============ AÇÕES ============ */
+const NEW={info:()=>({n:'Campo',v:''}),attrs:()=>({id:uid(),n:'ATR',v:1}),stats:()=>({id:uid(),n:'Nova',cur:0,max:0,c:'#6dd36d'}),skills:()=>({id:uid(),n:'Perícia',a:'',t:0,o:0}),items:()=>({id:uid(),n:'',cat:'Geral',esp:1,qtd:1,desc:''}),poderes:()=>({id:uid(),n:'',desc:''})};
+function roll(i){const f=curF(),s=f.skills[i],n=av(f,s.a),r=Array.from({length:n>0?n:2},()=>1+Math.floor(Math.random()*20)),best=n>0?Math.max(...r):Math.min(...r),b=(+s.t||0)+(+s.o||0);
+  toast(`${esc(f.nome||'Ficha')} · ${esc(s.n)}: [${r}] → ${best}${b?(b>0?' +':' ')+b:''} = <b>${best+b}</b>`)}
+document.addEventListener('input',e=>{const t=e.target,f=curF();if(!f)return;
+  if('mesa' in t.dataset){f._mesa=t.value||null;touch(f);return}
+  const p=t.dataset.p;if(!p)return;let v=t.value;if('n' in t.dataset)v=v===''?0:+v;setP(f,p,v);
+  if(p=='nome'){const o=$('#sel').selectedOptions[0];if(o)o.textContent=rotulo(f)}touch(f);derive()});
+$('#sel').onchange=e=>{SEL=e.target.value;localStorage.mesa_ficha_sel=SEL;render()};
+document.addEventListener('click',async e=>{
+  if(e.target.id=='md'){$('#md').classList.add('hid');return}
+  const b=e.target.closest('[data-act],[data-tab]');if(!b)return;const d=b.dataset,f=curF(),a=d.act;
+  try{
+    if(d.tab){tab=d.tab;render();return}
+    if(a=='sair'){flush();await Mesa.sair();return}
+    if(a=='mesas'){await abrirMesas();return}
+    if(/^m(new|join|sair|del|copy|close)$/.test(a)){await acaoMesa(a,d);return}
+    if(a=='new'){const n=nova('Novo personagem');await inserir(n);ALL.push(n);ordenar();SEL=n.id;tab='g';render();return}
+    if(a=='imp'){$('#fi').click();return}
+    if(!f)return;
+    if(a=='dup'){const c=JSON.parse(JSON.stringify(dadosDe(f)));c.id=uuid();c.nome+=' (cópia)';c._mesa=f._mesa||null;await inserir(c);ALL.push(c);ordenar();SEL=c.id;render()}
+    else if(a=='exp'){const u=URL.createObjectURL(new Blob([JSON.stringify(dadosDe(f),null,2)],{type:'application/json'})),l=document.createElement('a');l.href=u;l.download=(f.nome||'ficha').replace(/[^\w-]+/g,'_')+'.json';l.click();setTimeout(()=>URL.revokeObjectURL(u),5000)}
+    else if(a=='delf'){
+      if(f._dono!=ME.id){toast('Só o dono pode excluir esta ficha.');return}
+      if(!confirm('Excluir "'+(f.nome||'esta ficha')+'"? Não dá para desfazer.'))return;
+      clearTimeout(PEND.get(f.id));PEND.delete(f.id);
+      const{data,error}=await db.from('personagens').delete().eq('id',f.id).select('id');if(error)throw error;if(!data||!data.length)throw new Error('sem permissão para excluir');
+      ALL=ALL.filter(x=>x!=f);if(!ALL.length)await criarPadrao();SEL=ALL[0].id;render()}
+    else if(a=='add'){listOf(f,d.l).push(NEW[d.l]());touch(f);render()}
+    else if(a=='del'){const l=listOf(f,d.l),it=l[+d.i];l.splice(+d.i,1);if(d.l=='attrs'){f.skills.forEach(s=>{if(s.a==it.id)s.a=''});if(f.inv.capAttr==it.id)f.inv.capAttr=''}touch(f);render()}
+    else if(a=='sd'){const s=f.stats[+d.i];s.cur=Math.max(0,(+s.cur||0)+ +d.d);const i=$(`[data-p="stats.${d.i}.cur"]`);if(i)i.value=s.cur;touch(f);derive()}
+    else if(a=='roll')roll(+d.i)
+  }catch(err){toast('Erro: '+esc(err.message||err))}});
+$('#fi').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;
+  try{let o=JSON.parse(await file.text());o=Array.isArray(o)?o:[o];
+    o.forEach(x=>{if(!x||!x.attrs||!x.skills||!x.inv||!x.stats||!x.info)throw new Error('formato')});
+    for(const x of o){x.id=uuid();x._mesa=null;await inserir(x);ALL.push(x)}ordenar();SEL=o[0].id;render();toast('Ficha importada.')}
+  catch(err){toast(err.message=='formato'||err instanceof SyntaxError?'Arquivo inválido: não parece uma ficha exportada daqui.':'Erro ao importar: '+esc(err.message||err))}};
+
+/* ============ INÍCIO ============ */
+(async()=>{
+  try{
+    const u=await Mesa.exigirLogin();ME={id:u.id,nome:''};
+    await carregar();ME.nome=NOMES[ME.id]||(u.email||'').split('@')[0]||'Conta';
+    if(!ALL.length){
+      const n=localStorage.mesa_migrado?0:await migrarLocal();
+      if(n){toast('As fichas que estavam só neste navegador foram enviadas para a sua conta.')}
+      else await criarPadrao()}
+    if(!curF())SEL=ALL[0].id;
+    $('#who').textContent=ME.nome+' · sair';
+    ouvir();render();status('conectado ✓')
+  }catch(e){toast('Erro ao iniciar: '+esc(e.message||e));status('sem conexão')}
+})();
+</script></body></html>
