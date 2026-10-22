@@ -11,6 +11,7 @@ input,select,textarea{background:var(--bg);color:#fff;border:1px solid #454b6b;b
 input[type=color]{width:34px;height:34px;padding:2px;flex:none}input[type=number]{width:70px;text-align:center}
 :focus-visible{outline:2px solid var(--a)}
 input[type=checkbox]{width:auto;flex:none}
+a.tl{color:var(--a);text-decoration:none;padding:8px 10px;border-radius:12px;white-space:nowrap}a.tl:hover{background:#ffffff14}
 .hid{display:none!important}
 .m{color:var(--m)}.sp{flex:1}#st{font-size:12px;color:var(--m)}#who{color:var(--m);font-size:13px;max-width:160px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 #tabs{display:flex;gap:2px;overflow-x:auto;padding:8px 12px 0;max-width:900px;margin:0 auto}
@@ -43,7 +44,7 @@ h2{margin:0 0 10px;font-size:12px;color:var(--m);font-weight:500;text-transform:
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:600px){input,select,textarea{font-size:16px}.sk{flex-wrap:wrap}.sk .sn{flex-basis:calc(100% - 90px)}}
 </style></head><body>
-<header><select id="sel"></select><button data-act="new">＋ Nova</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><button data-act="delf" class="x">Excluir</button><span class="sp"></span><span id="st"></span><button data-act="mesas">Mesas</button><button data-act="sair" id="who" title="Sair da conta"></button></header>
+<header><select id="sel"></select><button data-act="new">＋ Nova</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><button data-act="delf" class="x">Excluir</button><span class="sp"></span><span id="st"></span><a href="mesa.html" class="tl" title="Abrir o tabletop">🎲 Tabletop</a><button data-act="mesas">Mesas</button><button data-act="sair" id="who" title="Sair da conta"></button></header>
 <nav id="tabs"></nav><main id="app"></main><div id="toast"></div>
 <div id="md" class="hid"><div id="mb" class="mb"></div></div>
 <input type="file" id="fi" accept=".json,application/json" hidden>
@@ -193,7 +194,7 @@ function render(){const f=curF();renderSel();
 /* ============ MESAS ============ */
 const linhaJog=(m,x,eu)=>eu?`<div class=itr><span style="flex:1">${esc(NOMES[x.user_id]||'?')}</span><select data-papel data-m=${m.id} data-u=${x.user_id} style="width:auto"><option value=jogador ${x.papel=='jogador'?'selected':''}>Jogador</option><option value=admin ${x.papel=='admin'?'selected':''}>Admin</option></select></div>`:`<div class=m>${esc(NOMES[x.user_id]||'?')}${x.papel=='admin'?' · admin':''}</div>`;
 function htmlMesas(mb){return `<h3>Mesas</h3>`+(MESAS.map(m=>{const eu=m.mestre_id==ME.id,js=mb.filter(x=>x.mesa_id==m.id&&x.papel!='mestre');
-  return `<div class=mz><div class=itr><b class=in>${esc(m.nome)}</b><span class=m>${eu?'Mestre':'Jogador'}</span><span class=sp></span>${eu?`<button class=x data-act=mdel data-id=${m.id}>Excluir</button>`:`<button class=x data-act=msair data-id=${m.id}>Sair</button>`}</div>
+  return `<div class=mz><div class=itr><b class=in>${esc(m.nome)}</b><span class=m>${eu?'Mestre':'Jogador'}</span><span class=sp></span><a class=tl href="mesa.html?mesa=${m.id}">🎲 Abrir</a>${eu?`<button class=x data-act=mdel data-id=${m.id}>Excluir</button>`:`<button class=x data-act=msair data-id=${m.id}>Sair</button>`}</div>
 ${eu?`<div class=m>Código de convite: <b class=cod>${esc(m.codigo)}</b> <button data-act=mcopy data-c="${esc(m.codigo)}">Copiar</button></div>`:`<div class=m>Mestre: ${esc(NOMES[m.mestre_id]||'')}</div>`}
 <div class=m>Jogadores:</div>${js.map(x=>linhaJog(m,x,eu)).join('')||'<div class=m>ninguém ainda</div>'}
 ${eu?`<label class=sm style="font-size:14px"><input type=checkbox data-cfg=jogadores_adicionam data-m=${m.id} ${m.jogadores_adicionam?'checked':''}> Jogadores podem enviar imagens de token</label><label class=sm style="font-size:14px"><input type=checkbox data-cfg=jogadores_movem data-m=${m.id} ${m.jogadores_movem?'checked':''}> Jogadores podem mover tokens</label>`:''}</div>`}).join('')||'<p class=m>Você ainda não está em nenhuma mesa.</p>')+
