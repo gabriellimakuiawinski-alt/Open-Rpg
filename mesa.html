@@ -196,7 +196,7 @@ function snapLast(){LAST.s.clear();LAST.m.clear();LAST.t.clear();LAST.f.clear();
 
 /* ---------- carregar dados da mesa ---------- */
 async function carregarTudo(keep){
- const[c,pa,pe]=await Promise.all([sb.from('cenas').select('*').eq('mesa_id',MESA.id).order('ordem').order('criado_em'),sb.from('pastas').select('*').eq('mesa_id',MESA.id),sb.from('personagens').select('id,user_id,nome,npc,privada').eq('mesa_id',MESA.id)]);
+ const[c,pa,pe]=await Promise.all([sb.from('cenas').select('*').eq('mesa_id',MESA.id).order('ordem').order('criado_em'),sb.from('pastas').select('*').eq('mesa_id',MESA.id),(MESA.campanha_id?sb.from('personagens').select('id,user_id,nome,npc,privada').eq('campanha_id',MESA.campanha_id):Promise.resolve({data:[]}))]);
  if(c.error)throw c.error;
  PERS=new Map((pe.data||[]).map(p=>[p.id,p]));
  const ids=c.data.map(x=>x.id);let mp={data:[]},tk={data:[]};
@@ -309,16 +309,17 @@ function nuvemPanel(){const el=document.getElementById('pl');if(!el||!MESA)retur
  const r=[`<div class="pr"><span class="dot"></span><span>${esc(MESA.nome)}</span><span class="sp"></span><b class="gm">${pap}</b></div>`];
  if(GER){r.push(`<div class="pr"><span class="m">Jogadores veem:</span><b>${esc(a?a.n:'—')}</b></div><div class="pr"><button data-a="ativar">📢 Mostrar esta cena aos jogadores</button></div>`)}
  if(DONO){r.push(`<label class="pr"><input type="checkbox" data-cfg="jogadores_movem" ${MESA.jogadores_movem?'checked':''}> Jogadores movem tokens</label><label class="pr"><input type="checkbox" data-cfg="jogadores_adicionam" ${MESA.jogadores_adicionam?'checked':''}> Jogadores enviam imagens</label><div class="pr"><span>Espectador</span><span class="sp"></span><button data-a="m_vw">Abrir</button></div>`)}
- r.push(`<div class="pr"><a href="ficha.html" style="color:#bb99ff;text-decoration:none">📜 Fichas</a></div><div class="pr"><button data-a="trocar">Trocar de mesa</button></div><div class="pr"><button data-a="sair">Sair da conta</button></div>`);el.innerHTML=r.join('')}
+ if(DONO&&!MESA.campanha_id)r.push(`<div class="pr"><span class="m">Código da mesa</span><span class="sp"></span><b style="letter-spacing:.12em;color:#bb99ff">${esc(MESA.codigo)}</b></div>`);
+ r.push(`<div class="pr"><a href="index.html" style="color:#bb99ff;text-decoration:none">🏠 Início</a></div>${MESA.campanha_id?`<div class="pr"><a href="ficha.html" style="color:#bb99ff;text-decoration:none">📜 Fichas</a></div>`:''}<div class="pr"><button data-a="sair">Sair da conta</button></div>`);el.innerHTML=r.join('')}
 document.addEventListener('change',async e=>{const c=e.target&&e.target.dataset&&e.target.dataset.cfg;if(!c||!DONO)return;const v=e.target.checked,{data,error}=await sb.from('mesas').update({[c]:v}).eq('id',MESA.id).select('id');
  if(error||!data||!data.length){e.target.checked=!v;return nerr(error||'sem permissão','Não consegui mudar')}MESA[c]=v;toast('Opção salva.')});
 function escolherMesa(ms,mb){return new Promise(ok=>{const o=document.createElement('div');o.id='mx-pick';
- o.innerHTML=`<div class="box"><h2>Escolha a mesa</h2>${ms.length?ms.map(m=>`<button data-m="${m.id}"><b>${esc(m.nome)}</b><small>${({mestre:'Mestre',admin:'Admin',jogador:'Jogador'})[(mb.find(x=>x.mesa_id==m.id)||{}).papel]||''}</small></button>`).join(''):'<p class="m">Você ainda não está em nenhuma mesa.</p>'}<p class="m" style="margin:10px 0 0"><a href="ficha.html" style="color:#bb99ff">📜 Ir para as fichas</a> (lá você cria uma mesa ou entra com um código).</p><p class="m"><button data-x="1">Sair da conta</button></p></div>`;
+ o.innerHTML=`<div class="box"><h2>Escolha a mesa</h2>${ms.length?ms.map(m=>`<button data-m="${m.id}"><b>${esc(m.nome)}</b><small>${({mestre:'Mestre',admin:'Admin',jogador:'Jogador'})[(mb.find(x=>x.mesa_id==m.id)||{}).papel]||''}</small></button>`).join(''):'<p class="m">Você ainda não está em nenhuma mesa.</p>'}<p class="m" style="margin:10px 0 0"><a href="index.html" style="color:#bb99ff">🏠 Ir para o início</a> (lá você cria uma mesa ou entra com um código).</p><p class="m"><button data-x="1">Sair da conta</button></p></div>`;
  o.onclick=e=>{const b=e.target.closest('[data-m]');if(b){o.remove();ok(ms.find(m=>m.id==b.dataset.m)||null)}else if(e.target.closest('[data-x]'))MX.sair()};document.body.append(o)})}
 function nuvemRole(){document.body.classList.add(ROLE=='mestre'?'mst':ROLE=='admin'?'adm':'jog');
  if(!GER){C.splice(0,2);dk=mk='chr';pv=true}
  const rm=document.getElementById('rm');if(rm&&!document.getElementById('cs')){const s=document.createElement('div');s.id='cs';s.className='m';s.style.cssText='font-size:11px;padding:0 10px 4px';rm.insertBefore(s,document.getElementById('pl'))}cs('☁ carregando…')}
-const fichaSel=t=>`<label class="m" style="display:block;margin:6px 0">Ficha vinculada <select data-f="pj" style="max-width:100%"><option value="">(nenhuma)</option>${[...PERS.values()].map(p=>`<option value="${p.id}" ${t.pj==p.id?'selected':''}>${esc(p.nome||'Sem nome')}${p.npc?' (NPC)':''}</option>`).join('')}</select></label>`;
+const fichaSel=t=>!MESA.campanha_id?`<p class="m" style="margin:6px 0">Mesa sem campanha: não tem fichas.</p>`:`<label class="m" style="display:block;margin:6px 0">Ficha vinculada <select data-f="pj" style="max-width:100%"><option value="">(nenhuma)</option>${[...PERS.values()].map(p=>`<option value="${p.id}" ${t.pj==p.id?'selected':''}>${esc(p.nome||'Sem nome')}${p.npc?' (NPC)':''}</option>`).join('')}</select></label>`;
 
 /* ---------- início ---------- */
 async function nuvemMain(){
@@ -330,10 +331,10 @@ async function nuvemMain(){
   if(mb.error)throw mb.error;if(ms.error)throw ms.error;
   const q=new URLSearchParams(location.search).get('mesa')||localStorage.mesa_atual;let m=ms.data.find(x=>x.id==q);
   if(!m&&ms.data.length==1)m=ms.data[0];
-  if(!m){if(VIEW)return falta('Abra primeiro o tabletop e escolha a mesa.');m=await escolherMesa(ms.data,mb.data);if(!m)return}
+  if(!m){if(VIEW)return falta('Abra primeiro o tabletop e escolha a mesa.');location.replace('index.html');return}
   localStorage.mesa_atual=m.id;MESA=m;ROLE=(mb.data.find(x=>x.mesa_id==m.id)||{}).papel||'jogador';GER=ROLE!='jogador';DONO=ROLE=='mestre';
   if(VIEW){await loadLib();CLOUD=false;try{recv(JSON.parse(localStorage.mesa3s).s)}catch(e){}bc.postMessage({hello:1});opts();ui();dock();upd();draw();mpr();return}
-  nuvemRole();
+  nuvemRole();sb.rpc('marcar_acesso_mesa',{p_mesa:m.id}).then(()=>{},()=>{});
   await Promise.all([carregarTudo(),loadLib()]);
   if(GER&&!S.scenes.length){const s={id:uid(),n:'Cena 1',maps:[],tok:[],fg:[],walls:[],nt:0,dl:.92,gs:50,gm:1.5,grid:true,fcol:'#000000',fa:.6};S.scenes.push(s);CLOUD=true;await cloudFlush();CLOUD=false}
   const alvo=scene(GER?(localStorage['mesa_cena_'+m.id]||MESA.cena_ativa):MESA.cena_ativa)||(GER?S.scenes[0]:null);

@@ -39,15 +39,23 @@
     const s = document.createElement('style');
     s.id = 'mx-css';
     s.textContent = `
-#mx-login{position:fixed;inset:0;z-index:100;background:#1d2133;display:flex;align-items:center;justify-content:center;padding:16px;font:15px Roboto,system-ui,sans-serif;color:#fff}
-#mx-login .mx-box{background:#2a2e44;border-radius:24px;padding:24px;width:min(400px,100%);display:flex;flex-direction:column;gap:10px;box-shadow:0 8px 32px #0009}
-#mx-login h2{margin:0;font-weight:500;font-size:24px;color:#fff;text-transform:none;letter-spacing:0}
-#mx-login .mx-m{margin:0 0 4px;color:#9aa0bd}
+#mx-login{position:fixed;inset:0;z-index:100;background:radial-gradient(circle at 50% 28%,#232850 0,#12142a 65%);display:flex;align-items:center;justify-content:center;padding:16px;font:15px Roboto,system-ui,sans-serif;color:#fff}
+#mx-login .mx-box{background:#242946;border-radius:28px;padding:26px 24px;width:min(400px,100%);display:flex;flex-direction:column;gap:10px;box-shadow:0 18px 50px -12px #000c}
+#mx-login .mx-logo{width:74px;height:74px;margin:0 auto 4px;filter:drop-shadow(0 0 14px rgba(185,155,255,.45))}
+#mx-login .mx-logo svg{width:100%;height:100%;overflow:visible}
+#mx-login .mx-logo .t{fill:none;stroke:#b99bff;stroke-width:2.6;stroke-linecap:round;stroke-linejoin:round}
+#mx-login .mx-logo .o{fill:#12142a;stroke:#b99bff;stroke-width:2;transform-box:fill-box;transform-origin:center;animation:mxp 7s 2s infinite}
+#mx-login .mx-logo .i{fill:#b99bff}#mx-login .mx-logo .p{fill:#12142a}
+@keyframes mxp{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+#mx-login h2{text-align:center}
+#mx-login h2{margin:0;font-weight:800;font-size:28px;color:#fff;text-transform:none;letter-spacing:-.01em;font-family:'Bricolage Grotesque',system-ui,sans-serif}
+#mx-login h2 b{color:#b99bff}
+#mx-login .mx-m{margin:0 0 6px;color:#9aa0bd;text-align:center}
 #mx-login input{background:#1d2133;color:#fff;border:1px solid #454b6b;border-radius:12px;padding:12px;font:inherit;font-size:16px;width:100%}
 #mx-login input:focus-visible,#mx-login button:focus-visible{outline:2px solid #bb99ff}
 #mx-login button{background:transparent;color:#fff;border:0;border-radius:14px;padding:12px;cursor:pointer;font:inherit}
 #mx-login button:hover{background:#ffffff14}
-#mx-login .mx-pri{background:linear-gradient(90deg,#bb99ff,#e0a8f0);color:#1d1030;font-weight:700}
+#mx-login .mx-pri{background:linear-gradient(90deg,#b99bff,#d1a8f5);color:#1d1030;font-weight:700}
 #mx-login .mx-pri:hover{background:linear-gradient(90deg,#c9adff,#e8b8f5)}
 #mx-login .mx-pri:disabled{opacity:.5}
 #mx-login .mx-link{color:#9aa0bd;font-size:13px;padding:6px}
@@ -60,8 +68,8 @@
       estilo();
       const o = document.createElement('div');
       o.id = 'mx-login';
-      o.innerHTML = `<form class="mx-box" novalidate><h2>Mesa RPG</h2>
-<p class="mx-m">Entre na sua conta para acessar suas fichas.</p>
+      o.innerHTML = `<form class="mx-box" novalidate><div class="mx-logo"><svg viewBox="0 0 100 100" aria-hidden="true"><path class="t" d="M50 4 90 27 90 73 50 96 10 73 10 27ZM50 28 77 68 23 68ZM50 4V28M10 27 50 28 90 27M10 27 23 68M90 27 77 68M10 73 23 68M90 73 77 68M50 96 23 68M50 96 77 68"/><path class="o" d="M37.5 56Q50 45.5 62.5 56Q50 66.5 37.5 56Z"/><circle class="i" cx="50" cy="56" r="4.6"/><circle class="p" cx="50" cy="56" r="1.9"/></svg></div><h2>Open <b>RPG</b></h2>
+<p class="mx-m">Entre para acessar suas mesas, campanhas e fichas.</p>
 <input id="mx-nome" placeholder="Seu nome" autocomplete="nickname" style="display:none">
 <input id="mx-email" type="email" placeholder="E-mail" autocomplete="email">
 <input id="mx-senha" type="password" placeholder="Senha (mínimo 6 caracteres)" autocomplete="current-password">

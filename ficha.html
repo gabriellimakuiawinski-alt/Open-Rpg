@@ -44,9 +44,8 @@ h2{margin:0 0 10px;font-size:12px;color:var(--m);font-weight:500;text-transform:
 #toast.show{opacity:1;transform:translate(-50%,0)}
 @media(max-width:600px){input,select,textarea{font-size:16px}.sk{flex-wrap:wrap}.sk .sn{flex-basis:calc(100% - 90px)}}
 </style></head><body>
-<header><select id="sel"></select><button data-act="new">＋ Nova</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><button data-act="delf" class="x">Excluir</button><span class="sp"></span><span id="st"></span><a href="mesa.html" class="tl" title="Abrir o tabletop">🎲 Tabletop</a><button data-act="mesas">Mesas</button><button data-act="sair" id="who" title="Sair da conta"></button></header>
+<header><select id="sel"></select><button data-act="new">＋ Nova</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><button data-act="delf" class="x">Excluir</button><span class="sp"></span><span id="st"></span><a href="index.html" class="tl" title="Voltar ao início">🏠 Início</a><a href="mesa.html" class="tl" title="Abrir o tabletop">🎲 Tabletop</a><button data-act="sair" id="who" title="Sair da conta"></button></header>
 <nav id="tabs"></nav><main id="app"></main><div id="toast"></div>
-<div id="md" class="hid"><div id="mb" class="mb"></div></div>
 <input type="file" id="fi" accept=".json,application/json" hidden>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="comum.js"></script>
@@ -87,32 +86,36 @@ function nova(nome,demo){
 
 /* ============ ESTADO ============
    Cada ficha na tela é o conteúdo de "personagens.dados" + metadados com "_"
-   (_mesa, _dono, _donoNome) que NÃO são gravados dentro de dados. */
-let ME=null,ALL=[],MESAS=[],MEMB=[],SEL=localStorage.mesa_ficha_sel,tab='g',tt;const PEND=new Map(),NOMES={};
-const dadosDe=f=>{const{_mesa,_dono,_donoNome,_priv,_npc,...d}=f;return d},
-fromRow=r=>({...(r.dados||{}),id:r.id,nome:r.nome,_mesa:r.mesa_id,_dono:r.user_id,_donoNome:NOMES[r.user_id]||'',_priv:!!r.privada,_npc:!!r.npc}),
+   (_camp, _dono, _donoNome) que NÃO são gravados dentro de dados. */
+let ME=null,ALL=[],CAMPS=[],CM=[],SEL=localStorage.mesa_ficha_sel,tab='g',tt;const PEND=new Map(),NOMES={};
+/* ficha com dados faltando (criada por fora, ou de versão antiga) ganha o que falta, em vez de quebrar a tela */
+const completa=d=>{const b=nova('');for(const k of['info','attrs','stats','skills','poderes'])if(!Array.isArray(d[k]))d[k]=b[k];
+  if(!d.inv||typeof d.inv!='object'||!Array.isArray(d.inv.items))d.inv={...b.inv,...(d.inv&&typeof d.inv=='object'?d.inv:{}),items:[]};
+  if(typeof d.notas!='string')d.notas='';return d},
+dadosDe=f=>{const{_camp,_dono,_donoNome,_priv,_npc,...d}=f;return d},
+fromRow=r=>({...completa(r.dados||{}),id:r.id,nome:r.nome,_camp:r.campanha_id,_dono:r.user_id,_donoNome:NOMES[r.user_id]||'',_priv:!!r.privada,_npc:!!r.npc}),
 curF=()=>ALL.find(f=>f.id==SEL),av=(f,id)=>{const a=f.attrs.find(a=>a.id==id);return a?+a.v||0:0},
 getP=(o,p)=>p.split('.').reduce((t,k)=>t==null?t:t[k],o),
 setP=(o,p,v)=>{const k=p.split('.');let t=o;for(let i=0;i<k.length-1;i++)t=t[k[i]];t[k[k.length-1]]=v},
 listOf=(f,l)=>l=='items'?f.inv.items:f[l],
 ordenar=()=>ALL.sort((x,y)=>(x._dono==ME.id?0:1)-(y._dono==ME.id?0:1)),
-meuPapel=m=>{const x=MEMB.find(b=>b.mesa_id==m&&b.user_id==ME.id);return x?x.papel:null},
-podeEditar=f=>f._dono==ME.id||meuPapel(f._mesa)=='mestre'||(meuPapel(f._mesa)=='admin'&&!f._priv&&!f._npc);
+meuPapel=c=>{const x=CM.find(b=>b.campanha_id==c&&b.user_id==ME.id);return x?x.papel:null},
+podeEditar=f=>f._dono==ME.id||meuPapel(f._camp)=='mestre'||(meuPapel(f._camp)=='admin'&&!f._priv&&!f._npc);
 function toast(h){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),6000)}
 const status=t=>$('#st').textContent=t;
 
 /* ============ NUVEM (Supabase) ============ */
 async function carregarNomes(){const r=await db.from('profiles').select('id,nome');if(r.error)throw r.error;r.data.forEach(p=>NOMES[p.id]=p.nome);ALL.forEach(f=>f._donoNome=NOMES[f._dono]||'')}
 async function carregar(){
-  const[a,m,b]=await Promise.all([db.from('personagens').select('id,user_id,mesa_id,nome,dados,privada,npc').order('criado_em'),db.from('mesas').select('id,nome,codigo,mestre_id,jogadores_adicionam,jogadores_movem').order('criado_em'),db.from('membros').select('mesa_id,user_id,papel')]);
+  const[a,m,b]=await Promise.all([db.from('personagens').select('id,user_id,campanha_id,nome,dados,privada,npc').order('criado_em'),db.from('campanhas').select('id,nome,mestre_id').order('criado_em'),db.from('campanha_membros').select('campanha_id,user_id,papel')]);
   if(a.error)throw a.error;if(m.error)throw m.error;if(b.error)throw b.error;
-  MESAS=m.data;MEMB=b.data;await carregarNomes();ALL=a.data.map(fromRow);ordenar()}
+  CAMPS=m.data;CM=b.data;await carregarNomes();ALL=a.data.map(fromRow);ordenar()}
 async function inserir(f){
-  const{error}=await db.from('personagens').insert({id:f.id,user_id:ME.id,mesa_id:f._mesa||null,nome:f.nome||'',dados:dadosDe(f),privada:!!f._priv,npc:!!f._npc});
+  const{error}=await db.from('personagens').insert({id:f.id,user_id:ME.id,campanha_id:f._camp||null,nome:f.nome||'',dados:dadosDe(f),privada:!!f._priv,npc:!!f._npc});
   if(error)throw error;f._dono=ME.id;f._donoNome=''}
 function erro(e){status('erro ao salvar');toast('Não consegui salvar: '+esc(e.message||e))}
 async function gravar(f){PEND.delete(f.id);
-  const{data,error}=await db.from('personagens').update({nome:f.nome||'',dados:dadosDe(f),mesa_id:f._mesa||null,privada:!!f._priv,npc:!!f._npc}).eq('id',f.id).select('id');
+  const{data,error}=await db.from('personagens').update({nome:f.nome||'',dados:dadosDe(f),campanha_id:f._camp||null,privada:!!f._priv,npc:!!f._npc}).eq('id',f.id).select('id');
   if(error)return erro(error);if(!data||!data.length)return erro('sem permissão para alterar esta ficha');
   if(!PEND.size)status('salvo ✓')}
 function touch(f=curF()){if(!f)return;clearTimeout(PEND.get(f.id));status('salvando…');PEND.set(f.id,setTimeout(()=>gravar(f),700))}
@@ -122,7 +125,7 @@ async function criarPadrao(){const n=nova('Agente Exemplo',true);await inserir(n
 async function migrarLocal(){ // uma vez só: leva para a conta as fichas que estavam só neste navegador
   let loc=[];try{loc=JSON.parse(localStorage.getItem('mesa_fichas_v1')||'[]')}catch(e){}
   loc=loc.filter(x=>x&&x.attrs&&x.skills&&x.inv&&x.stats&&x.info);
-  for(const x of loc){x.id=uuid();x._mesa=null;await inserir(x);ALL.push(x)}
+  for(const x of loc){x.id=uuid();x._camp=null;await inserir(x);ALL.push(x)}
   localStorage.mesa_migrado='1';return loc.length}
 
 /* tempo real: se a ficha mudar em outro lugar (ex.: o mestre no tabletop), atualiza aqui */
@@ -132,7 +135,7 @@ function aplicar(novo){
   const i=ALL.findIndex(x=>x.id==novo.id);
   if(i<0){ALL.push(novo);ordenar();render();return}
   const cur=ALL[i];
-  if(ss(dadosDe(cur))==ss(dadosDe(novo))&&cur._mesa==novo._mesa&&cur._priv==novo._priv&&cur._npc==novo._npc)return; // eco da nossa própria gravação
+  if(ss(dadosDe(cur))==ss(dadosDe(novo))&&cur._camp==novo._camp&&cur._priv==novo._priv&&cur._npc==novo._npc)return; // eco da nossa própria gravação
   if(PEND.has(cur.id))return; // temos edição local ainda não enviada: ela prevalece
   const a=document.activeElement,foco=!!(a&&$('#app').contains(a)),eraSel=cur.id==SEL;
   if(eraSel&&foco&&sig(cur)!=sig(novo)){toast('Esta ficha foi alterada por outra pessoa. Saia do campo em que está digitando para atualizar.');return}
@@ -143,7 +146,7 @@ function ouvir(){
     try{
       if(p.eventType=='DELETE'){const id=p.old.id;if(!ALL.some(x=>x.id==id))return;ALL=ALL.filter(x=>x.id!=id);if(!ALL.length)await criarPadrao();if(SEL==id||!curF())SEL=ALL[0].id;render();return}
       let r=p.new;
-      if(!r.dados||!Object.keys(r.dados).length){const q=await db.from('personagens').select('id,user_id,mesa_id,nome,dados,privada,npc').eq('id',r.id).maybeSingle();if(!q.data)return;r=q.data}
+      if(!r.dados||!Object.keys(r.dados).length){const q=await db.from('personagens').select('id,user_id,campanha_id,nome,dados,privada,npc').eq('id',r.id).maybeSingle();if(!q.data)return;r=q.data}
       if(!(r.user_id in NOMES))await carregarNomes();
       aplicar(fromRow(r))
     }catch(e){}
@@ -153,9 +156,9 @@ function ouvir(){
 const inp=(p,v,ex='')=>`<input data-p="${p}" value="${esc(v)}" ${ex}>`,num=(p,v,ex='')=>`<input type="number" data-p="${p}" data-n value="${+v||0}" ${ex}>`,
 attrOpts=(f,sel)=>'<option value="">—</option>'+f.attrs.map(a=>`<option value="${a.id}" ${a.id==sel?'selected':''}>${esc(a.n)}</option>`).join('');
 const TABS=[['g','Geral'],['p','Perícias'],['i','Inventário'],['n','Poderes e notas']];
-function vGeral(f){const meu=f._dono==ME.id,pp=meuPapel(f._mesa);return `${meu?'':`<p class=m style="margin:0 0 10px">Ficha de <b>${esc(f._donoNome||'outro jogador')}</b>. ${podeEditar(f)?'Você a edita como '+(pp=='mestre'?'mestre':'admin')+' da mesa.':'Somente leitura.'}</p>`}<section class=card><h2>Identificação</h2>
+function vGeral(f){const meu=f._dono==ME.id,pp=meuPapel(f._camp);return `${meu?'':`<p class=m style="margin:0 0 10px">Ficha de <b>${esc(f._donoNome||'outro jogador')}</b>. ${podeEditar(f)?'Você a edita como '+(pp=='mestre'?'mestre':'admin')+' da campanha.':'Somente leitura.'}</p>`}<section class=card><h2>Identificação</h2>
 <label class=fld>Nome do personagem${inp('nome',f.nome)}</label>
-${meu?`<label class=fld>Mesa<select data-mesa><option value="">— nenhuma —</option>${MESAS.map(m=>`<option value="${m.id}" ${m.id==f._mesa?'selected':''}>${esc(m.nome)}</option>`).join('')}</select></label>`:''}
+${meu?`<label class=fld>Campanha<select data-camp><option value="">— nenhuma (só você vê) —</option>${CAMPS.filter(c=>c.id==f._camp||meuPapel(c.id)).map(c=>`<option value="${c.id}" ${c.id==f._camp?'selected':''}>${esc(c.nome)}</option>`).join('')}</select></label>`:''}
 ${meu||pp=='mestre'?`<label class=sm style="font-size:14px;margin:0 0 6px"><input type=checkbox data-flag=_priv ${f._priv?'checked':''}> Ficha privada (só o dono e o mestre veem)</label>`:''}
 ${pp=='mestre'?`<label class=sm style="font-size:14px;margin:0 0 10px"><input type=checkbox data-flag=_npc ${f._npc?'checked':''}> NPC (só o mestre vê)</label>`:''}
 <div class=g2>${f.info.map((x,i)=>`<div class=kv>${inp(`info.${i}.n`,x.n,'class=k')}${inp(`info.${i}.v`,x.v)}<button class=x data-act=del data-l=info data-i=${i}>✕</button></div>`).join('')}</div>
@@ -191,54 +194,25 @@ function render(){const f=curF();renderSel();
   const v=f?({g:vGeral,p:vPericias,i:vInv,n:vNotas}[tab])(f):'';
   $('#app').innerHTML=f&&!podeEditar(f)?`<fieldset disabled style="border:0;padding:0;margin:0;min-width:0">${v}</fieldset>`:v;const del=document.querySelector('[data-act=delf]');if(del)del.disabled=!!f&&f._dono!=ME.id;derive()}
 
-/* ============ MESAS ============ */
-const linhaJog=(m,x,eu)=>eu?`<div class=itr><span style="flex:1">${esc(NOMES[x.user_id]||'?')}</span><select data-papel data-m=${m.id} data-u=${x.user_id} style="width:auto"><option value=jogador ${x.papel=='jogador'?'selected':''}>Jogador</option><option value=admin ${x.papel=='admin'?'selected':''}>Admin</option></select></div>`:`<div class=m>${esc(NOMES[x.user_id]||'?')}${x.papel=='admin'?' · admin':''}</div>`;
-function htmlMesas(mb){return `<h3>Mesas</h3>`+(MESAS.map(m=>{const eu=m.mestre_id==ME.id,js=mb.filter(x=>x.mesa_id==m.id&&x.papel!='mestre');
-  return `<div class=mz><div class=itr><b class=in>${esc(m.nome)}</b><span class=m>${eu?'Mestre':'Jogador'}</span><span class=sp></span><a class=tl href="mesa.html?mesa=${m.id}">🎲 Abrir</a>${eu?`<button class=x data-act=mdel data-id=${m.id}>Excluir</button>`:`<button class=x data-act=msair data-id=${m.id}>Sair</button>`}</div>
-${eu?`<div class=m>Código de convite: <b class=cod>${esc(m.codigo)}</b> <button data-act=mcopy data-c="${esc(m.codigo)}">Copiar</button></div>`:`<div class=m>Mestre: ${esc(NOMES[m.mestre_id]||'')}</div>`}
-<div class=m>Jogadores:</div>${js.map(x=>linhaJog(m,x,eu)).join('')||'<div class=m>ninguém ainda</div>'}
-${eu?`<label class=sm style="font-size:14px"><input type=checkbox data-cfg=jogadores_adicionam data-m=${m.id} ${m.jogadores_adicionam?'checked':''}> Jogadores podem enviar imagens de token</label><label class=sm style="font-size:14px"><input type=checkbox data-cfg=jogadores_movem data-m=${m.id} ${m.jogadores_movem?'checked':''}> Jogadores podem mover tokens</label>`:''}</div>`}).join('')||'<p class=m>Você ainda não está em nenhuma mesa.</p>')+
-`<div class=ra><button class=add data-act=mnew>＋ Criar mesa</button><button class=add data-act=mjoin>Entrar com código</button></div><div class=ra><span class=sp></span><button data-act=mclose>Fechar</button></div>`}
-async function abrirMesas(){
-  const q=await db.from('membros').select('mesa_id,user_id,papel'),m=await db.from('mesas').select('id,nome,codigo,mestre_id,jogadores_adicionam,jogadores_movem').order('criado_em');
-  if(q.error)throw q.error;if(m.error)throw m.error;MESAS=m.data;MEMB=q.data;await carregarNomes();
-  $('#mb').innerHTML=htmlMesas(q.data);$('#md').classList.remove('hid')}
-$('#mb').addEventListener('change',async e=>{const t=e.target;
-  try{
-    if('papel' in t.dataset){const{data,error}=await db.from('membros').update({papel:t.value}).eq('mesa_id',t.dataset.m).eq('user_id',t.dataset.u).select('user_id');if(error)throw error;if(!data.length)throw new Error('sem permissão');toast('Papel atualizado.');await abrirMesas()}
-    else if('cfg' in t.dataset){const{data,error}=await db.from('mesas').update({[t.dataset.cfg]:t.checked}).eq('id',t.dataset.m).select('id');if(error)throw error;if(!data.length)throw new Error('sem permissão');const m=MESAS.find(x=>x.id==t.dataset.m);if(m)m[t.dataset.cfg]=t.checked;toast('Opção salva.')}
-  }catch(err){toast('Erro: '+esc(err.message||err));abrirMesas().catch(()=>{})}});
-async function acaoMesa(a,d){
-  if(a=='mclose'){$('#md').classList.add('hid');return}
-  if(a=='mcopy'){try{await navigator.clipboard.writeText(d.c);toast('Código copiado.')}catch(e){toast('Código: <b>'+esc(d.c)+'</b>')}return}
-  if(a=='mnew'){const n=(prompt('Nome da mesa')||'').trim();if(!n)return;const{error}=await db.from('mesas').insert({nome:n,mestre_id:ME.id});if(error)throw error}
-  else if(a=='mjoin'){const c=(prompt('Código de convite')||'').trim();if(!c)return;const{error}=await db.rpc('entrar_na_mesa',{p_codigo:c});if(error)throw error}
-  else if(a=='msair'){if(!confirm('Sair desta mesa? Suas fichas ligadas a ela ficam sem mesa.'))return;const{error}=await db.from('membros').delete().eq('mesa_id',d.id).eq('user_id',ME.id);if(error)throw error}
-  else if(a=='mdel'){if(!confirm('Excluir esta mesa para todos? As fichas dos jogadores continuam existindo, só perdem o vínculo.'))return;const{error}=await db.from('mesas').delete().eq('id',d.id);if(error)throw error}
-  await carregar();if(!curF()&&ALL.length)SEL=ALL[0].id;render();await abrirMesas()}
-
 /* ============ AÇÕES ============ */
 const NEW={info:()=>({n:'Campo',v:''}),attrs:()=>({id:uid(),n:'ATR',v:1}),stats:()=>({id:uid(),n:'Nova',cur:0,max:0,c:'#6dd36d'}),skills:()=>({id:uid(),n:'Perícia',a:'',t:0,o:0}),items:()=>({id:uid(),n:'',cat:'Geral',esp:1,qtd:1,desc:''}),poderes:()=>({id:uid(),n:'',desc:''})};
 function roll(i){const f=curF(),s=f.skills[i],n=av(f,s.a),r=Array.from({length:n>0?n:2},()=>1+Math.floor(Math.random()*20)),best=n>0?Math.max(...r):Math.min(...r),b=(+s.t||0)+(+s.o||0);
   toast(`${esc(f.nome||'Ficha')} · ${esc(s.n)}: [${r}] → ${best}${b?(b>0?' +':' ')+b:''} = <b>${best+b}</b>`)}
 document.addEventListener('input',e=>{const t=e.target,f=curF();if(!f)return;
-  if('mesa' in t.dataset){f._mesa=t.value||null;touch(f);return}
+  if('camp' in t.dataset){f._camp=t.value||null;touch(f);return}
   if('flag' in t.dataset){f[t.dataset.flag]=t.checked;touch(f);return}
   const p=t.dataset.p;if(!p)return;let v=t.value;if('n' in t.dataset)v=v===''?0:+v;setP(f,p,v);
   if(p=='nome'){const o=$('#sel').selectedOptions[0];if(o)o.textContent=rotulo(f)}touch(f);derive()});
 $('#sel').onchange=e=>{SEL=e.target.value;localStorage.mesa_ficha_sel=SEL;render()};
 document.addEventListener('click',async e=>{
-  if(e.target.id=='md'){$('#md').classList.add('hid');return}
   const b=e.target.closest('[data-act],[data-tab]');if(!b)return;const d=b.dataset,f=curF(),a=d.act;
   try{
     if(d.tab){tab=d.tab;render();return}
     if(a=='sair'){flush();await Mesa.sair();return}
-    if(a=='mesas'){await abrirMesas();return}
-    if(/^m(new|join|sair|del|copy|close)$/.test(a)){await acaoMesa(a,d);return}
     if(a=='new'){const n=nova('Novo personagem');await inserir(n);ALL.push(n);ordenar();SEL=n.id;tab='g';render();return}
     if(a=='imp'){$('#fi').click();return}
     if(!f)return;
-    if(a=='dup'){const c=JSON.parse(JSON.stringify(dadosDe(f)));c.id=uuid();c.nome+=' (cópia)';c._mesa=f._mesa||null;await inserir(c);ALL.push(c);ordenar();SEL=c.id;render()}
+    if(a=='dup'){const c=JSON.parse(JSON.stringify(dadosDe(f)));c.id=uuid();c.nome+=' (cópia)';c._camp=f._camp||null;await inserir(c);ALL.push(c);ordenar();SEL=c.id;render()}
     else if(a=='exp'){const u=URL.createObjectURL(new Blob([JSON.stringify(dadosDe(f),null,2)],{type:'application/json'})),l=document.createElement('a');l.href=u;l.download=(f.nome||'ficha').replace(/[^\w-]+/g,'_')+'.json';l.click();setTimeout(()=>URL.revokeObjectURL(u),5000)}
     else if(a=='delf'){
       if(f._dono!=ME.id){toast('Só o dono pode excluir esta ficha.');return}
@@ -254,7 +228,7 @@ document.addEventListener('click',async e=>{
 $('#fi').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!file)return;
   try{let o=JSON.parse(await file.text());o=Array.isArray(o)?o:[o];
     o.forEach(x=>{if(!x||!x.attrs||!x.skills||!x.inv||!x.stats||!x.info)throw new Error('formato')});
-    for(const x of o){x.id=uuid();x._mesa=null;await inserir(x);ALL.push(x)}ordenar();SEL=o[0].id;render();toast('Ficha importada.')}
+    for(const x of o){x.id=uuid();x._camp=null;await inserir(x);ALL.push(x)}ordenar();SEL=o[0].id;render();toast('Ficha importada.')}
   catch(err){toast(err.message=='formato'||err instanceof SyntaxError?'Arquivo inválido: não parece uma ficha exportada daqui.':'Erro ao importar: '+esc(err.message||err))}};
 
 /* ============ INÍCIO ============ */
@@ -262,10 +236,17 @@ $('#fi').onchange=async e=>{const file=e.target.files[0];e.target.value='';if(!f
   try{
     const u=await Mesa.exigirLogin();ME={id:u.id,nome:''};
     await carregar();ME.nome=NOMES[ME.id]||(u.email||'').split('@')[0]||'Conta';
-    if(!ALL.length){
+    const Q=new URLSearchParams(location.search);
+    if(!ALL.length&&!Q.get('nova')){
       const n=localStorage.mesa_migrado?0:await migrarLocal();
       if(n){toast('As fichas que estavam só neste navegador foram enviadas para a sua conta.')}
       else await criarPadrao()}
+    if(Q.get('nova')){ // vindo do início: "Criar ficha"
+      const n=nova((Q.get('nome')||'Novo personagem').slice(0,80)),c=Q.get('camp');
+      if(c&&CAMPS.some(x=>x.id==c))n._camp=c;
+      await inserir(n);ALL.push(n);ordenar();SEL=n.id;tab='g';
+      history.replaceState(null,'','ficha.html')}
+    else if(Q.get('id')&&ALL.some(x=>x.id==Q.get('id'))){SEL=Q.get('id');history.replaceState(null,'','ficha.html')}
     if(!curF())SEL=ALL[0].id;
     $('#who').textContent=ME.nome+' · sair';
     ouvir();render();status('conectado ✓')
