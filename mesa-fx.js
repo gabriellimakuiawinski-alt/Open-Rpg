@@ -93,10 +93,11 @@ const log=document.getElementById('log');
 if(log)new MutationObserver(ms=>{
   const n=ms.flatMap(m=>[...m.addedNodes]).filter(x=>x.nodeType==1||x.textContent.trim());
   if(!n.length)return;
-  const first=log.firstElementChild||log.firstChild;const txt=(first&&first.textContent||'').trim();if(!txt)return;
+  const seg=log.innerHTML.split('<br>')[0],tmp=document.createElement('div');tmp.innerHTML=seg;
+  const txt=tmp.textContent.trim();if(!txt)return;
   const el=document.createElement('div');el.className='fx-dado';
-  const num=(txt.match(/=\s*(-?\d+)\s*$/)||txt.match(/(-?\d+)\s*$/)||[])[1];
-  el.innerHTML=`<b>${num??'🎲'}</b><small>${txt.replace(/</g,'&lt;').slice(0,60)}</small>`;
+  const num=(txt.match(/=\s*(-?\d+)\s*$/)||txt.match(/→\s*(-?\d+)\s*$/)||txt.match(/(-?\d+)\s*$/)||[])[1];
+  el.innerHTML=`<b>${num??'?'}</b><small>${txt.replace(/</g,'&lt;').slice(0,70)}</small>`;
   document.body.append(el);setTimeout(()=>el.remove(),2200);
   if(window.MesaFX)MesaFX.burst(W/2,H/2,18,RED)
 }).observe(log,{childList:true});

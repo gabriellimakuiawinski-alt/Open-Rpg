@@ -57,9 +57,16 @@ async function urlDe(id){
   const s=await sb.storage.from('mesa-arquivos').createSignedUrl(data.path,3600);
   if(s.error||!s.data)throw new Error('sem link');
   const o={url:s.data.signedUrl||s.data.signedURL,n:data.nome,exp:Date.now()+50*60*1000};urls.set(id,o);return o}
+const fxA2=[];
+async function tocaFx(id){
+  try{const o=await urlDe(id);const a=new Audio(o.url);a.volume=mudo?0:Math.min(1,vol*((typeof S!=='undefined'&&S.mp&&S.mp.fxv!=null)?S.mp.fxv:1));
+    fxA2.push(a);a.onended=()=>{const i=fxA2.indexOf(a);if(i>=0)fxA2.splice(i,1)};
+    if(fxA2.length>12){const v=fxA2.shift();try{v.pause()}catch(e){}}
+    await a.play()}catch(e){/* sem permissão de áudio ainda: ignora o efeito perdido */}}
 let seq=0;
 async function rx(p){
   if(p&&p.pedir){if(DONO&&tx)publicar();return}
+  if(p&&p.fx){if(!GER&&!(typeof VIEW!=='undefined'&&VIEW))tocaFx(p.fx);return}
   if(!p||GER||(typeof VIEW!=='undefined'&&VIEW))return;
   if(p.parar){PA.pause();cur=null;ui();return}
   if(!p.id)return;
@@ -78,6 +85,9 @@ async function rx(p){
   ui()}
 PA.addEventListener('pause',ui);PA.addEventListener('playing',()=>{bloq=false;ui()});
 
+function fxPub(){
+  if(typeof fx!=='function')return;const orig=fx;
+  fx=function(id){orig.apply(this,arguments);if(tx&&uuidOk(id))send({fx:id})}}
 window.MusicaSync={rx,
-  conectou(){pronto=true;if(DONO&&!mestre.ok){mestre.ok=1;mestre()}if(DONO)publicar();else if(!GER)send({pedir:1})}};
+  conectou(){pronto=true;if(DONO&&!fxPub.ok){fxPub.ok=1;fxPub()}if(DONO&&!mestre.ok){mestre.ok=1;mestre()}if(DONO)publicar();else if(!GER)send({pedir:1})}};
 })();

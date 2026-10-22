@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="tema.css?v=7">
+<link rel="stylesheet" href="tema.css?v=8">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{background:var(--tabua)}
@@ -370,7 +370,7 @@ ${edit?`<select data-papel data-u="${m.user_id}" aria-label="Papel de ${esc(nm)}
   return`${pp=='mestre'?`<div class="acoes"><div class="codigo">Código de convite <b>${esc(c.codigo)}</b><button class="btn papel-b" style="padding:10px 14px;font-size:13px" data-a="copiar" data-c="${esc(c.codigo)}">Copiar</button></div></div>
 <p class="dica">Admins ajudam a gerir cenas e tokens, mas não veem fichas privadas nem NPCs.</p>`:''}
 <div class="lista" style="margin-top:16px">${l}</div>
-<div class="zona">${pp=='mestre'?`<button class="btn papel-b" data-a="renomear">Renomear campanha</button><button class="btn perigo" data-a="excluirCamp">Excluir campanha</button>`:`<button class="btn perigo" data-a="sairCamp">Sair da campanha</button>`}</div>`}
+<div class="zona"><button class="btn papel-b" data-a="exportar">${pp=='mestre'?'Exportar campanha':'Exportar minhas fichas'}</button>${pp=='mestre'?`<button class="btn papel-b" data-a="renomear">Renomear campanha</button><button class="btn perigo" data-a="excluirCamp">Excluir campanha</button>`:`<button class="btn perigo" data-a="sairCamp">Sair da campanha</button>`}</div>`}
 
 function renderCamp(id){
   const c=campDe(id),pp=meuPapel(id);
@@ -482,6 +482,30 @@ function rolar(){
   setTimeout(()=>aviso(n==20?'<b>20!</b> Crítico.':n==1?'<b>1.</b> Falha crítica...':'Você tirou <b>'+n+'</b>'),520)}
 
 const cid=()=>rota().id;
+function baixar(nome,obj){
+  const u=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'})),l=document.createElement('a');
+  l.href=u;l.download=nome.replace(/[^\w\-]+/g,'_')+'.json';document.body.append(l);l.click();l.remove();setTimeout(()=>URL.revokeObjectURL(u),5000)}
+async function exportarCamp(c){
+  const pp=meuPapel(c.id),dia=new Date().toISOString().slice(0,10);
+  aviso('Preparando o arquivo…');
+  const fichas=await db.from('personagens').select('*').eq('campanha_id',c.id);
+  if(fichas.error)throw fichas.error;
+  const minhas=fichas.data.filter(f=>pp=='mestre'||f.user_id==ME.id);
+  const base={formato:'open-rpg',versao:1,exportado_em:new Date().toISOString(),campanha:{nome:c.nome,criada_em:c.criado_em}};
+  if(pp!='mestre'){baixar('fichas_'+c.nome+'_'+dia,{...base,tipo:'fichas',fichas:minhas.map(f=>({nome:f.nome,privada:f.privada,npc:f.npc,dados:f.dados}))});aviso('Fichas exportadas.');return}
+  const mesas=S.mesas.filter(m=>m.campanha_id==c.id),mids=mesas.map(m=>m.id);
+  const q=(t,col,ids)=>ids.length?db.from(t).select('*').in(col,ids):Promise.resolve({data:[]});
+  const cenas=await q('cenas','mesa_id',mids);if(cenas.error)throw cenas.error;
+  const cids=cenas.data.map(x=>x.id);
+  const[tk,mp,ar,pa,pl]=await Promise.all([q('tokens','cena_id',cids),q('mapas_cena','cena_id',cids),q('arquivos','mesa_id',mids),q('pastas','mesa_id',mids),q('playlists','mesa_id',mids)]);
+  for(const r of[tk,mp,ar,pa,pl])if(r.error)throw r.error;
+  const lim=a=>a.map(({miniatura,...r})=>r);
+  baixar('campanha_'+c.nome+'_'+dia,{...base,tipo:'campanha',
+    grupo:S.cm.filter(m=>m.campanha_id==c.id).map(m=>({nome:S.nomes[m.user_id]||'',papel:m.papel})),
+    fichas:fichas.data.map(f=>({dono:S.nomes[f.user_id]||'',nome:f.nome,privada:f.privada,npc:f.npc,dados:f.dados})),
+    mesas:mesas.map(m=>({nome:m.nome,cenas:cenas.data.filter(x=>x.mesa_id==m.id).map(x=>({...x,tokens:tk.data.filter(t=>t.cena_id==x.id),mapas:mp.data.filter(t=>t.cena_id==x.id)})),pastas:pa.data.filter(x=>x.mesa_id==m.id),playlists:pl.data.filter(x=>x.mesa_id==m.id),arquivos:lim(ar.data.filter(x=>x.mesa_id==m.id))})),
+    aviso:'Os arquivos (mapas, imagens, músicas) não vão dentro deste arquivo: só a lista deles.'});
+  aviso('Campanha exportada.')}
 async function acao(a,d){
   if(a=='aba'){aba=d.t;desenhar();return}
   if(a=='rolar')return rolar();
@@ -492,6 +516,7 @@ async function acao(a,d){
   if(a=='entrar')return entrar();
   if(a=='copiar'){try{await navigator.clipboard.writeText(d.c);aviso('Código copiado.')}catch(e){aviso('Código: <b>'+esc(d.c)+'</b>')}return}
   const c=campDe(cid());if(!c)return;
+  if(a=='exportar')return exportarCamp(c);
   if(a=='renomear'){await pedir({titulo:'Renomear campanha',campos:[{id:'nome',rot:'Novo nome',val:c.nome}],ok:'Salvar',carimbo:'Atualizada',validar:v=>v.nome?'':'O nome não pode ficar vazio.'},
       async v=>{const{data,error}=await db.from('campanhas').update({nome:v.nome}).eq('id',c.id).select('id');if(error)throw error;if(!data.length)throw new Error('Sem permissão.')});await carregar();desenhar()}
   else if(a=='remover'){await pedir({titulo:'Remover '+d.n+'?',texto:'A pessoa sai da campanha e das mesas dela. As fichas continuam com ela, mas deixam de aparecer aqui.',ok:'Remover',perigo:true},

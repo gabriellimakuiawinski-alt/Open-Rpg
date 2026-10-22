@@ -172,3 +172,17 @@ input[type=checkbox]{accent-color:var(--carimbo);width:18px;height:18px}
 @keyframes pulso-b{50%{transform:scale(1.08)}}
 @media(max-width:700px){#mx-musica{top:calc(70px + env(safe-area-inset-top));max-width:calc(100vw - 20px)}#mx-musica input[type=range]{width:56px}}
 .mtx{padding:8px 2px;font:400 13px var(--maq);color:var(--giz)}
+
+/* ---------- dados compartilhados e caderno do jogador ---------- */
+#log .dn{display:inline-block;font:400 12px var(--maq);color:var(--tinta);background:var(--fita);padding:0 6px;border-radius:2px;margin-right:4px;transform:rotate(-1deg)}
+.dsec{padding:6px 2px;font:400 12px var(--maq);color:var(--giz)}
+#mx-notas{position:fixed;inset:0;z-index:35;background:#000b;display:flex;align-items:center;justify-content:center;padding:12px;animation:vel .25s ease both}
+#mx-notas.hid{display:none}
+#mx-notas .folha-n{position:relative;width:min(560px,100%);height:min(82vh,640px);display:flex;flex-direction:column;background-color:var(--papel2);background-image:repeating-linear-gradient(180deg,transparent 0,transparent 33px,#4a6fa533 33px,#4a6fa533 34px),var(--grao);background-blend-mode:normal,multiply;color:var(--tinta);border-radius:3px;padding:18px 18px 12px;box-shadow:0 30px 60px -20px #000;animation:mj .45s var(--mola)}
+#mx-notas .folha-n::before{content:"";position:absolute;left:50%;top:-10px;width:80px;height:22px;margin-left:-40px;background:#dcc66ab8;transform:rotate(-2deg)}
+#mx-notas .cab-n{display:flex;align-items:baseline;gap:10px;padding-bottom:6px}
+#mx-notas .cab-n b{font:400 24px var(--maq)}#mx-notas .cab-n small{font:700 19px var(--mao);color:var(--caneta)}
+#mx-notas .fx{color:var(--tinta);width:36px;height:36px;padding:0;justify-content:center;border-radius:50%}
+#mx-notas textarea{flex:1;resize:none;background:transparent;border:0;color:var(--caneta);font:700 22px/34px var(--mao);padding:0;outline:0;-webkit-user-select:text;user-select:text}
+#mx-notas textarea::placeholder{color:#7a705d99;font-weight:500}
+#mx-notas .rod-n{min-height:20px;font:400 12px var(--maq);color:var(--tinta2);text-align:right}
