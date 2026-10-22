@@ -10,6 +10,7 @@ button:hover{background:#ffffff14}button.on{color:var(--a);background:#bb99ff22}
 input,select,textarea{background:var(--bg);color:#fff;border:1px solid #454b6b;border-radius:10px;padding:8px 10px;font:inherit;min-width:0;width:100%}
 input[type=color]{width:34px;height:34px;padding:2px;flex:none}input[type=number]{width:70px;text-align:center}
 :focus-visible{outline:2px solid var(--a)}
+input[type=checkbox]{width:auto;flex:none}
 .hid{display:none!important}
 .m{color:var(--m)}.sp{flex:1}#st{font-size:12px;color:var(--m)}#who{color:var(--m);font-size:13px;max-width:160px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
 #tabs{display:flex;gap:2px;overflow-x:auto;padding:8px 12px 0;max-width:900px;margin:0 auto}
@@ -86,29 +87,31 @@ function nova(nome,demo){
 /* ============ ESTADO ============
    Cada ficha na tela é o conteúdo de "personagens.dados" + metadados com "_"
    (_mesa, _dono, _donoNome) que NÃO são gravados dentro de dados. */
-let ME=null,ALL=[],MESAS=[],SEL=localStorage.mesa_ficha_sel,tab='g',tt;const PEND=new Map(),NOMES={};
-const dadosDe=f=>{const{_mesa,_dono,_donoNome,...d}=f;return d},
-fromRow=r=>({...(r.dados||{}),id:r.id,nome:r.nome,_mesa:r.mesa_id,_dono:r.user_id,_donoNome:NOMES[r.user_id]||''}),
+let ME=null,ALL=[],MESAS=[],MEMB=[],SEL=localStorage.mesa_ficha_sel,tab='g',tt;const PEND=new Map(),NOMES={};
+const dadosDe=f=>{const{_mesa,_dono,_donoNome,_priv,_npc,...d}=f;return d},
+fromRow=r=>({...(r.dados||{}),id:r.id,nome:r.nome,_mesa:r.mesa_id,_dono:r.user_id,_donoNome:NOMES[r.user_id]||'',_priv:!!r.privada,_npc:!!r.npc}),
 curF=()=>ALL.find(f=>f.id==SEL),av=(f,id)=>{const a=f.attrs.find(a=>a.id==id);return a?+a.v||0:0},
 getP=(o,p)=>p.split('.').reduce((t,k)=>t==null?t:t[k],o),
 setP=(o,p,v)=>{const k=p.split('.');let t=o;for(let i=0;i<k.length-1;i++)t=t[k[i]];t[k[k.length-1]]=v},
 listOf=(f,l)=>l=='items'?f.inv.items:f[l],
-ordenar=()=>ALL.sort((x,y)=>(x._dono==ME.id?0:1)-(y._dono==ME.id?0:1));
+ordenar=()=>ALL.sort((x,y)=>(x._dono==ME.id?0:1)-(y._dono==ME.id?0:1)),
+meuPapel=m=>{const x=MEMB.find(b=>b.mesa_id==m&&b.user_id==ME.id);return x?x.papel:null},
+podeEditar=f=>f._dono==ME.id||meuPapel(f._mesa)=='mestre'||(meuPapel(f._mesa)=='admin'&&!f._priv&&!f._npc);
 function toast(h){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),6000)}
 const status=t=>$('#st').textContent=t;
 
 /* ============ NUVEM (Supabase) ============ */
 async function carregarNomes(){const r=await db.from('profiles').select('id,nome');if(r.error)throw r.error;r.data.forEach(p=>NOMES[p.id]=p.nome);ALL.forEach(f=>f._donoNome=NOMES[f._dono]||'')}
 async function carregar(){
-  const[a,m]=await Promise.all([db.from('personagens').select('id,user_id,mesa_id,nome,dados').order('criado_em'),db.from('mesas').select('id,nome,codigo,mestre_id').order('criado_em')]);
-  if(a.error)throw a.error;if(m.error)throw m.error;
-  MESAS=m.data;await carregarNomes();ALL=a.data.map(fromRow);ordenar()}
+  const[a,m,b]=await Promise.all([db.from('personagens').select('id,user_id,mesa_id,nome,dados,privada,npc').order('criado_em'),db.from('mesas').select('id,nome,codigo,mestre_id,jogadores_adicionam,jogadores_movem').order('criado_em'),db.from('membros').select('mesa_id,user_id,papel')]);
+  if(a.error)throw a.error;if(m.error)throw m.error;if(b.error)throw b.error;
+  MESAS=m.data;MEMB=b.data;await carregarNomes();ALL=a.data.map(fromRow);ordenar()}
 async function inserir(f){
-  const{error}=await db.from('personagens').insert({id:f.id,user_id:ME.id,mesa_id:f._mesa||null,nome:f.nome||'',dados:dadosDe(f)});
+  const{error}=await db.from('personagens').insert({id:f.id,user_id:ME.id,mesa_id:f._mesa||null,nome:f.nome||'',dados:dadosDe(f),privada:!!f._priv,npc:!!f._npc});
   if(error)throw error;f._dono=ME.id;f._donoNome=''}
 function erro(e){status('erro ao salvar');toast('Não consegui salvar: '+esc(e.message||e))}
 async function gravar(f){PEND.delete(f.id);
-  const{data,error}=await db.from('personagens').update({nome:f.nome||'',dados:dadosDe(f),mesa_id:f._mesa||null}).eq('id',f.id).select('id');
+  const{data,error}=await db.from('personagens').update({nome:f.nome||'',dados:dadosDe(f),mesa_id:f._mesa||null,privada:!!f._priv,npc:!!f._npc}).eq('id',f.id).select('id');
   if(error)return erro(error);if(!data||!data.length)return erro('sem permissão para alterar esta ficha');
   if(!PEND.size)status('salvo ✓')}
 function touch(f=curF()){if(!f)return;clearTimeout(PEND.get(f.id));status('salvando…');PEND.set(f.id,setTimeout(()=>gravar(f),700))}
@@ -128,7 +131,7 @@ function aplicar(novo){
   const i=ALL.findIndex(x=>x.id==novo.id);
   if(i<0){ALL.push(novo);ordenar();render();return}
   const cur=ALL[i];
-  if(ss(dadosDe(cur))==ss(dadosDe(novo))&&cur._mesa==novo._mesa)return; // eco da nossa própria gravação
+  if(ss(dadosDe(cur))==ss(dadosDe(novo))&&cur._mesa==novo._mesa&&cur._priv==novo._priv&&cur._npc==novo._npc)return; // eco da nossa própria gravação
   if(PEND.has(cur.id))return; // temos edição local ainda não enviada: ela prevalece
   const a=document.activeElement,foco=!!(a&&$('#app').contains(a)),eraSel=cur.id==SEL;
   if(eraSel&&foco&&sig(cur)!=sig(novo)){toast('Esta ficha foi alterada por outra pessoa. Saia do campo em que está digitando para atualizar.');return}
@@ -139,7 +142,7 @@ function ouvir(){
     try{
       if(p.eventType=='DELETE'){const id=p.old.id;if(!ALL.some(x=>x.id==id))return;ALL=ALL.filter(x=>x.id!=id);if(!ALL.length)await criarPadrao();if(SEL==id||!curF())SEL=ALL[0].id;render();return}
       let r=p.new;
-      if(!r.dados||!Object.keys(r.dados).length){const q=await db.from('personagens').select('id,user_id,mesa_id,nome,dados').eq('id',r.id).maybeSingle();if(!q.data)return;r=q.data}
+      if(!r.dados||!Object.keys(r.dados).length){const q=await db.from('personagens').select('id,user_id,mesa_id,nome,dados,privada,npc').eq('id',r.id).maybeSingle();if(!q.data)return;r=q.data}
       if(!(r.user_id in NOMES))await carregarNomes();
       aplicar(fromRow(r))
     }catch(e){}
@@ -149,9 +152,11 @@ function ouvir(){
 const inp=(p,v,ex='')=>`<input data-p="${p}" value="${esc(v)}" ${ex}>`,num=(p,v,ex='')=>`<input type="number" data-p="${p}" data-n value="${+v||0}" ${ex}>`,
 attrOpts=(f,sel)=>'<option value="">—</option>'+f.attrs.map(a=>`<option value="${a.id}" ${a.id==sel?'selected':''}>${esc(a.n)}</option>`).join('');
 const TABS=[['g','Geral'],['p','Perícias'],['i','Inventário'],['n','Poderes e notas']];
-function vGeral(f){const meu=f._dono==ME.id;return `${meu?'':`<p class=m style="margin:0 0 10px">Ficha de <b>${esc(f._donoNome||'outro jogador')}</b>. Você a edita como mestre da mesa.</p>`}<section class=card><h2>Identificação</h2>
+function vGeral(f){const meu=f._dono==ME.id,pp=meuPapel(f._mesa);return `${meu?'':`<p class=m style="margin:0 0 10px">Ficha de <b>${esc(f._donoNome||'outro jogador')}</b>. ${podeEditar(f)?'Você a edita como '+(pp=='mestre'?'mestre':'admin')+' da mesa.':'Somente leitura.'}</p>`}<section class=card><h2>Identificação</h2>
 <label class=fld>Nome do personagem${inp('nome',f.nome)}</label>
 ${meu?`<label class=fld>Mesa<select data-mesa><option value="">— nenhuma —</option>${MESAS.map(m=>`<option value="${m.id}" ${m.id==f._mesa?'selected':''}>${esc(m.nome)}</option>`).join('')}</select></label>`:''}
+${meu||pp=='mestre'?`<label class=sm style="font-size:14px;margin:0 0 6px"><input type=checkbox data-flag=_priv ${f._priv?'checked':''}> Ficha privada (só o dono e o mestre veem)</label>`:''}
+${pp=='mestre'?`<label class=sm style="font-size:14px;margin:0 0 10px"><input type=checkbox data-flag=_npc ${f._npc?'checked':''}> NPC (só o mestre vê)</label>`:''}
 <div class=g2>${f.info.map((x,i)=>`<div class=kv>${inp(`info.${i}.n`,x.n,'class=k')}${inp(`info.${i}.v`,x.v)}<button class=x data-act=del data-l=info data-i=${i}>✕</button></div>`).join('')}</div>
 <button class=add data-act=add data-l=info>＋ Campo</button></section>
 <section class=card><h2>Condição</h2>${f.stats.map((s,i)=>`<div class=st><div class=sth>${inp(`stats.${i}.n`,s.n,'class=k')}<input type=color data-p="stats.${i}.c" value="${esc(s.c)}"><span class=sp></span><button class=x data-act=del data-l=stats data-i=${i}>✕</button></div>
@@ -182,18 +187,26 @@ const rotulo=x=>(x.nome||'Sem nome')+(x._dono!=ME.id?' — '+(x._donoNome||'outr
 function renderSel(){$('#sel').innerHTML=ALL.map(x=>`<option value="${x.id}" ${x.id==SEL?'selected':''}>${esc(rotulo(x))}</option>`).join('')}
 function render(){const f=curF();renderSel();
   $('#tabs').innerHTML=TABS.map(([k,l])=>`<button data-tab=${k} class="${tab==k?'on':''}">${l}</button>`).join('');
-  $('#app').innerHTML=f?({g:vGeral,p:vPericias,i:vInv,n:vNotas}[tab])(f):'';derive()}
+  const v=f?({g:vGeral,p:vPericias,i:vInv,n:vNotas}[tab])(f):'';
+  $('#app').innerHTML=f&&!podeEditar(f)?`<fieldset disabled style="border:0;padding:0;margin:0;min-width:0">${v}</fieldset>`:v;const del=document.querySelector('[data-act=delf]');if(del)del.disabled=!!f&&f._dono!=ME.id;derive()}
 
 /* ============ MESAS ============ */
+const linhaJog=(m,x,eu)=>eu?`<div class=itr><span style="flex:1">${esc(NOMES[x.user_id]||'?')}</span><select data-papel data-m=${m.id} data-u=${x.user_id} style="width:auto"><option value=jogador ${x.papel=='jogador'?'selected':''}>Jogador</option><option value=admin ${x.papel=='admin'?'selected':''}>Admin</option></select></div>`:`<div class=m>${esc(NOMES[x.user_id]||'?')}${x.papel=='admin'?' · admin':''}</div>`;
 function htmlMesas(mb){return `<h3>Mesas</h3>`+(MESAS.map(m=>{const eu=m.mestre_id==ME.id,js=mb.filter(x=>x.mesa_id==m.id&&x.papel!='mestre');
   return `<div class=mz><div class=itr><b class=in>${esc(m.nome)}</b><span class=m>${eu?'Mestre':'Jogador'}</span><span class=sp></span>${eu?`<button class=x data-act=mdel data-id=${m.id}>Excluir</button>`:`<button class=x data-act=msair data-id=${m.id}>Sair</button>`}</div>
 ${eu?`<div class=m>Código de convite: <b class=cod>${esc(m.codigo)}</b> <button data-act=mcopy data-c="${esc(m.codigo)}">Copiar</button></div>`:`<div class=m>Mestre: ${esc(NOMES[m.mestre_id]||'')}</div>`}
-<div class=m>Jogadores: ${js.map(x=>esc(NOMES[x.user_id]||'?')).join(', ')||'ninguém ainda'}</div></div>`}).join('')||'<p class=m>Você ainda não está em nenhuma mesa.</p>')+
+<div class=m>Jogadores:</div>${js.map(x=>linhaJog(m,x,eu)).join('')||'<div class=m>ninguém ainda</div>'}
+${eu?`<label class=sm style="font-size:14px"><input type=checkbox data-cfg=jogadores_adicionam data-m=${m.id} ${m.jogadores_adicionam?'checked':''}> Jogadores podem enviar imagens de token</label><label class=sm style="font-size:14px"><input type=checkbox data-cfg=jogadores_movem data-m=${m.id} ${m.jogadores_movem?'checked':''}> Jogadores podem mover tokens</label>`:''}</div>`}).join('')||'<p class=m>Você ainda não está em nenhuma mesa.</p>')+
 `<div class=ra><button class=add data-act=mnew>＋ Criar mesa</button><button class=add data-act=mjoin>Entrar com código</button></div><div class=ra><span class=sp></span><button data-act=mclose>Fechar</button></div>`}
 async function abrirMesas(){
-  const q=await db.from('membros').select('mesa_id,user_id,papel'),m=await db.from('mesas').select('id,nome,codigo,mestre_id').order('criado_em');
-  if(q.error)throw q.error;if(m.error)throw m.error;MESAS=m.data;await carregarNomes();
+  const q=await db.from('membros').select('mesa_id,user_id,papel'),m=await db.from('mesas').select('id,nome,codigo,mestre_id,jogadores_adicionam,jogadores_movem').order('criado_em');
+  if(q.error)throw q.error;if(m.error)throw m.error;MESAS=m.data;MEMB=q.data;await carregarNomes();
   $('#mb').innerHTML=htmlMesas(q.data);$('#md').classList.remove('hid')}
+$('#mb').addEventListener('change',async e=>{const t=e.target;
+  try{
+    if('papel' in t.dataset){const{data,error}=await db.from('membros').update({papel:t.value}).eq('mesa_id',t.dataset.m).eq('user_id',t.dataset.u).select('user_id');if(error)throw error;if(!data.length)throw new Error('sem permissão');toast('Papel atualizado.');await abrirMesas()}
+    else if('cfg' in t.dataset){const{data,error}=await db.from('mesas').update({[t.dataset.cfg]:t.checked}).eq('id',t.dataset.m).select('id');if(error)throw error;if(!data.length)throw new Error('sem permissão');const m=MESAS.find(x=>x.id==t.dataset.m);if(m)m[t.dataset.cfg]=t.checked;toast('Opção salva.')}
+  }catch(err){toast('Erro: '+esc(err.message||err));abrirMesas().catch(()=>{})}});
 async function acaoMesa(a,d){
   if(a=='mclose'){$('#md').classList.add('hid');return}
   if(a=='mcopy'){try{await navigator.clipboard.writeText(d.c);toast('Código copiado.')}catch(e){toast('Código: <b>'+esc(d.c)+'</b>')}return}
@@ -209,6 +222,7 @@ function roll(i){const f=curF(),s=f.skills[i],n=av(f,s.a),r=Array.from({length:n
   toast(`${esc(f.nome||'Ficha')} · ${esc(s.n)}: [${r}] → ${best}${b?(b>0?' +':' ')+b:''} = <b>${best+b}</b>`)}
 document.addEventListener('input',e=>{const t=e.target,f=curF();if(!f)return;
   if('mesa' in t.dataset){f._mesa=t.value||null;touch(f);return}
+  if('flag' in t.dataset){f[t.dataset.flag]=t.checked;touch(f);return}
   const p=t.dataset.p;if(!p)return;let v=t.value;if('n' in t.dataset)v=v===''?0:+v;setP(f,p,v);
   if(p=='nome'){const o=$('#sel').selectedOptions[0];if(o)o.textContent=rotulo(f)}touch(f);derive()});
 $('#sel').onchange=e=>{SEL=e.target.value;localStorage.mesa_ficha_sel=SEL;render()};
