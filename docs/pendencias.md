@@ -12,7 +12,7 @@ Sistema por campanha (Ordem Paranormal automática / Modular), loja e dinheiro, 
 ## Etapa 6 (em andamento)
 Feito: habilidades de classe, poderes de classe e trilhas do livro básico (130 linhas) + botão "Do livro". **Pendente do usuário:** rodar `schema_etapa6_livro.sql` (depois do etapa5).
 Rituais do livro básico: FEITO (82, `schema_etapa6b_rituais.sql`; pendente do usuário rodar). Ideia: aviso de "aprender ritual" a cada NEX do ocultista (hoje ele escolhe em "Do livro").
-Falta: rituais do Sobrevivendo ao Horror, origens e poderes paranormais; trilhas/poderes dos outros livros.
+Origens (26) e poderes paranormais (22) do livro básico: FEITO (`schema_etapa6c_origens.sql`; pendente do usuário rodar). Falta: rituais do Sobrevivendo ao Horror; trilhas/poderes dos outros livros.
 
 Próximos passos possíveis: origens com efeitos prontos, munição gasta ao atacar, rolagens da ficha no log da mesa.
 
