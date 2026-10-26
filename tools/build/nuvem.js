@@ -208,7 +208,10 @@ function escolherMesa(ms,mb){return new Promise(ok=>{const o=document.createElem
 function nuvemRole(){document.body.classList.add(ROLE=='mestre'?'mst':ROLE=='admin'?'adm':'jog');
  if(!GER){C.splice(0,2);dk=mk='chr';pv=true}
  const rm=document.getElementById('rm');if(rm&&!document.getElementById('cs')){const s=document.createElement('div');s.id='cs';s.className='m';s.style.cssText='font-size:11px;padding:0 10px 4px';rm.insertBefore(s,document.getElementById('pl'))}cs('carregando…')}
-const fichaSel=t=>!MESA.campanha_id?`<p class="m" style="margin:6px 0">Mesa sem campanha: não tem fichas.</p>`:`<label class="m" style="display:block;margin:6px 0">Ficha vinculada <select data-f="pj" style="max-width:100%"><option value="">(nenhuma)</option>${[...PERS.values()].map(p=>`<option value="${p.id}" ${t.pj==p.id?'selected':''}>${esc(p.nome||'Sem nome')}${p.npc?' (NPC)':''}</option>`).join('')}</select></label>`;
+const ehMon=p=>!!(p&&p.dados&&p.dados.op&&p.dados.op.classe=='criatura');
+const fichaSel=t=>{if(!MESA.campanha_id)return `<p class="m" style="margin:6px 0">Mesa sem campanha: não tem fichas.</p>`;
+ const L=[...PERS.values()],op=p=>`<option value="${p.id}" ${t.pj==p.id?'selected':''}>${esc(p.nome||'Sem nome')}</option>`,g=(r,a)=>a.length?`<optgroup label="${r}">${a.map(op).join('')}</optgroup>`:'';
+ return `<label class="m" style="display:block;margin:6px 0">Ficha vinculada <select data-f="pj" style="max-width:100%"><option value="">(nenhuma)</option>${g('Personagens',L.filter(p=>!p.npc&&!ehMon(p)))}${g('NPCs',L.filter(p=>p.npc&&!ehMon(p)))}${g('Monstros',L.filter(ehMon))}</select></label>`};
 
 /* ---------- início ---------- */
 async function nuvemMain(){

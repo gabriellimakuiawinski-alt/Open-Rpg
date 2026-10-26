@@ -1,0 +1,29 @@
+/* ficha de monstro */
+.mon{position:relative;margin:0 0 14px;padding:16px 14px 14px;border:1px solid color-mix(in srgb,var(--el) 55%,#000);border-left:6px solid var(--el);border-radius:8px;background:linear-gradient(160deg,color-mix(in srgb,var(--el) 14%,#15151a),#121216 60%);color:#e9e6dc;box-shadow:0 6px 18px #0008}
+.mon *{color:inherit}.mon .m,.mon small{color:#a9a69b}
+.mon-topo{display:flex;gap:8px;flex-wrap:wrap;align-items:center;font:600 11px var(--maq,monospace);letter-spacing:.12em;text-transform:uppercase}
+.mon-topo span{padding:3px 8px;border-radius:3px;background:#ffffff12}.mon-el{background:var(--el)!important;color:#111!important}.mon-el{color:#111}
+.mon-nome{width:100%;box-sizing:border-box;margin:8px 0 10px;padding:4px 0;border:0;border-bottom:1px dashed #ffffff30;background:transparent;font:700 26px/1.1 var(--titulo,Georgia,serif);color:#fff;text-transform:uppercase;letter-spacing:.03em}
+.mon-pv{padding:10px;border-radius:6px;background:#00000040;margin-bottom:10px}.mon-pv.mach .bar i{filter:saturate(1.4)}
+.mon-pvh{display:flex;gap:8px;align-items:baseline}.mon-pvh b{font:700 13px var(--maq,monospace);letter-spacing:.14em;color:var(--el)}
+.mon-pv .bar{height:12px;border-radius:6px;background:#ffffff18;overflow:hidden;margin:6px 0}.mon-pv .bar i{display:block;height:100%;background:var(--el);transition:width .25s}
+.mon-pv .ctl{display:flex;gap:6px;align-items:center;justify-content:center}.mon-pv .ctl input{width:84px;text-align:center;font:700 22px var(--maq,monospace);background:#00000050;color:#fff;border:1px solid #ffffff30;border-radius:4px}
+.mon-pv .ctl button{min-width:44px;padding:8px 6px;background:#ffffff14;color:#fff;border:1px solid #ffffff22;border-radius:4px}.mon-pv .ctl .b5{background:color-mix(in srgb,var(--el) 30%,#222)}
+.mon-g4,.mon-g3{display:grid;gap:8px;margin:0 0 10px}.mon-g4{grid-template-columns:repeat(4,1fr)}.mon-g3{grid-template-columns:repeat(3,1fr)}
+@media(max-width:380px){.mon-g4{grid-template-columns:repeat(2,1fr)}}
+.mt{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 4px;background:#ffffff0d;border:1px solid #ffffff1c;border-radius:6px;font:inherit;cursor:default;min-width:0}
+button.mt{cursor:pointer}button.mt:active,.mon-atqb button:active{background:color-mix(in srgb,var(--el) 35%,#222)}
+.mt small{font:600 10px var(--maq,monospace);letter-spacing:.1em;text-transform:uppercase}.mt b{font:700 17px var(--maq,monospace);white-space:nowrap}
+.mon-atr{display:grid;grid-template-columns:repeat(5,1fr);gap:4px;margin:0 0 10px;text-align:center}
+.mon-atr div{padding:6px 0;border-bottom:3px solid var(--el);background:#ffffff08}.mon-atr small{display:block;font:600 10px var(--maq,monospace);letter-spacing:.1em}.mon-atr b{font:700 20px var(--maq,monospace)}
+.mon-chips p{margin:4px 0;font-size:14px}.mon-chips b{color:var(--el);font:700 11px var(--maq,monospace);letter-spacing:.1em;text-transform:uppercase;margin-right:6px}.mon-chips .vul b{color:#ff8a65}
+.mon-sec{margin:0 0 14px;padding:12px;border:1px solid #ffffff1c;border-top:3px solid var(--el);border-radius:6px;background:#15151a;color:#e9e6dc}
+.mon-sec h3{margin:0 0 8px;font:700 13px var(--maq,monospace);letter-spacing:.16em;text-transform:uppercase;color:var(--el)}
+.mon-atq{display:flex;gap:8px;align-items:center;justify-content:space-between;flex-wrap:wrap;padding:8px 0;border-top:1px solid #ffffff14}.mon-atq:first-of-type{border-top:0}
+.mon-atqn{flex:1;min-width:130px}.mon-atqn b{display:block;font:700 16px var(--titulo,Georgia,serif);text-transform:uppercase}.mon-atqn small{color:#a9a69b;font-style:italic}
+.mon-atqb{display:flex;gap:6px}.mon-atqb button{display:flex;flex-direction:column;align-items:center;padding:6px 10px;background:#ffffff0d;color:#fff;border:1px solid #ffffff2a;border-radius:6px}
+.mon-atqb small{font:600 10px var(--maq,monospace);letter-spacing:.1em;text-transform:uppercase;color:var(--el)}.mon-atqb b{font:700 15px var(--maq,monospace)}
+.mon-hab{padding:10px 0;border-top:1px solid #ffffff14}.mon-hab:first-of-type{border-top:0}.mon-hab p{margin:4px 0 0;font-size:14.5px;line-height:1.45;color:#d9d6cb}
+.mon-habn{display:flex;gap:8px;align-items:center;justify-content:space-between}.mon-habn b{font:700 15px var(--titulo,Georgia,serif);text-transform:uppercase;letter-spacing:.02em}
+.mon-ac{font:600 10px var(--maq,monospace);letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:color-mix(in srgb,var(--el) 35%,#222);color:#fff}
+.mon-aj{margin:0 0 14px;padding:8px 12px;border:1px dashed #00000050;border-radius:6px}
