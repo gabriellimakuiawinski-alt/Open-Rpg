@@ -28,11 +28,16 @@
   const sigilo = `<svg class="sigilo" viewBox="0 0 200 200" aria-hidden="true"><circle cx="100" cy="100" r="92"/><circle cx="100" cy="100" r="70"/><path d="M100 8 L180 146 L20 146 Z M100 192 L20 54 L180 54 Z"/><circle cx="100" cy="100" r="22"/><path d="M100 30v140M30 100h140"/></svg>`;
 
   function avisos(f) {
-    const L = f.op.avisos || []; if (!L.length) return '';
+    const L = f.op.avisos || [], livro = temLivro(f.op.classe);
+    const faltaTrilha = livro && nexDe(f) >= 10 && !f.op.trilha && !L.some(a => a.k == 'trilha');
+    if (!L.length && !faltaTrilha) return '';
     const atr = S.ATR.map(([id, ab]) => `<button class="mini" data-act="op-atr" data-at="${id}">${ab} +1</button>`).join('');
-    return `<section class="card aviso-nex"><h2>Novidades do personagem</h2>${L.map(a => `<div class="av-l" data-aviso="${a.id}">
-<div class="av-t"><b>${f.op.classe == 'sobrevivente' ? 'Estágio ' + a.nv : 'NEX ' + (a.nv >= 20 ? 99 : a.nv * 5) + '%'}</b> — ${esc(a.t)}</div>
-<div class="av-b">${a.k == 'atr' ? atr : a.k == 'grau' ? `<button class="mini" data-act="op-grau" data-av="${a.id}">Ir para perícias</button>` : `<button class="mini" data-act="op-hab" data-av="${a.id}">＋ Adicionar habilidade</button>`}<button class="mini fino" data-act="op-dispensa" data-av="${a.id}">Dispensar</button></div></div>`).join('')}
+    const rot = a => !livro ? '＋ Adicionar habilidade' : a.k == 'trilha' ? (f.op.trilha ? 'Ver habilidades da trilha' : 'Escolher trilha') : a.k == 'poder' ? 'Escolher poder' : a.k == 'vers' ? 'Escolher (poder ou outra trilha)' : '＋ Ver habilidade de classe';
+    const obrig = a => a.k == 'trilha' && livro && !f.op.trilha;          // sem trilha não dá para dispensar
+    return `<section class="card aviso-nex"><h2>Novidades do personagem</h2>${faltaTrilha ? `<div class="av-l"><div class="av-t"><b>NEX ${nexDe(f)}%</b> — Você precisa escolher uma trilha de ${esc((S.CLASSES[f.op.classe] || {}).n || 'sua classe')}.</div>
+<div class="av-b"><button class="mini" data-act="op-trilha">Escolher trilha</button></div></div>` : ''}${L.map(a => `<div class="av-l" data-aviso="${a.id}">
+<div class="av-t"><b>${f.op.classe == 'sobrevivente' ? 'Estágio ' + a.nv : 'NEX ' + nexAviso(a) + '%'}</b> — ${esc(a.t)}</div>
+<div class="av-b">${a.k == 'atr' ? atr : a.k == 'grau' ? `<button class="mini" data-act="op-grau" data-av="${a.id}">Ir para perícias</button>` : `<button class="mini" data-act="op-hab" data-av="${a.id}">${rot(a)}</button>`}${obrig(a) ? '' : `<button class="mini fino" data-act="op-dispensa" data-av="${a.id}">Dispensar</button>`}</div></div>`).join('')}
 <p class="m" style="font-size:12px;margin:8px 0 0">Ao subir de NEX os PV, PE e SAN já aumentam sozinhos. Aqui ficam só as escolhas que são suas.</p></section>`;
   }
 
@@ -146,7 +151,9 @@ ${n0(p.pe === undefined ? (rit ? S.CIRCULO_PE[p.circ || 1] : 0) : p.pe) > 0 ? `<
 <label class=sm><input type=checkbox data-chk="poderes.${i}.off" ${p.off ? 'checked' : ''}> Desligado (não soma)</label>
 ${(p.ef || []).map((e, j) => efLinha(`poderes.${i}.ef.${j}`, e, 'poderes', i, j, true)).join('')}<button class="mini" data-act="op-ef+" data-l="poderes" data-i="${i}">＋ Efeito</button>
 ${f._camp && (t == 'homebrew' || p.ef && p.ef.length) ? `<button class="mini" data-act="op-share" data-i="${i}">Enviar para a campanha${mestre(f) ? '' : ' (o mestre aprova)'}</button>` : ''}</details></div>` }).join('') || '<p class="m">Nenhuma habilidade ainda.</p>'}
-<div class="g2b"><button class=add data-act="op-nova" data-t="poder">＋ Habilidade</button><button class=add data-act="op-nova" data-t="ritual">＋ Ritual</button><button class=add data-act="op-nova" data-t="homebrew">＋ Homebrew</button><button class=add data-act="op-livro">＋ Do livro</button>${f._camp ? '<button class=add data-act="op-camp">＋ Da campanha</button>' : ''}</div></section>`;
+${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro">＋ Do livro</button></div>
+<details style="margin-top:10px"><summary class="m">Criar habilidade própria (homebrew)</summary><div class="g2b"><button class=add data-act="op-nova" data-t="poder">＋ Habilidade</button><button class=add data-act="op-nova" data-t="ritual">＋ Ritual</button><button class=add data-act="op-nova" data-t="homebrew">＋ Homebrew</button>${f._camp ? '<button class=add data-act="op-camp">＋ Da campanha</button>' : ''}</div></details>`
+: `<div class="g2b"><button class=add data-act="op-nova" data-t="poder">＋ Habilidade</button><button class=add data-act="op-nova" data-t="ritual">＋ Ritual</button><button class=add data-act="op-nova" data-t="homebrew">＋ Homebrew</button>${f._camp ? '<button class=add data-act="op-camp">＋ Da campanha</button>' : ''}</div>`}</section>`;
   }
 
   function vDocs(f) { return vDocsSec(f) + vNotasSec(f) }
@@ -179,9 +186,8 @@ ${f._camp && (t == 'homebrew' || p.ef && p.ef.length) ? `<button class="mini" da
       const av_ = d.av || (f.op.avisos.find(x => x.k == 'atr') || {}).id; f.attrs[i].v = v + 1; remAviso(f, av_); calc(f); touch(f); render(); toast(f.attrs[i].n + ' agora é ' + (v + 1) + '.'); return true }
     if (a == 'op-dispensa') { remAviso(f, d.av); touch(f); render(); return true }
     if (a == 'op-grau') { remAviso(f, d.av); touch(f); setTab('p'); toast('Suba o grau de 2 + INT perícias treinadas.'); return true }
-    if (a == 'op-hab') { const av_ = (f.op.avisos || []).find(x => x.id == d.av); remAviso(f, d.av);
-      f.poderes.push({ id: S.uid(), n: av_ ? av_.t : '', tipo: av_ && av_.k == 'trilha' ? 'trilha' : av_ && av_.k == 'classe' ? 'classe' : 'poder', desc: '', ef: [] });
-      touch(f); setTab('h'); toast('Habilidade criada: preencha o nome e a descrição.'); return true }
+    if (a == 'op-hab') { await doAviso(f, d.av); return true }
+    if (a == 'op-trilha') { await escolherTrilha(f); return true }
     if (a == 'op-eq') { const it = f.inv.items[+d.i], antes = ULT.def; it.eq = !it.eq;
       if (it.eq && it.tipo == 'protecao') f.inv.items.forEach(o => { if (o !== it && o.tipo == 'protecao' && o.eq && ((o.sub == 'escudo') == (it.sub == 'escudo'))) o.eq = false });
       calc(f); touch(f); render(); if (it.tipo == 'protecao') toast(`Defesa ${antes} → <b>${ULT.def}</b>`); return true }
@@ -233,42 +239,105 @@ ${f._camp && (t == 'homebrew' || p.ef && p.ef.length) ? `<button class="mini" da
   /* habilidades do livro (classe, poderes, trilhas) — tabela global livro_habilidades */
   let LIVRO = null;
   const CLS3 = [['combatente', 'Combatente'], ['especialista', 'Especialista'], ['ocultista', 'Ocultista']];
-  async function doLivro(f) {
-    if (!LIVRO) {
-      const r = await db.from('livro_habilidades').select('ref,classe,grupo,trilha,nex,ordem,nome,dados').eq('sistema', 'op').order('ordem');
-      if (r.error || !r.data.length) { toast('Habilidades do livro indisponíveis (rode o SQL schema_etapa6_livro.sql no Supabase).'); return }
-      LIVRO = r.data;
-    }
-    let cl = CLS3.some(c => c[0] == f.op.classe) ? f.op.classe : 'combatente', gr = 'trilha';
+  const temLivro = c => CLS3.some(x => x[0] == c);
+  const REPETE = ['Transcender', 'Treinamento em Perícia'];           // o livro deixa escolher várias vezes
+  const GENERICA = /^(Habilidade de Trilha|Poder de |Aumento de Atributo|Grau de Treinamento|Versatilidade)/;
+  const nexDe = f => n0(f.op.nex) || 5;
+  const nexAviso = a => a.nv >= 20 ? 99 : a.nv * 5;
+  const jaTem = (f, x) => !REPETE.includes(x.nome) && f.poderes.some(p => p.ref == 'livro:' + x.ref);
+  async function livroCarrega() {
+    if (LIVRO) return true;
+    const r = await db.from('livro_habilidades').select('ref,classe,grupo,trilha,nex,ordem,nome,dados').eq('sistema', 'op').order('ordem');
+    if (r.error || !r.data.length) { toast('Habilidades do livro indisponíveis (rode o SQL schema_etapa6_livro.sql no Supabase).'); return false }
+    LIVRO = r.data; return true;
+  }
+  const trilhasDe = cl => [...new Set(LIVRO.filter(x => x.classe == cl && x.grupo == 'trilha').map(x => x.trilha))];
+  const resumo = (f, x) => {
+    const d = x.dados || {}, sub = [x.nex ? 'NEX ' + x.nex + '%' : '', d.pe ? d.pe + ' PE' : '', (d.ef || []).length ? 'efeito automático' : '', jaTem(f, x) ? 'já na ficha' : ''].filter(Boolean).join(' · ');
+    return `<button class="cat-i" data-r="${esc(x.ref)}"><b>${esc(x.nome)}</b><small>${esc(sub)}</small><small style="white-space:normal">${esc(d.desc || '')}</small></button>`;
+  };
+  const titulo2 = t => `<p class="m" style="margin:10px 0 2px"><b>${esc(t)}</b></p>`;
+  /* janela de escolha. corpo() -> [topo, lista]; aoEscolher(botão, fechar); aoFiltro(botão) muda o estado */
+  function janela(titulo, corpo, aoEscolher, aoFiltro) {
     const o = document.createElement('div'); o.id = 'md';
-    const lista = () => {
-      const L = LIVRO.filter(x => x.classe == cl && x.grupo == gr), tem = new Set(f.poderes.map(p => p.ref));
-      let h = '', ult = null;
-      L.forEach(x => {
-        if (gr == 'trilha' && x.trilha != ult) { ult = x.trilha; h += `<p class="m" style="margin:10px 0 2px"><b>${esc(x.trilha)}</b>${f.op.trilha == x.trilha ? ' · sua trilha' : ''}</p>` }
-        const d = x.dados || {}, sub = [x.nex ? 'NEX ' + x.nex + '%' : '', d.pe ? d.pe + ' PE' : '', (d.ef || []).length ? 'efeito automático' : '', tem.has('livro:' + x.ref) ? 'já na ficha' : ''].filter(Boolean).join(' · ');
-        h += `<button class="cat-i" data-r="${esc(x.ref)}"><b>${esc(x.nome)}</b><small>${esc(sub)}</small><small style="white-space:normal">${esc(d.desc || '')}</small></button>`;
-      });
-      return h;
-    };
-    const tela = () => {
-      o.innerHTML = `<div class="mb"><h3>Habilidades do livro</h3>
-<div class="g2b">${CLS3.map(c => `<button class="mini" data-cl="${c[0]}" ${c[0] == cl ? 'style="outline:2px solid currentColor"' : ''}>${c[1]}</button>`).join('')}</div>
-<div class="g2b">${[['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe']].map(g => `<button class="mini" data-gr="${g[0]}" ${g[0] == gr ? 'style="outline:2px solid currentColor"' : ''}>${g[1]}</button>`).join('')}</div>
-<div class="catl">${lista()}</div><button data-x style="align-self:flex-end">Fechar</button></div>`;
-    };
+    const tela = () => { const [topo, lista] = corpo(); o.innerHTML = `<div class="mb"><h3>${esc(titulo)}</h3>${topo || ''}<div class="catl">${lista}</div><button data-x style="align-self:flex-end">Fechar</button></div>` };
     tela(); document.body.append(o);
     o.onclick = e => {
       if (e.target === o || e.target.closest('[data-x]')) { o.remove(); return }
-      const c = e.target.closest('[data-cl]'); if (c) { cl = c.dataset.cl; tela(); return }
-      const g = e.target.closest('[data-gr]'); if (g) { gr = g.dataset.gr; tela(); return }
-      const b = e.target.closest('.cat-i'); if (!b) return;
-      const x = LIVRO.find(y => y.ref == b.dataset.r); if (!x) return;
-      if (f.poderes.some(p => p.ref == 'livro:' + x.ref)) { toast(esc(x.nome) + ' já está na ficha.'); return }
-      f.poderes.push({ ...JSON.parse(JSON.stringify(x.dados)), id: S.uid(), n: x.nome, ref: 'livro:' + x.ref });
-      if (x.grupo == 'trilha' && !f.op.trilha) f.op.trilha = x.trilha;
-      calc(f); touch(f); o.remove(); render(); toast(esc(x.nome) + ' adicionada.');
+      const fl = aoFiltro && e.target.closest('[data-f]'); if (fl) { aoFiltro(fl.dataset.f); tela(); return }
+      const b = e.target.closest('.cat-i'); if (b) aoEscolher(b, () => o.remove());
     };
+    return o;
+  }
+  function addLivro(f, x) {
+    f.poderes.push({ ...JSON.parse(JSON.stringify(x.dados)), id: S.uid(), n: x.nome, ref: 'livro:' + x.ref });
+    if (x.grupo == 'trilha' && !f.op.trilha) f.op.trilha = x.trilha;
+  }
+  function fim(f, fecha, x, av) { if (av) remAviso(f, av); calc(f); touch(f); fecha(); render(); toast(esc(x.nome) + ' adicionada.') }
+  const achar = b => LIVRO.find(y => y.ref == b.dataset.r);
+
+  /* botão "＋ Do livro": navegar por classe / grupo */
+  async function doLivro(f) {
+    if (!await livroCarrega()) return;
+    let cl = temLivro(f.op.classe) ? f.op.classe : 'combatente', gr = 'trilha';
+    const mk = (k, v, t, on) => `<button class="mini" data-f="${k}:${v}" ${on ? 'style="outline:2px solid currentColor"' : ''}>${t}</button>`;
+    janela('Habilidades do livro', () => {
+      let L = LIVRO.filter(x => x.classe == cl && x.grupo == gr), ult = null, h = '';
+      if (gr == 'trilha' && f.op.trilha) L = L.filter(x => x.trilha == f.op.trilha).concat(L.filter(x => x.trilha != f.op.trilha));
+      L.forEach(x => {
+        if (gr == 'trilha' && x.trilha != ult) { ult = x.trilha; h += titulo2(x.trilha + (f.op.trilha == x.trilha ? ' · sua trilha' : '')) }
+        h += resumo(f, x);
+      });
+      return [`<div class="g2b">${CLS3.map(c => mk('cl', c[0], c[1], c[0] == cl)).join('')}</div><div class="g2b">${[['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe']].map(g => mk('gr', g[0], g[1], g[0] == gr)).join('')}</div>`, h];
+    }, (b, fecha) => {
+      const x = achar(b); if (!x) return;
+      if (jaTem(f, x)) { toast(esc(x.nome) + ' já está na ficha.'); return }
+      addLivro(f, x); fim(f, fecha, x);
+    }, k => { const [a, v] = k.split(':'); if (a == 'cl') cl = v; else gr = v });
+  }
+
+  /* NEX 10%: o personagem precisa escolher uma das 5 trilhas da classe (recebe a 1ª habilidade) */
+  async function escolherTrilha(f, av) {
+    if (!await livroCarrega()) return;
+    const cl = f.op.classe, T = trilhasDe(cl);
+    if (!T.length) { toast('Sem trilhas do livro para esta classe.'); return }
+    janela('Escolha sua trilha', () => ['<p class="m" style="margin:0">Toque na trilha para ficar com ela. Você recebe a 1ª habilidade agora e as outras em NEX 40%, 65% e 99%.</p>',
+      T.map(t => `<button class="cat-i" data-t="${esc(t)}"><b>${esc(t)}</b><small style="white-space:normal">${esc(LIVRO.filter(x => x.classe == cl && x.trilha == t).map(x => x.nome).join(' · '))}</small></button>`).join('')],
+    (b, fecha) => {
+      const t = b.dataset.t, x = LIVRO.find(y => y.classe == cl && y.trilha == t && y.nex == 10); if (!x) return;
+      f.op.trilha = t; if (!jaTem(f, x)) addLivro(f, x);
+      const a_ = av || ((f.op.avisos || []).find(y => y.k == 'trilha') || {}).id; fim(f, fecha, { nome: t + ' — ' + x.nome }, a_);
+    });
+  }
+
+  /* clique no aviso de subida de NEX: leva direto às habilidades que o personagem pode pegar agora */
+  async function doAviso(f, av) {
+    const a = (f.op.avisos || []).find(x => x.id == av); if (!a) return;
+    if (!temLivro(f.op.classe)) {                      // outras classes (sem dados do livro): cria em branco
+      remAviso(f, av); f.poderes.push({ id: S.uid(), n: a.t, tipo: a.k == 'trilha' ? 'trilha' : a.k == 'classe' ? 'classe' : 'poder', desc: '', ef: [] });
+      touch(f); setTab('h'); toast('Habilidade criada: preencha o nome e a descrição.'); return }
+    if (!await livroCarrega()) return;
+    const cl = f.op.classe, nx = nexAviso(a), nxF = nexDe(f);
+    if (a.k == 'trilha') {
+      if (!f.op.trilha) return escolherTrilha(f, av);
+      const L = LIVRO.filter(x => x.classe == cl && x.grupo == 'trilha' && x.trilha == f.op.trilha && x.nex <= nxF && !jaTem(f, x));
+      if (!L.length) { remAviso(f, av); touch(f); render(); toast('Você já tem todas as habilidades da sua trilha disponíveis neste NEX.'); return }
+      janela('Trilha: ' + f.op.trilha, () => [`<p class="m" style="margin:0">Habilidade de trilha do NEX ${nx}%. Toque para adicionar.</p>`, L.map(x => resumo(f, x)).join('')],
+        (b, fecha) => { const x = achar(b); if (!x) return; addLivro(f, x); fim(f, fecha, x, av) });
+    } else if (a.k == 'poder') {
+      const L = LIVRO.filter(x => x.classe == cl && x.grupo == 'poder' && !jaTem(f, x));
+      janela('Poder de ' + (S.CLASSES[cl] || {}).n, () => ['<p class="m" style="margin:0">Veja os pré-requisitos na descrição. Toque para adicionar.</p>', L.map(x => resumo(f, x)).join('')],
+        (b, fecha) => { const x = achar(b); if (!x) return; addLivro(f, x); fim(f, fecha, x, av) });
+    } else if (a.k == 'vers') {
+      const P = LIVRO.filter(x => x.classe == cl && x.grupo == 'poder' && !jaTem(f, x)), T = LIVRO.filter(x => x.classe == cl && x.grupo == 'trilha' && x.nex == 10 && x.trilha != f.op.trilha && !jaTem(f, x));
+      janela('Versatilidade', () => ['<p class="m" style="margin:0">NEX 50%: escolha UM poder da classe ou o 1º poder de outra trilha.</p>', titulo2('Poderes da classe') + P.map(x => resumo(f, x)).join('') + titulo2('1º poder de outra trilha') + T.map(x => resumo(f, x)).join('')],
+        (b, fecha) => { const x = achar(b); if (!x) return; f.poderes.push({ ...JSON.parse(JSON.stringify(x.dados)), id: S.uid(), n: x.nome, ref: 'livro:' + x.ref }); fim(f, fecha, x, av) });
+    } else {                                             // 'classe': evolução de habilidade de classe
+      const L = LIVRO.filter(x => x.classe == cl && x.grupo == 'classe' && !GENERICA.test(x.nome) && x.nex <= nxF && !jaTem(f, x));
+      if (!L.length) { remAviso(f, av); touch(f); render(); toast('Sua habilidade de classe já está na ficha: só o custo e o bônus evoluíram (veja a descrição).'); return }
+      janela('Habilidade de classe', () => [`<p class="m" style="margin:0">${esc(a.t)}</p>`, L.map(x => resumo(f, x)).join('')],
+        (b, fecha) => { const x = achar(b); if (!x) return; addLivro(f, x); fim(f, fecha, x, av) });
+    }
   }
   async function compartilhar(f, p) {
     if (!p.n) { toast('Dê um nome à habilidade antes.'); return }

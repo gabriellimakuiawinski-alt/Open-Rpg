@@ -24,7 +24,7 @@ with sync_playwright() as p:
     pg.locator('[data-act="op-eq"]').first.click();pg.wait_for_timeout(200)
     chk("desequipar volta a Defesa",ev("OP.calc(curF()).D.def")==12)
     chk("jogador não edita regras do item (só o mestre)",pg.locator('details.mec').count()==0)
-    pg.click('[data-tab=h]');pg.click('[data-act="op-nova"][data-t="homebrew"]');pg.wait_for_timeout(200)
+    pg.click('[data-tab=h]');pg.click('details summary');pg.click('[data-act="op-nova"][data-t="homebrew"]');pg.wait_for_timeout(200)
     pg.locator('.op-po input.in').last.fill('Pele Grossa');pg.locator('[data-act="op-ef+"]').last.click();pg.wait_for_timeout(200)
     pg.locator('.op-po .ef select').last.select_option('def');pg.locator('.op-po .ef input[type=number]').last.fill('2');pg.locator('.op-po .ef input[type=number]').last.blur();pg.wait_for_timeout(300)
     chk("homebrew com efeito +2 Defesa soma sozinho",ev("OP.calc(curF()).D.def")==14,ev("OP.calc(curF()).D.def"))
