@@ -23,3 +23,12 @@ Escuro/escuridão/névoa por cena; `lightsData` gera luz dos tokens; `cena_visiv
 - `DONO` falso no load → iniciar só em `conectou()`.
 - `upsert` sem `onConflict` assume PK `id`.
 - Dado recebido: overlay deve usar só o texto do 1º `<br>`.
+
+## Desempenho (não desfazer)
+- `mip(im,w)` (build.py): mapas e tokens grandes são desenhados a partir de cópias reduzidas (metade, um quarto…), criadas aos poucos (uma por quadro).
+- `camada()` (build.py): névoa e escuridão ficam em cache com margem de 25% em volta da tela; arrastar só move a imagem. Redesenha quando muda a névoa/luz (`WV`, `FK`/`DK`), sai da margem ou o zoom muda mais de 25% (e 200 ms depois de parar o zoom, para ficar nítido).
+- Só desenha mapa/token que está na tela.
+- `mesa-fx.js`: o laço só roda com efeito ativo; parado = 0% de CPU. Canvas de efeitos em 1x. No modo Leve (`S.q=='l'`): sem poeira e anel de seleção parado. É acordado pelo `render` (embrulhado no fim do arquivo).
+- `mesa-icones.js`: só examina os nós que mudaram.
+- Token enviado é reduzido para no máximo 512px (`reduzTok`). Mapas não (o tamanho do mapa define a grade).
+- Animações CSS infinitas: só `transform`/`opacity` (nunca `height`, que recalcula a página a cada quadro).

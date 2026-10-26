@@ -6,6 +6,8 @@ Tudo em `tools/`. Precisa de Postgres 16 local (porta 54329, socket `/tmp/pgtest
 ```
 # iniciar o cluster de teste (se ainda não existir, criar: initdb em /tmp/pgtest/data)
 pg_isready -h /tmp/pgtest -p 54329 || su postgres -c "/usr/lib/postgresql/16/bin/pg_ctl -D /tmp/pgtest/data -o '-p 54329 -k /tmp/pgtest' -l /tmp/pgtest/log start"
+# cluster novo: criar os papéis uma vez
+psql -h /tmp/pgtest -p 54329 -U postgres -c "create role authenticated nologin" -c "create role anon nologin" -c "create role service_role nologin bypassrls"
 bash tools/tests/t/mkdb.sh        # recria o banco e2e com os schemas reais
 ```
 ## Rodar
@@ -16,6 +18,8 @@ bash tools/tests/t/mkdb.sh        # recria o banco e2e com os schemas reais
 ## Quando rodar
 Antes de publicar: `python3 tools/build/build.py` (mesa.html), e as suítes da área mexida (mesa → t1–t6, t9–t12, fx, fog; início/ficha → t7, t8, t13, t14; banco → m/*).
 Teste novo: copie um `tN.py`, use `chk()` e termine com `report()`.
+
+Falhas `ERR_TUNNEL_CONNECTION_FAILED` são as fontes do Google bloqueadas no ambiente, não erro do código.
 
 ## Limites
 O mock não prova o realtime real nem multi-dispositivo. Validar no site com 2 contas depois de rodar os SQL.

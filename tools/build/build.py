@@ -36,7 +36,7 @@ def rep(a, b, n=1):
 
 # ---- cabeçalho: scripts do Supabase ----
 rep('<input type="file" id="fob" multiple webkitdirectory hidden>\n<script>',
-    '<input type="file" id="fob" multiple webkitdirectory hidden>\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>\n<script src="comum.js"></script>\n<script>')
+    '<input type="file" id="fob" multiple webkitdirectory hidden>\n<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>\n<script src="comum.js?v=2"></script>\n<script>')
 rep("</style></head>", """body.jog #tb hr{display:none}
 body.jog [data-t=fog],body.jog [data-t=wall],body.jog [data-a=pv],body.jog #undo,body.jog #redo,body.jog #mpb,body.jog #mp,body.jog [data-a=m_maps],body.jog [data-a=m_ord],body.jog [data-a=m_nt],body.jog [data-a=m_obs],body.jog [data-a=m_vw],body.jog .gonly,body.adm #mpb,body.adm #mp,body.adm [data-a=m_nt],body.adm [data-a=m_obs],body.adm [data-a=m_vw]{display:none!important}
 #espera{position:fixed;inset:0;display:none;align-items:center;justify-content:center;flex-direction:column;gap:12px;text-align:center;padding:24px;color:var(--m);font-size:18px;pointer-events:none;z-index:1}#espera button{pointer-events:auto;background:#343954}
@@ -127,8 +127,46 @@ rep("N=(a,b,l)=>`${l} <input type=number data-f=${a} value=${t[a]}> / <input typ
 rep("${N('mn','mm','Mana')}<br>", "${N('mn','mm','PE')}<br>${N('sn','sm','SAN')}<br>")
 rep("const logm=s=>$('log').innerHTML=s+'<br>'+$('log').innerHTML,", "const logm=(s,r)=>{$('log').innerHTML=s+'<br>'+$('log').innerHTML;if(!r&&window.DadoHook)try{DadoHook(s)}catch(e){}},")
 
-FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet"><link rel="stylesheet" href="tema.css?v=8"><link rel="stylesheet" href="tema-mesa.css?v=8">'
+# ---- desempenho: mipmaps das imagens, só desenha o que está na tela, tokens leves no envio ----
+rep("let rq=0;function draw(){",
+    "const MIPC=new WeakMap;/* cópias reduzidas (metade, um quarto...) das imagens grandes: desenhar uma imagem 5000px em 300px a cada quadro trava celular */\n"
+    "function mip(im,w){w=Math.max(w,24);if(!(im.width>w*2)||im.width<256)return im;let L=MIPC.get(im);if(!L){L=[im];MIPC.set(im,L)}let i=0,novo=0;"
+    "while(L[i].width>w*2){if(!L[i+1]){if(novo){draw();break}const p=L[i],c=document.createElement('canvas');c.width=Math.max(1,p.width>>1);c.height=Math.max(1,p.height>>1);const q=c.getContext('2d');q.imageSmoothingQuality='high';q.drawImage(p,0,0,c.width,c.height);L.push(c);novo=1}i++}return L[i]}\n"
+    "let rq=0;function draw(){")
+rep("S.maps.forEach(m=>{const r=mrect(m),im=(LIB.get(m.i)||{}).img;if(im&&im.complete&&im.width)x.drawImage(im,r.x,r.y,r.w,r.h);",
+    "const VX0=-v.x/v.z,VY0=-v.y/v.z,VX1=(cw-v.x)/v.z,VY1=(ch-v.y)/v.z;\nS.maps.forEach(m=>{const r=mrect(m),im=(LIB.get(m.i)||{}).img;if(r.x>VX1||r.y>VY1||r.x+r.w<VX0||r.y+r.h<VY0)return;if(im&&im.complete&&im.width)x.drawImage(mip(im,r.w*v.z*Q),r.x,r.y,r.w,r.h);")
+rep("cx=t.x+bw/2,cy=t.y+bw/2,by=t.y+bw+3;x.globalAlpha=",
+    "cx=t.x+bw/2,cy=t.y+bw/2,by=t.y+bw+3;if(t.x+bw<VX0-3*g||t.x>VX1+3*g||t.y+bw+24<VY0||t.y-g>VY1)return;x.globalAlpha=")
+rep("x.drawImage(m.img,-a/2,-h/2,a,h)", "x.drawImage(mip(m.img,a*v.z*Q),-a/2,-h/2,a,h)")
+rep("const b=await paraImagemOk(q);if(!b){toast('Formato não aceito: '+q.name);continue}",
+    "let b=await paraImagemOk(q);if(!b){toast('Formato não aceito: '+q.name);continue}if(fk!='map')b=await reduzTok(b);")
+rep("async function paraImagemOk(f){",
+    "/* token não precisa de mais que 512px: arquivo menor = carrega mais rápido e gasta menos memória */\n"
+    "async function reduzTok(b){try{if(b.type=='image/gif')return b;const bm=await createImageBitmap(b),k=512/Math.max(bm.width,bm.height);if(!(k<1)){bm.close&&bm.close();return b}const c=document.createElement('canvas');c.width=Math.max(1,Math.round(bm.width*k));c.height=Math.max(1,Math.round(bm.height*k));const q=c.getContext('2d');q.imageSmoothingQuality='high';q.drawImage(bm,0,0,c.width,c.height);bm.close&&bm.close();return await new Promise(r=>c.toBlob(x=>r(x&&x.size<b.size?x:b),'image/webp',.9))}catch(e){return b}}\n"
+    "async function paraImagemOk(f){")
+
+# ---- desempenho: névoa e escuridão em cache com margem (arrastar o mapa não redesenha tudo a cada quadro) ----
+rep("let rq=0;function draw(){",
+    "const CAM={f:{},d:{}};let CAMT=0;\n"
+    "function camada(L,c,sig,k,cw,ch,v,paint){const X0=-v.x/v.z,Y0=-v.y/v.z,VW=cw/v.z,VH=ch/v.z;"
+    "if(sig!==L.sig||!(v.z/L.z<1.25&&L.z/v.z<1.25)||X0<L.X||Y0<L.Y||X0+VW>L.X+L.W||Y0+VH>L.Y+L.H){"
+    "L.sig=sig;L.z=v.z;L.X=X0-VW*.25;L.Y=Y0-VH*.25;L.W=VW*1.5;L.H=VH*1.5;let s=v.z*k;const mx=4096/Math.max(L.W*s,L.H*s);if(mx<1)s*=mx;L.s=s;"
+    "const a=Math.max(1,Math.round(L.W*s)),b=Math.max(1,Math.round(L.H*s));if(c.width!=a||c.height!=b){c.width=a;c.height=b}paint(s,-L.X*s,-L.Y*s)}"
+    "else if(L.z!=v.z){clearTimeout(CAMT);CAMT=setTimeout(()=>{CAM.f.sig=CAM.d.sig=null;draw()},200)}}\n"
+    "let rq=0;function draw(){")
+rep("sz(cv,Q);const rf=sz(fcv,QF),rd=sz(dcv,QD);", "sz(cv,Q);")
+rep("sig=[cw,ch,QD,v.x,v.y,v.z,WV,lg.map(", "sig=[QD,WV,lg.map(")
+rep("if(rd||sig!=DK){DK=sig;drawDarkLayer(lg,v,QD)}x.save();x.setTransform(1,0,0,1,0,0);x.globalAlpha=pv?S.dl:Math.min(S.dl,.6);x.drawImage(dcv,0,0,cv.width,cv.height);x.restore()}",
+    "if(sig!==DK){DK=sig;CAM.d.sig=null}camada(CAM.d,dcv,sig,QD,cw,ch,v,(s,ox,oy)=>drawDarkLayer(lg,{z:s,x:ox,y:oy},1));const L=CAM.d;x.save();x.setTransform(v.z*Q,0,0,v.z*Q,v.x*Q,v.y*Q);x.globalAlpha=pv?S.dl:Math.min(S.dl,.6);x.drawImage(dcv,L.X,L.Y,dcv.width/L.s,dcv.height/L.s);x.restore()}")
+rep("const fkey=[cw,ch,QF,v.x,v.y,v.z,WV,S.fcol].join();if(rf||fkey!=FK){FK=fkey;f.setTransform(1,0,0,1,0,0);f.globalCompositeOperation='source-over';f.clearRect(0,0,fcv.width,fcv.height);f.setTransform(v.z*QF,0,0,v.z*QF,v.x*QF,v.y*QF);S.fg.forEach(",
+    "const fkey=[QF,WV,S.fcol].join();if(fkey!==FK){FK=fkey;CAM.f.sig=null}if(S.fg.length)camada(CAM.f,fcv,fkey,QF,cw,ch,v,(sc,ox,oy)=>{f.setTransform(1,0,0,1,0,0);f.globalCompositeOperation='source-over';f.clearRect(0,0,fcv.width,fcv.height);f.setTransform(sc,0,0,sc,ox,oy);S.fg.forEach(")
+rep("else f.fill(P)})}\nif(S.fg.length){x.save();x.setTransform(1,0,0,1,0,0);x.globalAlpha=pv?1:S.fa;x.drawImage(fcv,0,0,cv.width,cv.height);x.restore()}",
+    "else f.fill(P)})});\nif(S.fg.length){const L=CAM.f;x.save();x.globalAlpha=pv?1:S.fa;if(Math.abs(v.z*Q/L.s-1)<1e-6){x.setTransform(1,0,0,1,0,0);x.drawImage(fcv,Math.round((L.X*v.z+v.x)*Q),Math.round((L.Y*v.z+v.y)*Q))}else{x.setTransform(v.z*Q,0,0,v.z*Q,v.x*Q,v.y*Q);x.drawImage(fcv,L.X,L.Y,fcv.width/L.s,fcv.height/L.s)}x.restore()}")
+
+rep("S.q=COARSE||(navigator.hardwareConcurrency||4)<=4?'l':'n';", "S.q=COARSE||window.LEVE||(navigator.hardwareConcurrency||4)<=4?'l':'n';")
+
+FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet"><link rel="stylesheet" href="tema.css?v=9"><link rel="stylesheet" href="tema-mesa.css?v=9">'
 s=s.replace("</head>",FONTS+"</head>",1)
-s=s.replace("</body>",'<script src="mesa-fx.js?v=8"></script><script src="mesa-icones.js?v=8"></script><script src="mesa-musica.js?v=8"></script><script src="mesa-dados.js?v=8"></script><script src="mesa-notas.js?v=8"></script><script src="mesa-exportar.js?v=8"></script></body>',1)
+s=s.replace("</body>",'<script src="mesa-fx.js?v=9"></script><script src="mesa-icones.js?v=9"></script><script src="mesa-musica.js?v=9"></script><script src="mesa-dados.js?v=9"></script><script src="mesa-notas.js?v=9"></script><script src="mesa-exportar.js?v=9"></script></body>',1)
 open(OUT, "w", encoding="utf-8").write(s)
 print("mesa.html gerado:", len(s), "bytes")
