@@ -339,17 +339,19 @@ const logoSvg=()=>`<svg class="d20" viewBox="0 0 100 100" aria-hidden="true">
 <g><path class="olho" d="M37.5 56Q50 45.5 62.5 56Q50 66.5 37.5 56Z"/><circle class="iris" cx="50" cy="56" r="4.6"/><circle class="pup" cx="50" cy="56" r="1.9"/></g></svg>`;
 
 /* ============ estado ============ */
-let ME=null,S={camps:[],cm:[],mesas:[],mb:[],fichas:[],nomes:{}},ARTE=null,aba='fichas',rotaAnt='';
+let ME=null,S={camps:[],cm:[],mesas:[],mb:[],fichas:[],nomes:{},pedidos:[]},ARTE=null,aba='fichas',rotaAnt='';
 
 async function carregar(){
-  const[c,cm,m,mb,f,p]=await Promise.all([
+  const[c,cm,m,mb,f,p,pd]=await Promise.all([
     db.from('campanhas').select('*').order('criado_em'),
     db.from('campanha_membros').select('campanha_id,user_id,papel'),
     db.from('mesas').select('id,nome,campanha_id,mestre_id,codigo,cena_ativa,criado_em').order('criado_em'),
     db.from('membros').select('mesa_id,user_id,papel,ultimo_acesso').eq('user_id',ME.id),
     db.from('personagens').select('id,user_id,campanha_id,nome,privada,npc,atualizado_em,stats:dados->stats,info:dados->info').order('criado_em'),
-    db.from('profiles').select('id,nome')]);
+    db.from('profiles').select('id,nome'),
+    db.from('pedidos').select('*').order('criado_em',{ascending:false})]);
   for(const r of[c,cm,m,mb,f,p])if(r.error)throw r.error;
+  S.pedidos=pd.error?[]:pd.data;
   S.camps=c.data;S.cm=cm.data;S.mesas=m.data;S.mb=mb.data;S.fichas=f.data;S.nomes={};p.data.forEach(x=>S.nomes[x.id]=x.nome);
   ME.nome=S.nomes[ME.id]||(ME.email||'').split('@')[0]||'Você';
   await carregarArte()}
@@ -433,6 +435,16 @@ function abaFichas(c,pp){
   return`<div class="acoes"><button class="btn" data-a="novaFicha" data-c="${c.id}">Criar ficha nesta campanha</button></div>`+
   (corpo||`<div class="vazia" style="margin-top:14px;color:var(--tinta2);border-color:#0003"><b style="color:var(--tinta)">Nenhuma ficha aqui ainda</b>As fichas dos jogadores desta campanha aparecem juntas nesta tela.</div>`)}
 
+function abaPedidos(c){
+  const L=S.pedidos.filter(x=>x.campanha_id==c.id),pend=L.filter(x=>x.estado=='pendente'),ant=L.filter(x=>x.estado!='pendente').slice(0,30);
+  const nomeP=x=>{const f=S.fichas.find(f=>f.id==x.personagem_id);return(f&&f.nome||'Personagem')+' · '+(S.nomes[x.autor]||'Jogador')};
+  const ET={aprovado:'Aprovado',recusado:'Recusado',aplicado:'Aprovado e aplicado'};
+  return`<p class="m" style="margin:0 0 10px">Pedidos dos jogadores (por exemplo, modificação que a patente não permite). Aprovado: a ficha do jogador aplica sozinha.</p>
+${pend.map(x=>`<div class="vazia" style="text-align:left;color:var(--tinta);border-color:#0003;margin-bottom:10px"><b>${esc(x.titulo)}</b><small style="display:block">${esc(nomeP(x))}</small><p style="margin:6px 0">${esc(x.detalhe)}</p>
+<input id="pr-${x.id}" placeholder="Resposta para o jogador (opcional)" style="width:100%;margin-bottom:8px" maxlength="500">
+<div class="acoes"><button class="btn" data-a="pedido" data-v="aprovado" data-id="${x.id}">Aprovar</button><button class="btn papel-b" data-a="pedido" data-v="recusado" data-id="${x.id}">Recusar</button></div></div>`).join('')||`<div class="vazia" style="color:var(--tinta2);border-color:#0003"><b style="color:var(--tinta)">Nenhum pedido esperando</b>Quando um jogador pedir algo, aparece aqui.</div>`}
+${ant.length?`<h3 style="margin:16px 0 6px;font-size:15px">Já decididos</h3>${ant.map(x=>`<div class="m" style="margin:4px 0">${esc(x.titulo)} · ${esc(nomeP(x))} — <b>${ET[x.estado]}</b>${x.resposta?' ('+esc(x.resposta)+')':''}</div>`).join('')}`:''}`}
+
 function abaMesas(c,pp){
   const ms=S.mesas.filter(m=>m.campanha_id==c.id);
   return`${pp=='mestre'?`<div class="acoes"><button class="btn" data-a="novaMesa" data-c="${c.id}">Criar mesa nesta campanha</button></div>`:''}
@@ -452,8 +464,9 @@ function renderCamp(id){
   const c=campDe(id),pp=meuPapel(id);
   if(!c||!pp)return`${topo()}<a class="volta" href="#/">${IC.volta}Início</a><div class="vazia"><b>Campanha não encontrada</b>Ela pode ter sido excluída, ou você saiu dela.</div>`;
   const nf=S.fichas.filter(f=>f.campanha_id==id).length,nm=S.mesas.filter(m=>m.campanha_id==id).length,ng=S.cm.filter(m=>m.campanha_id==id).length;
-  const A=[['fichas','Fichas',nf],['mesas','Mesas',nm],['grupo','Grupo',ng]];
-  const corpo=aba=='mesas'?abaMesas(c,pp):aba=='grupo'?abaGrupo(c,pp):abaFichas(c,pp);
+  const gere=pp=='mestre'||pp=='admin',np=S.pedidos.filter(x=>x.campanha_id==id&&x.estado=='pendente').length;
+  const A=[['fichas','Fichas',nf],['mesas','Mesas',nm],['grupo','Grupo',ng]];if(gere)A.push(['pedidos','Pedidos',np]);if(aba=='pedidos'&&!gere)aba='fichas';
+  const corpo=aba=='mesas'?abaMesas(c,pp):aba=='grupo'?abaGrupo(c,pp):aba=='pedidos'?abaPedidos(c):abaFichas(c,pp);
   return`${topo()}<a class="volta" href="#/">${IC.volta}Início</a>
 <div class="cab"><span class="etq">${esc(PAPEL[pp])}</span><h1>${esc(c.nome)}</h1><p>Você é ${esc(PAPEL[pp].toLowerCase())} · ${plural(ng,'pessoa','pessoas')} · sistema <b>${esc(nomeSis(c))}</b></p>
 <div class="acoes" style="margin-top:10px"><a class="btn papel-b" href="loja.html?camp=${c.id}">${pp=='mestre'?'Lojas e dinheiro':'Loja'}</a><a class="btn papel-b" href="quadro.html?camp=${c.id}">Quadro de investigação</a>${pp=='mestre'?`<button class="btn papel-b" data-a="sistema">Sistema e regras</button>`:''}</div></div>
@@ -589,6 +602,8 @@ async function exportarCamp(c){
   aviso('Campanha exportada.')}
 async function acao(a,d){
   if(a=='aba'){aba=d.t;desenhar();return}
+  if(a=='pedido'){const r=await db.from('pedidos').update({estado:d.v,resposta:(document.getElementById('pr-'+d.id)||{}).value||''}).eq('id',d.id);
+    if(r.error){aviso('Não consegui responder o pedido.');return}await carregar();desenhar();aviso(d.v=='aprovado'?'Pedido aprovado. A ficha do jogador aplica sozinha.':'Pedido recusado.');return}
   if(a=='rolar')return rolar();
   if(a=='som')return painelSom();
   if(a=='menu')return menu();
@@ -705,7 +720,7 @@ function conta(ch){const n=+ch.dataset.n;if(!(n>0)){ch.textContent=ch.dataset.n?
 /* ============ tempo real: o início se mantém atualizado ============ */
 let rt;function recarregar(){clearTimeout(rt);rt=setTimeout(async()=>{if(fecha)return recarregar();try{await carregar();desenhar()}catch(e){}},500)}
 function ouvir(){
-  const ch=db.channel('inicio');['personagens','campanhas','campanha_membros','mesas','membros'].forEach(t=>ch.on('postgres_changes',{event:'*',schema:'public',table:t},recarregar));
+  const ch=db.channel('inicio');['personagens','campanhas','campanha_membros','mesas','membros','pedidos'].forEach(t=>ch.on('postgres_changes',{event:'*',schema:'public',table:t},recarregar));
   ch.subscribe()}
 document.addEventListener('visibilitychange',()=>{if(!document.hidden&&ME)recarregar()});
 
