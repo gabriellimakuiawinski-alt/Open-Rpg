@@ -3,7 +3,7 @@
 Projeto "Open Rpg" (`riltokltdqpccckpqmal`). Postgres + RLS + Realtime + Storage. **Quem protege é o RLS**; o cliente usa só a chave publishable.
 
 ## Ordem dos SQL (rodar no SQL Editor; todos re-executáveis)
-1. `schema.sql` 2. `schema_etapa2.sql` 3. `schema_etapa2b.sql` 4. `schema_etapa3.sql` 5. `schema_etapa3b_musica.sql` 6. `schema_etapa4.sql` 7. `schema_etapa5.sql` 8. `schema_etapa6_livro.sql` 9. `schema_etapa6b_rituais.sql`
+1. `schema.sql` 2. `schema_etapa2.sql` 3. `schema_etapa2b.sql` 4. `schema_etapa3.sql` 5. `schema_etapa3b_musica.sql` 6. `schema_etapa4.sql` 7. `schema_etapa5.sql` 8. `schema_etapa6_livro.sql` 9. `schema_etapa6b_rituais.sql` 10. `schema_etapa6c_origens.sql`
 **Pendente no projeto do usuário:** 5, 6, 7, 8 e 9. Confirmar com ele se já rodou. As páginas funcionam sem o 7 (sem loja/dinheiro/sistema; mostram aviso).
 
 ## Tabelas
@@ -23,6 +23,7 @@ Projeto "Open Rpg" (`riltokltdqpccckpqmal`). Postgres + RLS + Realtime + Storage
 - `livro_habilidades` (ref PK, sistema, fonte, classe, grupo `classe|poder|trilha`, trilha, nex, ordem, nome, `dados` jsonb já no formato de poder da ficha: tipo, desc, pe, ef[]). **Global e só leitura** para `authenticated` (sem policy de escrita; quem altera é o dono rodando SQL). Rituais e outros livros entram na mesma tabela (coluna `fonte`).
 - O SQL é GERADO por `python3 tools/livro/gerar_op_basico.py` (edite os dados lá, não o `.sql`). Textos são resumos da mecânica (livro v1.2), não cópia.
 - Rituais (`schema_etapa6b_rituais.sql`, gerado por `tools/livro/gerar_op_rituais.py`): 82 linhas `grupo='ritual'`, `classe` null, colunas `circulo` (1–4) e `elemento` (null = Amaldiçoar Arma, escolhe ao aprender); `dados` = `{tipo:'ritual', circ, el, pe (custo do círculo 1/3/6/10), desc (parâmetros + efeito + formas discente/verdadeira), ef:[]}`. Sem efeito automático.
+- Origens e poderes paranormais (`schema_etapa6c_origens.sql`, gerado por `tools/livro/gerar_op_origens.py`): 26 linhas `grupo='origem'` (dados: `pericias[]`, `origem`, `desc`, `ef`) e 22 `grupo='paranormal'` (coluna `elemento`; dados: `pre`, `desc`, `ef`). `classe` null. Rode depois do 6b (o 6c só troca o check de `grupo`).
 - Efeito automático (`ef`) só onde a regra é exata: Reflexos Defensivos, Casca Grossa (PV × nível), Iniciativa Aprimorada, Gatuno. O resto fica na descrição.
 
 ## Funções-chave (security definer)

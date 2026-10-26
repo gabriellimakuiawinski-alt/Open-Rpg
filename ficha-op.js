@@ -65,7 +65,7 @@ ${S.ATR.map(([id, ab, nome]) => { const i = idxAt(f, id), [x, y] = pos[id];
 <label class=fld>Nome do personagem${inp('nome', f.nome)}</label>
 <div class="g3"><label class=fld>Classe${sel('op.classe', cls, op.classe, 'data-rr')}</label>
 ${C.estagio ? `<label class=fld>Estágio${sel('op.estagio', [1, 2, 3, 4, 5].map(x => [x, 'Estágio ' + x]), op.estagio || 1, 'data-n data-rr')}</label>` : `<label class=fld>NEX${sel('op.nex', nexOpts, op.nex || 5, 'data-n data-rr')}</label>`}
-<label class=fld>Origem${inp('op.origem', op.origem || '', 'placeholder="Ex.: Policial"')}</label>
+<label class=fld>Origem${inp('op.origem', op.origem || '', 'placeholder="Ex.: Policial"')}${meu && temLivro(op.classe) ? '<button class="mini" data-act="op-livro" data-g="origem" type="button">Escolher do livro</button>' : ''}</label>
 <label class=fld>Trilha${inp('op.trilha', op.trilha || '', 'placeholder="Escolha no NEX 10%"')}</label>
 <label class=fld>Jogador${inp('op.jogador', op.jogador || f._donoNome || '', '')}</label>
 <label class=fld>Pontos de prestígio${num('op.pp', op.pp || 0, 'min=0 data-rr')}</label></div>
@@ -205,7 +205,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     if (a == 'op-dano') { const it = f.inv.items[+d.i], r = S.rolar((it.arma || {}).dano); toast(r ? `${esc(it.n)} · dano ${esc(it.arma.dano)}: ${r.txt} = <b>${r.total}</b>` : 'Preencha o dano da arma (ex.: 1d8).'); return true }
     if (a == 'op-cat') { catalogo(f); return true }
     if (a == 'op-camp') { await daCampanha(f); return true }
-    if (a == 'op-livro') { await doLivro(f); return true }
+    if (a == 'op-livro') { await doLivro(f, d.g); return true }
     if (a == 'op-share') { await compartilhar(f, f.poderes[+d.i]); return true }
     return false;
   }
@@ -240,7 +240,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   let LIVRO = null;
   const CLS3 = [['combatente', 'Combatente'], ['especialista', 'Especialista'], ['ocultista', 'Ocultista']];
   const temLivro = c => CLS3.some(x => x[0] == c);
-  const REPETE = ['Transcender', 'Treinamento em Perícia'];           // o livro deixa escolher várias vezes
+  const REPETE = ['Transcender', 'Treinamento em Perícia', 'Aprender Ritual', 'Resistir a <Elemento>'];           // o livro deixa escolher várias vezes
   const GENERICA = /^(Habilidade de Trilha|Poder de |Aumento de Atributo|Grau de Treinamento|Versatilidade)/;
   const nexDe = f => n0(f.op.nex) || 5;
   const nexAviso = a => a.nv >= 20 ? 99 : a.nv * 5;
@@ -253,8 +253,8 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   }
   const trilhasDe = cl => [...new Set(LIVRO.filter(x => x.classe == cl && x.grupo == 'trilha').map(x => x.trilha))];
   const resumo = (f, x) => {
-    const d = x.dados || {}, sub = [x.grupo == 'ritual' ? (x.elemento || 'Elemento à escolha') : '', x.grupo == 'ritual' ? x.circulo + 'º círculo' : '', x.nex ? 'NEX ' + x.nex + '%' : '', d.pe ? d.pe + ' PE' : '', (d.ef || []).length ? 'efeito automático' : '', jaTem(f, x) ? 'já na ficha' : ''].filter(Boolean).join(' · ');
-    return `<button class="cat-i" data-r="${esc(x.ref)}"><b>${esc(x.nome)}</b><small>${esc(sub)}</small><small style="white-space:normal">${esc(d.desc || '')}</small></button>`;
+    const d = x.dados || {}, sub = [x.grupo == 'ritual' ? (x.elemento || 'Elemento à escolha') : x.grupo == 'paranormal' ? (x.elemento || 'Geral') : '', x.grupo == 'ritual' ? x.circulo + 'º círculo' : '', x.grupo == 'origem' ? 'Poder: ' + x.nome + ' · ' + (d.pericias && d.pericias.length ? d.pericias.join(' e ') : 'perícias à escolha do mestre') : '', x.grupo == 'paranormal' && d.pre ? 'Pré-requisito: ' + d.pre : '', x.nex ? 'NEX ' + x.nex + '%' : '', d.pe ? d.pe + ' PE' : '', (d.ef || []).length ? 'efeito automático' : '', jaTem(f, x) ? 'já na ficha' : ''].filter(Boolean).join(' · ');
+    return `<button class="cat-i" data-r="${esc(x.ref)}"><b>${esc(x.grupo == 'origem' ? d.origem : x.nome)}</b><small>${esc(sub)}</small><small style="white-space:normal">${esc(d.desc || '')}</small></button>`;
   };
   const titulo2 = t => `<p class="m" style="margin:10px 0 2px"><b>${esc(t)}</b></p>`;
   /* janela de escolha. corpo() -> [topo, lista]; aoEscolher(botão, fechar); aoFiltro(botão) muda o estado */
@@ -277,19 +277,29 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   const achar = b => LIVRO.find(y => y.ref == b.dataset.r);
 
   /* botão "＋ Do livro": navegar por classe / grupo */
-  async function doLivro(f) {
+  async function doLivro(f, g0) {
     if (!await livroCarrega()) return;
-    let cl = temLivro(f.op.classe) ? f.op.classe : 'combatente', gr = 'trilha', ci = 0, el = '';
+    let cl = temLivro(f.op.classe) ? f.op.classe : 'combatente', gr = g0 || 'trilha', ci = 0, el = '', pe = '';
     const mk = (k, v, t, on) => `<button class="mini" data-f="${k}:${v}" ${on ? 'style="outline:2px solid currentColor"' : ''}>${t}</button>`;
     const ELS = ['Conhecimento', 'Energia', 'Morte', 'Sangue', 'Medo'];
     const circMax = f.op.classe == 'ocultista' ? (nexDe(f) >= 85 ? 4 : nexDe(f) >= 55 ? 3 : nexDe(f) >= 25 ? 2 : 1) : 0;
     const dica = f.op.classe == 'ocultista' ? `Seu NEX libera rituais até o ${circMax}º círculo; a cada avanço de NEX você aprende um novo.` : 'Rituais vêm do poder paranormal Aprender Ritual (até seu Intelecto).';
+    const ABAS = [['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe'], ['ritual', 'Rituais'], ['origem', 'Origens'], ['paranormal', 'Paranormal']];
+    const abas = () => `<div class="g2b">${ABAS.map(g => mk('gr', g[0], g[1], g[0] == gr)).join('')}</div>`;
     janela('Habilidades do livro', () => {
+      if (gr == 'origem') {
+        const L = LIVRO.filter(x => x.grupo == 'origem');
+        return [abas() + `<p class="m" style="margin:4px 0 0;font-size:12px">Toque na origem: você recebe as 2 perícias treinadas e o poder da origem. Origem atual: <b>${esc(f.op.origem || 'nenhuma')}</b>.</p>`, L.map(x => resumo(f, x)).join('')];
+      }
+      if (gr == 'paranormal') {
+        const L = LIVRO.filter(x => x.grupo == 'paranormal' && (!pe || (pe == 'Geral' ? !x.elemento : x.elemento == pe)));
+        return [abas() + `<div class="g2b">${[mk('pe', '', 'Todos', !pe)].concat(['Geral', ...ELS.slice(0, 4)].map(e => mk('pe', e, e, pe == e))).join('')}</div><p class="m" style="margin:4px 0 0;font-size:12px">Vêm do poder de classe Transcender (você não recebe a Sanidade daquele NEX). Confira os pré-requisitos na descrição.</p>`, L.map(x => resumo(f, x)).join('') || '<p class="m">Nenhum poder.</p>'];
+      }
       if (gr == 'ritual') {
         const L = LIVRO.filter(x => x.grupo == 'ritual' && (!ci || x.circulo == ci) && (!el || !x.elemento || x.elemento == el));
         let h = '', ult = 0;
         L.forEach(x => { if (!ci && x.circulo != ult) { ult = x.circulo; h += titulo2(x.circulo + 'º círculo') } h += resumo(f, x) });
-        return [`<div class="g2b">${[['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe'], ['ritual', 'Rituais']].map(g => mk('gr', g[0], g[1], g[0] == gr)).join('')}</div>
+        return [`${abas()}
 <div class="g2b">${[mk('ci', 0, 'Todos', !ci)].concat([1, 2, 3, 4].map(n => mk('ci', n, n + 'º', ci == n))).join('')}</div>
 <div class="g2b">${[mk('el', '', 'Todos', !el)].concat(ELS.map(e => mk('el', e, e, el == e))).join('')}</div>
 <p class="m" style="margin:4px 0 0;font-size:12px">${esc(dica)} Conjurar (exceto Medo) exige Ocultismo DT 20 + custo em PE; falhar custa Sanidade igual ao custo.</p>`, h || '<p class="m">Nenhum ritual com esse filtro.</p>'];
@@ -300,12 +310,24 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
         if (gr == 'trilha' && x.trilha != ult) { ult = x.trilha; h += titulo2(x.trilha + (f.op.trilha == x.trilha ? ' · sua trilha' : '')) }
         h += resumo(f, x);
       });
-      return [`<div class="g2b">${CLS3.map(c => mk('cl', c[0], c[1], c[0] == cl)).join('')}</div><div class="g2b">${[['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe'], ['ritual', 'Rituais']].map(g => mk('gr', g[0], g[1], g[0] == gr)).join('')}</div>`, h];
+      return [`<div class="g2b">${CLS3.map(c => mk('cl', c[0], c[1], c[0] == cl)).join('')}</div>${abas()}`, h];
     }, (b, fecha) => {
       const x = achar(b); if (!x) return;
+      if (x.grupo == 'origem') return escolherOrigem(f, x, fecha);
       if (jaTem(f, x)) { toast(esc(x.nome) + ' já está na ficha.'); return }
       addLivro(f, x); fim(f, fecha, x);
-    }, k => { const i = k.indexOf(':'), a = k.slice(0, i), v = k.slice(i + 1); if (a == 'cl') cl = v; else if (a == 'gr') gr = v; else if (a == 'ci') ci = +v; else el = v });
+    }, k => { const i = k.indexOf(':'), a = k.slice(0, i), v = k.slice(i + 1); if (a == 'cl') cl = v; else if (a == 'gr') gr = v; else if (a == 'ci') ci = +v; else if (a == 'pe') pe = v; else el = v });
+  }
+
+  /* origem do livro: grava o nome, treina as 2 perícias e troca o poder de origem anterior */
+  function escolherOrigem(f, x, fecha) {
+    const on = x.dados.origem;
+    if (f.op.origem == on && jaTem(f, x)) { toast(esc(on) + ' já é a sua origem.'); return }
+    f.poderes = f.poderes.filter(p => !String(p.ref || '').startsWith('livro:op:origem:'));
+    f.op.origem = on;
+    ((x.dados || {}).pericias || []).forEach(n => { const k = (f.skills || []).find(y => y.n == n); if (k && n0(k.t) < 5) k.t = 5 });
+    addLivro(f, x); calc(f); touch(f); fecha(); render();
+    toast(esc(on) + ': perícias treinadas e poder adicionados.' + (on == 'Cultista Arrependido' ? ' Escolha agora um poder paranormal.' : ''));
   }
 
   /* NEX 10%: o personagem precisa escolher uma das 5 trilhas da classe (recebe a 1ª habilidade) */
