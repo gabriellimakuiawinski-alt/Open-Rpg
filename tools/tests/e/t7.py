@@ -26,7 +26,7 @@ with sync_playwright() as p:
     chk("hero mostra campanha e papel",'campanha teste' in pg.locator('a.hero').inner_text().lower() and 'jogador' in pg.locator('a.hero').inner_text().lower())
     chk("hero diz quando abriu",'há 3 h' in pg.locator('a.hero').inner_text())
     chk("hero leva para a mesa",pg.locator('a.hero').get_attribute('href')=='mesa.html?mesa='+d['m'])
-    chk("4 atalhos",pg.locator('.tile').count()==4 and all(x in t for x in['Criar mesa','Criar ficha','Criar campanha','Entrar com código']))
+    chk("5 atalhos",pg.locator('.tile').count()==5 and all(x in t for x in['Inimigos','Criar mesa','Criar ficha','Criar campanha','Entrar com código']))
     chk("campanha listada",pg.locator('a.camp').count()==1 and 'Campanha Teste' in pg.locator('a.camp').inner_text())
     chk("mesas listadas (so a da campanha, J nao esta na avulsa)",pg.locator('.lin').count()==1)
     chk("sem erros no console (J)",not pg.errs,pg.errs)
@@ -44,7 +44,7 @@ with sync_playwright() as p:
     chk("jogador nao cria mesa na campanha",pg.locator('button:has-text("Criar mesa nesta campanha")').count()==0)
     pg.screenshot(path=shots+'i_camp_J_mesas.png')
     pg.go_back(); pg.wait_for_selector('.tile'); 
-    chk("voltar vai ao inicio",pg.locator('.tile').count()==4)
+    chk("voltar vai ao inicio",pg.locator('.tile').count()==5)
     chk("sem erros no console (J, campanha)",not pg.errs,pg.errs)
     pg.context.close()
     # ---- mestre M
@@ -53,7 +53,7 @@ with sync_playwright() as p:
     chk("sem abertura quando ja viu na sessao",pg.locator('#splash.hid').count()==1)
     chk("mestre: ultima mesa = avulsa (2 dias)",pg.locator('a.hero h2').inner_text()=='Oneshot avulso' and 'mesa avulsa' in pg.locator('a.hero').inner_text().lower() and 'há 2 dias' in pg.locator('a.hero').inner_text())
     chk("mestre ve 2 mesas",pg.locator('.lin').count()==2)
-    chk("mesa avulsa do mestre mostra codigo",pg.locator('.lin button.mini').count()==1)
+    chk("mesa avulsa do mestre mostra codigo",pg.locator('.lin button.mini:not(.exc)').count()==1)
     pg.screenshot(path=shots+'i_home_M.png',full_page=True)
     pg.click('a.camp'); pg.wait_for_selector('.cab h1'); pg.wait_for_timeout(1300)
     fch=pg.locator('.fch'); nomes=sorted(fch.nth(i).locator('b').inner_text() for i in range(fch.count()))

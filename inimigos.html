@@ -1,0 +1,165 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Inimigos · Open RPG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tema.css?v=9">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--tabua)}body{margin:0;color:var(--giz2);font:16px/1.45 var(--corpo);min-height:100vh}
+header{background:#151b1ae6;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:2px dashed #ffffff22;position:sticky;top:0;z-index:5}
+header a{color:var(--giz2);font:400 14px var(--maq);text-decoration:underline dashed;text-underline-offset:5px}header h1{margin:0;font:400 20px var(--maq);color:var(--papel2);flex:1;min-width:140px}
+main{max-width:860px;margin:0 auto;padding:14px 14px 60px}
+button{background:var(--papel3);color:var(--tinta);border:0;border-radius:4px;padding:9px 13px;font:400 14px var(--maq);cursor:pointer;box-shadow:0 3px 0 #8c8167}
+button:active{transform:translateY(2px);box-shadow:none}button.on{background:var(--carimbo);color:var(--papel2);box-shadow:0 3px 0 var(--carimbo-sombra)}button.perigo{background:#b3412e;color:#fff;box-shadow:0 3px 0 #6b160f}button[disabled]{opacity:.5}
+.abas{display:flex;gap:8px;margin:6px 0 12px;flex-wrap:wrap}
+.filtros{display:flex;gap:6px;flex-wrap:wrap;margin:8px 0 12px}.filtros button{padding:6px 10px;font-size:12px}
+input.busca{width:100%;background:#0003;color:var(--giz2);border:1px solid #ffffff22;border-radius:4px;padding:10px;font:16px var(--corpo)}
+.lista{display:grid;grid-template-columns:repeat(auto-fill,minmax(230px,1fr));gap:10px}
+.en{background-color:var(--papel2);color:var(--tinta);border-radius:3px;padding:12px;text-align:left;box-shadow:0 2px 0 #0003,0 10px 16px -10px #000;display:flex;flex-direction:column;gap:3px;cursor:pointer;width:100%}
+.en b{font:400 18px var(--maq)}.en small{font:400 12px var(--maq);color:var(--tinta2)}.en .el{display:inline-block;padding:1px 7px;border-radius:9px;font:400 11px var(--maq);color:#fff;background:#555;margin-right:6px}
+.el.Sangue{background:#a3201a!important}.el.Morte{background:#555!important;color:#eee}.el.Conhecimento{background:#b58a1b!important}.el.Energia{background:#7a2fb5!important}.el.Medo{background:#e8e8e8!important;color:#222!important}
+#md{position:fixed;inset:0;background:#000c;display:flex;align-items:center;justify-content:center;z-index:20;padding:12px}
+.mb{background-color:var(--papel2);color:var(--tinta);border-radius:3px;padding:20px;width:min(560px,100%);max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.mb h3{margin:0;font:400 22px var(--maq)}.mb h4{margin:8px 0 2px;font:400 15px var(--maq);color:var(--carimbo)}.mb label{display:flex;flex-direction:column;font:400 13px var(--maq);color:var(--tinta2);gap:2px}
+.mb input,.mb select,.mb textarea{background:transparent;color:var(--caneta);border:0;border-bottom:2px dashed var(--lapis);padding:7px 2px;font:500 16px var(--corpo);min-width:0;width:100%}.mb textarea{min-height:64px;border:2px dashed var(--lapis);padding:6px;resize:vertical}
+.mb .row{display:flex;gap:8px;flex-wrap:wrap}.mb .row>label{flex:1;min-width:90px}
+.mb p{margin:2px 0}.mb .m{font:400 13px var(--maq);color:var(--tinta2)}
+.mb .linha{border:1px dashed #0004;border-radius:3px;padding:8px;display:flex;flex-direction:column;gap:6px}
+.mb .bt{display:flex;gap:8px;flex-wrap:wrap;justify-content:flex-end}
+.bloco .atr{display:flex;gap:10px;flex-wrap:wrap;font:400 14px var(--maq)}.bloco .acao{margin:4px 0}.bloco .acao b{font-family:var(--maq);font-weight:400}
+#toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translate(-50%,-260%) rotate(-2deg);background:#f2df7c;color:#3d3510;font:700 21px/1.1 var(--mao);padding:14px 20px;box-shadow:0 14px 22px -10px #000;z-index:30;transition:transform .3s;max-width:92vw}
+#toast.show{transform:translate(-50%,0) rotate(-2deg)}
+.vazio{padding:24px;border:2px dashed #ffffff33;border-radius:4px;text-align:center;opacity:.9}
+</style><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone-192.png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><script src="pwa.js" defer></script></head><body class="quadro">
+<header><a href="index.html">Início</a><h1>Inimigos</h1><button data-a="novo" class="on">Novo inimigo</button></header>
+<main>
+<div class="abas"><button data-t="meus" class="on">Meus inimigos</button><button data-t="livro">Livro de Ordem Paranormal</button></div>
+<input class="busca" id="q" placeholder="Buscar pelo nome">
+<div class="filtros" id="fil"></div>
+<div id="lst"></div>
+</main><div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="comum.js?v=2"></script>
+<script src="sistemas.js?v=3"></script>
+<script>
+if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px">Não consegui carregar o login. Confira a internet.</p>';throw new Error('Mesa indisponível')}
+const db=Mesa.db,$=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const S=window.SIS,n0=v=>{v=+v;return isFinite(v)?v:0};
+const ELEM=['Sangue','Morte','Conhecimento','Energia','Medo','Outro'],ACOES=['Padrão','Movimento','Completa','Reação','Livre','Passiva'];
+let ME=null,MEUS=[],LIVRO=[],LIVRO_OK=true,TAB='meus',FIL='',ED=null,tt;
+function toast(h){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),4500)}
+const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
+const vazio=()=>({nome:'',elemento:'Sangue',vd:'',dados:{tamanho:'',pv:10,def:10,desloc:9,atr:{agi:1,for:1,int:1,pre:1,vig:1},fort:0,refl:0,vont:0,ini:0,perc:0,pericias:[],resist:'',vuln:'',sentidos:'',ataques:[],habilidades:[],desc:''}});
+const dados=en=>{const b=vazio().dados,d=en.dados||{};return{...b,...d,atr:{...b.atr,...(d.atr||{})},pericias:d.pericias||[],ataques:d.ataques||[],habilidades:d.habilidades||[]}};
+const sinal=v=>(v>=0?'+':'')+v;
+
+/* ---------- bloco de ficha (leitura) ---------- */
+function bloco(en){const d=dados(en),A=d.atr;
+  return`<div class="bloco"><p class="m">${esc(en.elemento||'')}${d.tamanho?' · '+esc(d.tamanho):''}${en.vd?' · VD '+esc(en.vd):''}</p>
+<p><b>PV</b> ${d.pv} · <b>Defesa</b> ${d.def} · <b>Desloc.</b> ${d.desloc} m</p>
+<div class="atr">${S.ATR.map(([id,ab])=>`<span>${ab} ${A[id]}</span>`).join('')}</div>
+<p><b>Fortitude</b> ${sinal(d.fort)} · <b>Reflexos</b> ${sinal(d.refl)} · <b>Vontade</b> ${sinal(d.vont)} · <b>Iniciativa</b> ${sinal(d.ini)} · <b>Percepção</b> ${sinal(d.perc)}</p>
+${d.pericias.length?`<p><b>Perícias</b> ${d.pericias.map(p=>esc(p.n)+' '+sinal(n0(p.b))).join(', ')}</p>`:''}
+${d.sentidos?`<p><b>Sentidos</b> ${esc(d.sentidos)}</p>`:''}${d.resist?`<p><b>Resistências</b> ${esc(d.resist)}</p>`:''}${d.vuln?`<p><b>Vulnerabilidades</b> ${esc(d.vuln)}</p>`:''}
+${d.ataques.length?`<h4>Ataques</h4>${d.ataques.map(a=>`<p class="acao"><b>${esc(a.n)}</b> ${esc(a.alc||'')} · teste ${sinal(n0(a.teste))} · dano ${esc(a.dano||'—')}</p>`).join('')}`:''}
+${d.habilidades.length?`<h4>Habilidades</h4>${d.habilidades.map(h=>`<p class="acao"><b>${esc(h.n)}</b>${h.acao?' ('+esc(h.acao)+')':''} ${esc(h.desc||'')}</p>`).join('')}`:''}
+${d.desc?`<p class="m" style="margin-top:8px">${esc(d.desc)}</p>`:''}</div>`}
+
+/* ---------- inimigo -> ficha de NPC (Ordem Paranormal, classe oculta "Criatura") ---------- */
+function paraFicha(en,nome){const d=dados(en),f={nome:nome||en.nome};
+  f.attrs=S.ATR.map(([id,ab])=>({id,n:ab,v:n0(d.atr[id])}));
+  f.info=[{n:'Classe',v:'Criatura'},{n:'Elemento',v:en.elemento||''},{n:'VD',v:String(en.vd||'')},{n:'Tamanho',v:d.tamanho||''}];
+  f.op={classe:'criatura',nex:5,estagio:1,origem:'',trilha:'',pp:0,avisos:[],visto:1,
+    bonus:{pv:n0(d.pv)-n0(d.atr.vig),def:n0(d.def)-10-n0(d.atr.agi),desloc:n0(d.desloc)-9}};
+  S.prepararOP(f);
+  const bon={Fortitude:d.fort,Reflexos:d.refl,Vontade:d.vont,'Iniciativa':d.ini,'Percepção':d.perc};d.pericias.forEach(p=>{bon[p.n]=n0(p.b)});
+  f.skills.forEach(s=>{const k=Object.keys(bon).find(x=>norm(x)==norm(s.n));if(k!==undefined)s.o=n0(bon[k])});
+  f.inv={items:d.ataques.map(a=>({id:S.uid(),n:a.n||'Ataque',tipo:'arma',catg:0,esp:0,qtd:1,eq:true,desc:'',
+    arma:{dano:a.dano||'',crit:'',alc:a.alc||'',td:'',per:/dist|disparo|arremes|tiro/i.test(a.alc||'')?'Pontaria':'Luta',atk:n0(a.teste)}}))};
+  f.poderes=d.habilidades.map(h=>({id:S.uid(),n:h.n||'Habilidade',tipo:'poder',desc:(h.acao?h.acao+'. ':'')+(h.desc||''),pe:0,ef:[]}));
+  const extra=[d.resist&&'Resistências: '+d.resist,d.vuln&&'Vulnerabilidades: '+d.vuln,d.sentidos&&'Sentidos: '+d.sentidos,d.desc].filter(Boolean).join('\n');
+  if(extra)f.poderes.push({id:S.uid(),n:'Anotações do inimigo',tipo:'poder',desc:extra,pe:0,ef:[]});
+  S.aplicar(f,{});return f}
+
+/* ---------- lista ---------- */
+const fonte=()=>TAB=='meus'?MEUS:LIVRO;
+function lista(){const q=norm($('#q').value),L=fonte().filter(e=>(!FIL||e.elemento==FIL)&&(!q||norm(e.nome).includes(q)));
+  $('#fil').innerHTML=['',...ELEM].map(x=>`<button data-f="${x}" class="${FIL==x?'on':''}">${x||'Todos'}</button>`).join('');
+  if(TAB=='livro'&&!LIVRO_OK){$('#lst').innerHTML='<div class="vazio"><b>Os inimigos do livro ainda não foram ativados.</b><br>O mestre do site precisa rodar o SQL do bestiário no Supabase.</div>';return}
+  $('#lst').innerHTML=L.length?`<div class="lista">${L.map(e=>`<button class="en" data-id="${e.id}"><b>${esc(e.nome)}</b><span><span class="el ${esc(e.elemento)}">${esc(e.elemento||'—')}</span><small>${e.vd?'VD '+esc(e.vd)+' · ':''}PV ${dados(e).pv} · Def ${dados(e).def}</small></span></button>`).join('')}</div>`
+    :`<div class="vazio">${TAB=='meus'?'<b>Você ainda não criou inimigos.</b><br>Toque em <b>Novo inimigo</b>, ou copie um do livro para a sua lista.':'Nenhum inimigo encontrado.'}</div>`}
+
+/* ---------- janela ---------- */
+function janela(html,onclick){fecha();const o=document.createElement('div');o.id='md';o.innerHTML='<div class="mb">'+html+'</div>';document.body.append(o);
+  o.onclick=e=>{if(e.target===o||e.target.closest('[data-x]')){o.remove();return}onclick&&onclick(e,o)};return o}
+const fecha=()=>{const o=$('#md');if(o)o.remove()};
+async function campanhas(){const r=await db.from('campanha_membros').select('campanha_id,papel').eq('user_id',ME.id).in('papel',['mestre','admin']);
+  const ids=(r.data||[]).map(x=>x.campanha_id);if(!ids.length)return[];const c=await db.from('campanhas').select('id,nome').in('id',ids);return c.data||[]}
+
+function ver(id){const en=fonte().find(x=>x.id==id);if(!en)return;const meu=TAB=='meus';
+  janela(`<h3>${esc(en.nome)}</h3>${bloco(en)}<div class="bt"><button data-a="usar" data-id="${id}" class="on">Usar na campanha</button>${meu?`<button data-a="editar" data-id="${id}">Editar</button><button data-a="dup" data-id="${id}">Duplicar</button><button data-a="del" data-id="${id}" class="perigo">Excluir</button>`:`<button data-a="copiar" data-id="${id}">Salvar nos meus</button>`}<button data-x>Fechar</button></div>`,
+    async(e)=>{const b=e.target.closest('[data-a]');if(!b)return;const id=b.dataset.id;try{
+      if(b.dataset.a=='editar'){fecha();editar(MEUS.find(x=>x.id==id))}
+      else if(b.dataset.a=='usar')usar(en)
+      else if(b.dataset.a=='copiar'||b.dataset.a=='dup'){const r=await db.from('inimigos').insert({nome:en.nome+(b.dataset.a=='dup'?' (cópia)':''),elemento:en.elemento||'',vd:String(en.vd||''),dados:en.dados||{}}).select().single();if(r.error)throw r.error;MEUS.unshift(r.data);fecha();lista();toast('Salvo nos seus inimigos.')}
+      else if(b.dataset.a=='del'){if(!confirm('Excluir "'+en.nome+'"? Não dá para desfazer.'))return;const r=await db.from('inimigos').delete().eq('id',id);if(r.error)throw r.error;MEUS=MEUS.filter(x=>x.id!=id);fecha();lista();toast('Inimigo excluído.')}
+    }catch(err){toast('Erro: '+esc(err.message||err))}})}
+
+async function usar(en){const cs=await campanhas();
+  if(!cs.length){toast('Você precisa ser mestre ou admin de uma campanha para usar inimigos.');return}
+  janela(`<h3>Usar ${esc(en.nome)}</h3><p class="m">Cria uma ficha de NPC (escondida dos jogadores) na campanha. Depois é só ligar o token a ela na mesa.</p>
+<label>Campanha<select id="uc">${cs.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select></label><label>Quantidade<input id="uq" type="number" min="1" max="12" value="1"></label>
+<div class="bt"><button data-x>Cancelar</button><button data-a="ok" class="on">Criar ficha(s)</button></div>`,
+  async(e,o)=>{const b=e.target.closest('[data-a="ok"]');if(!b)return;b.disabled=true;
+    try{const camp=$('#uc').value,q=Math.max(1,Math.min(12,n0($('#uq').value)||1)),rows=[];
+      for(let i=1;i<=q;i++){const nome=q>1?en.nome+' '+i:en.nome;rows.push({user_id:ME.id,campanha_id:camp,nome,npc:true,privada:true,dados:paraFicha(en,nome)})}
+      const r=await db.from('personagens').insert(rows).select('id');if(r.error)throw r.error;
+      o.remove();
+      janela(`<h3>Pronto</h3><p>${q>1?q+' fichas criadas':'Ficha criada'} na campanha, como NPC privado.</p><div class="bt"><a href="ficha.html?id=${r.data[0].id}"><button class="on">Abrir ficha</button></a><button data-x>Fechar</button></div>`)}
+    catch(err){b.disabled=false;toast('Erro: '+esc(err.message||err))}})}
+
+/* ---------- editor ---------- */
+function editar(en){ED=JSON.parse(JSON.stringify(en||vazio()));ED.dados=dados(ED);desenhaEd()}
+function lerEd(){const g=id=>($('#'+id)||{}).value||'',d=ED.dados;
+  ED.nome=g('e_nome')||ED.nome;ED.elemento=g('e_elem');ED.vd=g('e_vd');
+  Object.assign(d,{tamanho:g('e_tam'),pv:n0(g('e_pv')),def:n0(g('e_def')),desloc:n0(g('e_des')),fort:n0(g('e_fort')),refl:n0(g('e_refl')),vont:n0(g('e_vont')),ini:n0(g('e_ini')),perc:n0(g('e_perc')),
+    resist:g('e_res'),vuln:g('e_vul'),sentidos:g('e_sen'),desc:g('e_desc')});
+  S.ATR.forEach(([id])=>{d.atr[id]=n0(g('e_a_'+id))});
+  d.pericias=g('e_per').split(',').map(x=>x.trim()).filter(Boolean).map(x=>{const m=x.match(/^(.*?)[\s:]*([+-]?\d+)$/);return m?{n:m[1].trim(),b:n0(m[2])}:{n:x,b:0}});
+  d.ataques=[...document.querySelectorAll('.e_at')].map(r=>({n:r.querySelector('.n').value,alc:r.querySelector('.a').value,teste:n0(r.querySelector('.t').value),dano:r.querySelector('.d').value}));
+  d.habilidades=[...document.querySelectorAll('.e_hb')].map(r=>({n:r.querySelector('.n').value,acao:r.querySelector('select').value,desc:r.querySelector('textarea').value}))}
+function desenhaEd(){const d=ED.dados,N=(id,rot,v,ex='')=>`<label>${rot}<input id="${id}" type="number" value="${v}" ${ex}></label>`;
+  fecha();janela(`<h3>${ED.id?'Editar':'Novo'} inimigo</h3>
+<label>Nome<input id="e_nome" value="${esc(ED.nome)}" placeholder="Nome do inimigo"></label>
+<div class="row"><label>Elemento<select id="e_elem">${ELEM.map(x=>`<option ${x==ED.elemento?'selected':''}>${x}</option>`).join('')}</select></label><label>VD<input id="e_vd" value="${esc(ED.vd)}" placeholder="ex.: 300"></label><label>Tamanho<input id="e_tam" value="${esc(d.tamanho)}" placeholder="Grande"></label></div>
+<div class="row">${N('e_pv','PV',d.pv)}${N('e_def','Defesa',d.def)}${N('e_des','Deslocamento (m)',d.desloc,'step=1.5')}</div>
+<h4>Atributos</h4><div class="row">${S.ATR.map(([id,ab])=>N('e_a_'+id,ab,d.atr[id])).join('')}</div>
+<h4>Testes (somente o bônus fixo; os dados são o valor do atributo)</h4><div class="row">${N('e_fort','Fortitude',d.fort)}${N('e_refl','Reflexos',d.refl)}${N('e_vont','Vontade',d.vont)}${N('e_ini','Iniciativa',d.ini)}${N('e_perc','Percepção',d.perc)}</div>
+<label>Perícias (nome +bônus, separadas por vírgula)<input id="e_per" value="${esc(d.pericias.map(p=>p.n+' +'+p.b).join(', '))}" placeholder="Atletismo +20, Enganação +15"></label>
+<label>Sentidos<input id="e_sen" value="${esc(d.sentidos)}"></label><label>Resistências<input id="e_res" value="${esc(d.resist)}" placeholder="Balístico, impacto e Sangue 20"></label><label>Vulnerabilidades<input id="e_vul" value="${esc(d.vuln)}" placeholder="Morte"></label>
+<h4>Ataques</h4>${d.ataques.map((a,i)=>`<div class="linha e_at"><input class="n" value="${esc(a.n)}" placeholder="Nome (Garras)"><div class="row"><label>Alcance<input class="a" value="${esc(a.alc)}" placeholder="Corpo a corpo"></label><label>Teste (+bônus)<input class="t" type="number" value="${n0(a.teste)}"></label><label>Dano<input class="d" value="${esc(a.dano)}" placeholder="2d8+20 Sangue"></label></div><button data-r="at" data-i="${i}">Remover</button></div>`).join('')}<button data-m="at">Adicionar ataque</button>
+<h4>Habilidades</h4>${d.habilidades.map((h,i)=>`<div class="linha e_hb"><input class="n" value="${esc(h.n)}" placeholder="Nome da habilidade"><select>${ACOES.map(x=>`<option ${x==h.acao?'selected':''}>${x}</option>`).join('')}</select><textarea placeholder="O que faz">${esc(h.desc)}</textarea><button data-r="hb" data-i="${i}">Remover</button></div>`).join('')}<button data-m="hb">Adicionar habilidade</button>
+<label>Descrição<textarea id="e_desc">${esc(d.desc)}</textarea></label>
+<div class="bt"><button data-x>Cancelar</button><button data-s class="on">Salvar</button></div>`,
+  async(e)=>{const b=e.target.closest('button');if(!b)return;
+    if(b.dataset.m||b.dataset.r){lerEd();const k=b.dataset.m||b.dataset.r,l=k=='at'?ED.dados.ataques:ED.dados.habilidades;
+      if(b.dataset.m)l.push(k=='at'?{n:'',alc:'',teste:0,dano:''}:{n:'',acao:'Padrão',desc:''});else l.splice(+b.dataset.i,1);desenhaEd();return}
+    if(b.hasAttribute('data-s')){lerEd();if(!ED.nome.trim()){toast('Dê um nome ao inimigo.');return}
+      const row={nome:ED.nome.trim(),elemento:ED.elemento,vd:String(ED.vd||''),dados:ED.dados};
+      const r=ED.id?await db.from('inimigos').update(row).eq('id',ED.id).select().single():await db.from('inimigos').insert(row).select().single();
+      if(r.error){toast('Erro: '+esc(/relation|does not exist/i.test(r.error.message||'')?'o SQL dos inimigos ainda não foi rodado':r.error.message));return}
+      MEUS=[r.data,...MEUS.filter(x=>x.id!=r.data.id)];TAB='meus';marcaAba();fecha();lista();toast('Inimigo salvo.')}})}
+
+function marcaAba(){document.querySelectorAll('.abas button').forEach(b=>b.classList.toggle('on',b.dataset.t==TAB))}
+document.addEventListener('click',e=>{
+  const t=e.target.closest('.abas button');if(t){TAB=t.dataset.t;FIL='';marcaAba();lista();return}
+  const f=e.target.closest('[data-f]');if(f){FIL=f.dataset.f;lista();return}
+  if(e.target.closest('header [data-a="novo"]')){editar();return}
+  const c=e.target.closest('.en');if(c)ver(c.dataset.id)});
+$('#q').addEventListener('input',lista);
+(async()=>{try{
+  const u=await Mesa.exigirLogin();ME={id:u.id};
+  const [m,l]=await Promise.all([db.from('inimigos').select('*').order('nome'),db.from('livro_inimigos').select('*').order('nome')]);
+  if(m.error){$('#lst').innerHTML='<div class="vazio"><b>Os inimigos ainda não foram ativados.</b><br>O mestre do site precisa rodar o SQL dos inimigos no Supabase.</div>';return}
+  MEUS=m.data;if(l.error)LIVRO_OK=false;else LIVRO=l.data.map(x=>({...x,id:'l:'+x.id}));lista();
+  window.__ok=1}catch(e){$('#lst').innerHTML='<p class="vazio">Erro: '+esc(e.message||e)+'</p>'}})();
+</script></body></html>
