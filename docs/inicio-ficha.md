@@ -26,3 +26,5 @@
 - **Quadro de investigação** (`quadro.html`, ligado no menu da campanha em `index.html`): quadro de cortiça com notas, documentos e fotos arrastáveis, fios entre papéis, tempo real; mestre/admin esconde papéis dos jogadores. Foto é reduzida no navegador (máx. 1000 px, JPEG) e vai no próprio banco.
 - **Sem emojis nos botões** de nenhuma tela (texto puro). Botões só com símbolo viraram palavras (Remover, Fechar, Rolar…). Não reintroduzir.
 - "＋ Do livro" tem a aba **Criadas** (última): lista as habilidades próprias do jogador (desta e de outras fichas dele) para copiar, e "Criar habilidade nova".
+
+- Modificações de arma (ficha OP): ficam equipadas na arma (`it.mods=[{n,desc,catg,esp,def}]`), não ocupam espaço (só reduzem, ex.: Discreta), sobem a categoria do item em I e por isso dependem da patente (se passar do limite da categoria, não aplica). Têm botão Remover (desfaz categoria/Defesa). Efeitos por nome em `SIS.MODEF`/`SIS.armaEf`: Certeira e Alongada +2 ataque, Cruel +2 dano, Explosiva +2d6, Calibre Grosso +1 dado, Perigosa e Mira Laser +2 margem de ameaça, Dum Dum +1 multiplicador; usados no card de ataques da ficha e no menu do token. Teste t24.

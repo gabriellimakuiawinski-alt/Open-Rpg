@@ -182,6 +182,20 @@
   }
 
   /* ---------- dados: "2d6+3", "1d12", "3d4-1" ---------- */
+  /* efeito das modificações de arma (por nome). atk = bônus no ataque; dano = texto somado; dado = +dados do mesmo tipo; marg = margem de ameaça; mult = multiplicador */
+  const MODEF = { 'Certeira': { atk: 2 }, 'Alongada': { atk: 2 }, 'Cruel': { dano: '+2' }, 'Perigosa': { marg: 2 }, 'Mira Laser': { marg: 2 }, 'Dum Dum': { mult: 1 }, 'Explosiva': { dano: '+2d6' }, 'Calibre Grosso': { dado: 1 } };
+  const modNome = m => typeof m == 'string' ? m : (m && m.n) || '';
+  function armaEf(it) {
+    const a = it.arma || {}, r = { dano: a.dano || '', crit: a.crit || '', atk: 0, mods: [] };
+    (it.mods || []).forEach(m => { const e = MODEF[modNome(m)]; if (!e) return; r.mods.push(modNome(m));
+      if (e.atk) r.atk += e.atk;
+      if (e.dado && r.dano) r.dano = r.dano.replace(/(\d*)d(\d+)/i, (x, q, d) => ((+q || 1) + e.dado) + 'd' + d);
+      if (e.dano && r.dano) r.dano += e.dano;
+      if (e.marg || e.mult) { const c = String(r.crit).replace(/\s+/g, '').match(/^(\d+)?\/?(?:x(\d+))?$/i);
+        if (c) { const mg = Math.max(2, (c[1] ? +c[1] : 20) - (e.marg || 0)), mu = (c[2] ? +c[2] : 2) + (e.mult || 0);
+          r.crit = mg < 20 ? (mu != 2 ? mg + '/x' + mu : String(mg)) : 'x' + mu } } });
+    return r;
+  }
   function rolar(expr) {
     const s = String(expr || '').replace(/\s+/g, '').toLowerCase(); if (!s) return null;
     let total = 0; const partes = [];
@@ -232,7 +246,7 @@
   const TIPOS_ITEM = [['geral', 'Geral'], ['arma', 'Arma'], ['protecao', 'Proteção'], ['municao', 'Munição'], ['consumivel', 'Consumível'], ['paranormal', 'Paranormal']];
 
   window.SIS = { SISTEMAS, ATR, PERICIAS, TREINO, CLASSES, NEX, PATENTES, CIRCULO_PE, ROMANO, ALVOS, CATALOGO, TIPOS_ITEM,
-    nivel, marcos, derivar, aplicar, prepararOP, luz, rolar, teste, uid, n0,
+    nivel, marcos, derivar, aplicar, prepararOP, luz, rolar, teste, uid, n0, armaEf, modNome, MODEF,
     sistemaDe: (camp, f) => (camp && SISTEMAS[camp.sistema] ? camp.sistema : camp ? 'op' : (f && SISTEMAS[f.sistema] ? f.sistema : 'op')),
     cfgDe: camp => (camp && camp.config && typeof camp.config == 'object' ? camp.config : {}) };
 })();
