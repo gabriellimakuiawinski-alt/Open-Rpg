@@ -85,3 +85,5 @@ body.carimbo-mod,.carimbo-mod{display:none}body.sis-modular .carimbo-mod{display
 .op-it .itr,.op-po .itr{flex-wrap:wrap}.op-it .itr .in,.op-po .itr .in{flex:1 1 160px}
 .op-it label.sm select{width:auto;min-width:64px}.op-it label.sm input[type=number]{width:58px}
 #app>.add{color:var(--papel2);border-color:#f3ecd866;background:#ffffff0d}#app>.add:hover{background:#ffffff1a}
+
+.mods{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.modt{border:1px dashed var(--giz);padding:3px 6px;font-size:13px;border-radius:3px}.modt small{opacity:.7}

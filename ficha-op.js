@@ -94,8 +94,8 @@ ${pp == 'mestre' ? `<label class=sm style="font-size:14px;margin:0 0 6px"><input
 <ul class="det">${D.defDet.map(([n, v]) => `<li><span>${esc(n)}</span><b>${sinal(v)}</b></li>`).join('')}</ul></div>
 ${D.pesadaSemProf ? '<p class="alerta">Proteção pesada sem a habilidade Proteção Pesada: −2 dados em testes de Força e Agilidade.</p>' : ''}
 <p class="m" style="font-size:13px;margin:8px 0 0">Equipe proteções no <b>Inventário</b>: a Defesa muda sozinha.</p></section>
-<section class="card"><h2>Ataques</h2>${armas.map(([it, i]) => { const a = it.arma || {}, per = a.per || 'Luta', sk = f.skills.find(s => s.n == per);
-      return `<div class="arma"><div class="ar-n"><b>${esc(it.n || 'Arma')}</b><small>${esc([a.dano, a.crit && 'crít. ' + a.crit, a.alc, a.td].filter(Boolean).join(' · '))}</small></div>
+<section class="card"><h2>Ataques</h2>${armas.map(([it, i]) => { const a = it.arma || {}, ef = S.armaEf(it), per = a.per || 'Luta', sk = f.skills.find(s => s.n == per);
+      return `<div class="arma"><div class="ar-n"><b>${esc(it.n || 'Arma')}</b><small>${esc([ef.dano, ef.crit && 'crít. ' + ef.crit, ef.atk && 'ataque ' + sinal(ef.atk), a.alc, a.td].filter(Boolean).join(' · '))}${(it.mods || []).length ? ' · ' + esc(it.mods.map(S.modNome).join(', ')) : ''}</small></div>
 <button class="roll" data-act="op-atk" data-i="${i}" title="Atacar (${esc(per)})">Atacar</button><button class="mini" data-act="op-dano" data-i="${i}">Dano</button></div>` }).join('') || '<p class="m">Nenhuma arma no inventário.</p>'}</section>
 <section class="card"><h2>Resistências</h2><div class="res">${res.map(([n]) => { const i = f.skills.findIndex(s => s.n == n); return i < 0 ? '' : `<button class="btn-res" data-act="roll" data-i="${i}"><b>${n}</b><small id="rs${i}"></small></button>` }).join('')}</div>
 ${D.res ? `<p class="m" style="font-size:13px">Habilidades: ${sinal(D.res)} em testes de resistência (já somado).</p>` : ''}</section>`;
@@ -113,6 +113,7 @@ ${f.skills.map((s, i) => `<div class="sk"><button class="roll" data-act="roll" d
     const tag = [tipo == 'protecao' ? 'Defesa ' + sinal(n0(it.def)) : '', luzT].filter(Boolean);
     return `<div class="it op-it ${it.eq ? 'eq' : ''}"><div class="itr">${inp(`inv.items.${i}.n`, it.n, 'placeholder="Nome do item" class=in')}${eqv ? `<button class="eqb ${it.eq ? 'on' : ''}" data-act="op-eq" data-i="${i}">${it.eq ? 'Equipado' : 'Equipar'}</button>` : ''}<button class=x data-act=del data-l=items data-i=${i}>Remover</button></div>
 <div class="itr"><label class=sm>Tipo ${sel(`inv.items.${i}.tipo`, S.TIPOS_ITEM, tipo, 'data-rr' + (M ? '' : ' disabled'))}</label><label class=sm>Cat. ${sel(`inv.items.${i}.catg`, [0, 1, 2, 3, 4].map(x => [x, S.ROMANO[x]]), Math.round(n0(it.catg)), 'data-n data-rr' + (M ? '' : ' disabled'))}</label><label class=sm>Esp.${num(`inv.items.${i}.esp`, it.esp, 'min=0 step=.5' + (M ? '' : ' disabled'))}</label><label class=sm>Qtd${num(`inv.items.${i}.qtd`, it.qtd === undefined ? 1 : it.qtd, 'min=0 data-rr')}</label></div>
+${(it.mods || []).length ? `<div class="mods">${it.mods.map((m, k) => `<span class="modt">${esc(S.modNome(m))}${typeof m == 'object' && m.desc ? ` <small>${esc(m.desc)}</small>` : ''} <button class="mini" data-act="op-modx" data-i="${i}" data-k="${k}">Remover</button></span>`).join('')}</div>` : ''}
 ${tag.length ? `<div class="tags">${tag.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
 ${M ? `<details class="mec"><summary>Regras do item ${f._camp ? '(só o mestre)' : ''}</summary>
 ${tipo == 'protecao' ? `<div class="itr"><label class=sm>Proteção ${sel(`inv.items.${i}.sub`, [['leve', 'Leve'], ['pesada', 'Pesada'], ['escudo', 'Escudo']], it.sub || 'leve')}</label><label class=sm>Defesa ${num(`inv.items.${i}.def`, it.def || 0, 'data-rr')}</label></div>` : ''}
@@ -200,9 +201,12 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
       pe.cur = n0(pe.cur) - custo; touch(f); derive(f); const i = document.querySelector(`[data-p="stats.${f.stats.indexOf(pe)}.cur"]`); if (i) i.value = pe.cur;
       toast(`${esc(p.n || 'Habilidade')}: −${custo} ${esc(pe.n)} (restam ${pe.cur})${p.tipo == 'ritual' ? ` · DT ${ULT.dtRitual}` : ''}`); return true }
     if (a == 'op-atk') { const it = f.inv.items[+d.i], ar = it.arma || {}, sk = f.skills.find(s => s.n == (ar.per || 'Luta')) || { a: 'for', t: 0, o: 0 },
-      at = av(f, sk.a), b = n0(sk.t) + n0(sk.o) + n0(ULT.per[sk.n]), r = S.teste(at, b);
+      at = av(f, sk.a), b = n0(sk.t) + n0(sk.o) + n0(ULT.per[sk.n]) + S.armaEf(it).atk, r = S.teste(at, b);
       toast(`${esc(it.n)} · ataque (${esc(sk.n)}): [${r.r}] → ${r.d}${b ? ' ' + sinal(b) : ''} = <b>${r.total}</b>`); return true }
-    if (a == 'op-dano') { const it = f.inv.items[+d.i], r = S.rolar((it.arma || {}).dano); toast(r ? `${esc(it.n)} · dano ${esc(it.arma.dano)}: ${r.txt} = <b>${r.total}</b>` : 'Preencha o dano da arma (ex.: 1d8).'); return true }
+    if (a == 'op-dano') { const it = f.inv.items[+d.i], dn = S.armaEf(it).dano, r = S.rolar(dn); toast(r ? `${esc(it.n)} · dano ${esc(dn)}: ${r.txt} = <b>${r.total}</b>` : 'Preencha o dano da arma (ex.: 1d8).'); return true }
+    if (a == 'op-modx') { const it = f.inv.items[+d.i], m = (it.mods || [])[+d.k]; if (!m) return true;
+      if (typeof m == 'object') { it.catg = Math.max(0, Math.round(n0(it.catg)) - (m.catg || 0)); it.esp = Math.max(0, n0(it.esp) - (m.esp || 0)); if (m.def) it.def = n0(it.def) - m.def }
+      it.mods.splice(+d.k, 1); calc(f); touch(f); render(); toast(esc(S.modNome(m)) + ' removida de ' + esc(it.n) + '.'); return true }
     if (a == 'op-cat') { catalogo(f); return true }
     if (a == 'op-camp') { await daCampanha(f); return true }
     if (a == 'op-livro') { await doLivro(f, d.g); return true }
@@ -256,17 +260,18 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   }
   /* modificação: escolhe um item compatível do inventário; sobe a categoria em 1 e ajusta espaço/Defesa */
   function aplicaMod(f, m, fecha) {
-    const ap = m.aplica || [], its = f.inv.items.map((it, i) => [it, i]).filter(([it]) => ap.includes(it.mc) && !(it.mods || []).includes(m.n));
+    const ap = m.aplica || [], its = f.inv.items.map((it, i) => [it, i]).filter(([it]) => ap.includes(it.mc) && !(it.mods || []).map(S.modNome).includes(m.n));
     if (!its.length) { toast('Nenhum item do inventário aceita ' + esc(m.n) + '. Adicione primeiro a arma, proteção ou acessório do livro.'); return }
     const o = document.createElement('div'); o.id = 'md';
-    o.innerHTML = `<div class="mb"><h3>${esc(m.n)}</h3><p class="m" style="margin:0">${esc(m.desc)} Aplicar sobe a categoria do item em I. Em qual item?</p><div class="catl">${its.map(([it, i]) => `<button class="cat-i" data-i="${i}"><b>${esc(it.n)}</b><small>Cat. ${S.ROMANO[Math.round(n0(it.catg))]}${(it.mods || []).length ? ' · ' + esc(it.mods.join(', ')) : ''}</small></button>`).join('')}</div><button data-x style="align-self:flex-end">Cancelar</button></div>`;
+    o.innerHTML = `<div class="mb"><h3>${esc(m.n)}</h3><p class="m" style="margin:0">${esc(m.desc)} A modificação fica equipada na arma e não ocupa espaço. Ela sobe a categoria do item em I e por isso depende da sua patente. Em qual item?</p><div class="catl">${its.map(([it, i]) => `<button class="cat-i" data-i="${i}"><b>${esc(it.n)}</b><small>Cat. ${S.ROMANO[Math.round(n0(it.catg))]}${(it.mods || []).length ? ' · ' + esc(it.mods.map(S.modNome).join(', ')) : ''}</small></button>`).join('')}</div><button data-x style="align-self:flex-end">Cancelar</button></div>`;
     document.body.append(o);
     o.onclick = e => {
       if (e.target === o || e.target.closest('[data-x]')) { o.remove(); return }
       const b = e.target.closest('.cat-i'); if (!b) return; const it = f.inv.items[+b.dataset.i], d = m.mod || {};
-      it.mods = (it.mods || []).concat(m.n); it.catg = Math.min(4, Math.round(n0(it.catg)) + (d.catg || 0));
-      it.esp = Math.max(0, n0(it.esp) + (d.esp || 0)); if (d.def) it.def = n0(it.def) + d.def;
-      it.desc = ((it.desc || '') + ' [' + m.n + ': ' + m.desc + ']').trim();
+      const c0 = Math.round(n0(it.catg)), c1 = Math.min(4, c0 + (d.catg || 0)), D = ULT || calc(f).D;
+      if (c1 > c0 && c1 >= 1 && D.porCat[c1] + 1 > D.patente[3][c1 - 1]) { toast(`Sua patente (${esc(D.patente[1])}) só permite ${D.patente[3][c1 - 1]} item(ns) de categoria ${S.ROMANO[c1]}. Não dá para aplicar ${esc(m.n)}.`); return }
+      it.mods = (it.mods || []).concat([{ n: m.n, desc: m.desc, catg: c1 - c0, esp: Math.min(0, d.esp || 0), def: d.def || 0 }]); it.catg = c1;
+      it.esp = Math.max(0, n0(it.esp) + Math.min(0, d.esp || 0)); if (d.def) it.def = n0(it.def) + d.def;
       calc(f); touch(f); o.remove(); fecha(); render(); toast(esc(m.n) + ' aplicada em ' + esc(it.n) + '.') };
   }
   async function daCampanha(f) {
