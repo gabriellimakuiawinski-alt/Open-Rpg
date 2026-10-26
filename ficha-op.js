@@ -247,13 +247,13 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   const jaTem = (f, x) => !REPETE.includes(x.nome) && f.poderes.some(p => p.ref == 'livro:' + x.ref);
   async function livroCarrega() {
     if (LIVRO) return true;
-    const r = await db.from('livro_habilidades').select('ref,classe,grupo,trilha,nex,ordem,nome,dados').eq('sistema', 'op').order('ordem');
+    const r = await db.from('livro_habilidades').select('ref,classe,grupo,trilha,nex,ordem,nome,dados,circulo,elemento').eq('sistema', 'op').order('ordem');
     if (r.error || !r.data.length) { toast('Habilidades do livro indisponíveis (rode o SQL schema_etapa6_livro.sql no Supabase).'); return false }
     LIVRO = r.data; return true;
   }
   const trilhasDe = cl => [...new Set(LIVRO.filter(x => x.classe == cl && x.grupo == 'trilha').map(x => x.trilha))];
   const resumo = (f, x) => {
-    const d = x.dados || {}, sub = [x.nex ? 'NEX ' + x.nex + '%' : '', d.pe ? d.pe + ' PE' : '', (d.ef || []).length ? 'efeito automático' : '', jaTem(f, x) ? 'já na ficha' : ''].filter(Boolean).join(' · ');
+    const d = x.dados || {}, sub = [x.grupo == 'ritual' ? (x.elemento || 'Elemento à escolha') : '', x.grupo == 'ritual' ? x.circulo + 'º círculo' : '', x.nex ? 'NEX ' + x.nex + '%' : '', d.pe ? d.pe + ' PE' : '', (d.ef || []).length ? 'efeito automático' : '', jaTem(f, x) ? 'já na ficha' : ''].filter(Boolean).join(' · ');
     return `<button class="cat-i" data-r="${esc(x.ref)}"><b>${esc(x.nome)}</b><small>${esc(sub)}</small><small style="white-space:normal">${esc(d.desc || '')}</small></button>`;
   };
   const titulo2 = t => `<p class="m" style="margin:10px 0 2px"><b>${esc(t)}</b></p>`;
@@ -279,21 +279,33 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   /* botão "＋ Do livro": navegar por classe / grupo */
   async function doLivro(f) {
     if (!await livroCarrega()) return;
-    let cl = temLivro(f.op.classe) ? f.op.classe : 'combatente', gr = 'trilha';
+    let cl = temLivro(f.op.classe) ? f.op.classe : 'combatente', gr = 'trilha', ci = 0, el = '';
     const mk = (k, v, t, on) => `<button class="mini" data-f="${k}:${v}" ${on ? 'style="outline:2px solid currentColor"' : ''}>${t}</button>`;
+    const ELS = ['Conhecimento', 'Energia', 'Morte', 'Sangue', 'Medo'];
+    const circMax = f.op.classe == 'ocultista' ? (nexDe(f) >= 85 ? 4 : nexDe(f) >= 55 ? 3 : nexDe(f) >= 25 ? 2 : 1) : 0;
+    const dica = f.op.classe == 'ocultista' ? `Seu NEX libera rituais até o ${circMax}º círculo; a cada avanço de NEX você aprende um novo.` : 'Rituais vêm do poder paranormal Aprender Ritual (até seu Intelecto).';
     janela('Habilidades do livro', () => {
+      if (gr == 'ritual') {
+        const L = LIVRO.filter(x => x.grupo == 'ritual' && (!ci || x.circulo == ci) && (!el || !x.elemento || x.elemento == el));
+        let h = '', ult = 0;
+        L.forEach(x => { if (!ci && x.circulo != ult) { ult = x.circulo; h += titulo2(x.circulo + 'º círculo') } h += resumo(f, x) });
+        return [`<div class="g2b">${[['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe'], ['ritual', 'Rituais']].map(g => mk('gr', g[0], g[1], g[0] == gr)).join('')}</div>
+<div class="g2b">${[mk('ci', 0, 'Todos', !ci)].concat([1, 2, 3, 4].map(n => mk('ci', n, n + 'º', ci == n))).join('')}</div>
+<div class="g2b">${[mk('el', '', 'Todos', !el)].concat(ELS.map(e => mk('el', e, e, el == e))).join('')}</div>
+<p class="m" style="margin:4px 0 0;font-size:12px">${esc(dica)} Conjurar (exceto Medo) exige Ocultismo DT 20 + custo em PE; falhar custa Sanidade igual ao custo.</p>`, h || '<p class="m">Nenhum ritual com esse filtro.</p>'];
+      }
       let L = LIVRO.filter(x => x.classe == cl && x.grupo == gr), ult = null, h = '';
       if (gr == 'trilha' && f.op.trilha) L = L.filter(x => x.trilha == f.op.trilha).concat(L.filter(x => x.trilha != f.op.trilha));
       L.forEach(x => {
         if (gr == 'trilha' && x.trilha != ult) { ult = x.trilha; h += titulo2(x.trilha + (f.op.trilha == x.trilha ? ' · sua trilha' : '')) }
         h += resumo(f, x);
       });
-      return [`<div class="g2b">${CLS3.map(c => mk('cl', c[0], c[1], c[0] == cl)).join('')}</div><div class="g2b">${[['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe']].map(g => mk('gr', g[0], g[1], g[0] == gr)).join('')}</div>`, h];
+      return [`<div class="g2b">${CLS3.map(c => mk('cl', c[0], c[1], c[0] == cl)).join('')}</div><div class="g2b">${[['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe'], ['ritual', 'Rituais']].map(g => mk('gr', g[0], g[1], g[0] == gr)).join('')}</div>`, h];
     }, (b, fecha) => {
       const x = achar(b); if (!x) return;
       if (jaTem(f, x)) { toast(esc(x.nome) + ' já está na ficha.'); return }
       addLivro(f, x); fim(f, fecha, x);
-    }, k => { const [a, v] = k.split(':'); if (a == 'cl') cl = v; else gr = v });
+    }, k => { const i = k.indexOf(':'), a = k.slice(0, i), v = k.slice(i + 1); if (a == 'cl') cl = v; else if (a == 'gr') gr = v; else if (a == 'ci') ci = +v; else el = v });
   }
 
   /* NEX 10%: o personagem precisa escolher uma das 5 trilhas da classe (recebe a 1ª habilidade) */
