@@ -1,0 +1,172 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Loja · Open RPG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tema.css?v=9">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--tabua)}body{margin:0;color:var(--giz2);font:16px/1.45 var(--corpo);min-height:100vh;padding-bottom:60px}
+header{position:sticky;top:0;z-index:5;background:#151b1ae6;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:2px dashed #ffffff22}
+header a{color:var(--giz2);font:400 14px var(--maq);text-decoration:underline dashed;text-underline-offset:5px}header h1{margin:0;font:400 20px var(--maq);color:var(--papel2);flex:1}
+main{max-width:900px;margin:0 auto;padding:14px 12px}
+.card{background-color:var(--papel);background-image:var(--grao);color:var(--tinta);border-radius:4px 4px 10px 10px;padding:16px;margin:0 0 16px;box-shadow:0 2px 0 #0003,0 18px 26px -18px #000;position:relative}
+h2{margin:0 0 12px;font:400 17px var(--maq);letter-spacing:.1em;text-transform:uppercase;display:flex;gap:10px;align-items:center}h2::after{content:"";flex:1;border-bottom:2px dashed #00000026}
+button,.bt{background:var(--papel3);color:var(--tinta);border:0;border-radius:4px;padding:9px 13px;font:400 14px var(--maq);cursor:pointer;box-shadow:0 3px 0 #8c8167;text-decoration:none;display:inline-flex;align-items:center;gap:6px}
+button:hover{background:var(--pasta)}button:active{transform:translateY(2px);box-shadow:none}button.prim{background:var(--carimbo);color:var(--papel2);box-shadow:0 3px 0 var(--carimbo-sombra)}button.fino{background:transparent;box-shadow:none;text-decoration:underline dashed}button:disabled{opacity:.45}
+input,select,textarea{background:transparent;color:var(--caneta);border:0;border-bottom:2px dashed var(--lapis);padding:7px 2px;font:500 16px var(--corpo);min-width:0}
+input:focus,select:focus{outline:0;border-bottom:2px solid var(--carimbo)}select option{background:var(--papel2);color:var(--tinta)}
+.m{color:var(--tinta2)}.row{display:flex;gap:8px;align-items:center;flex-wrap:wrap}.sp{flex:1}
+.loja{border:2px solid #7a705d55;border-radius:4px;padding:12px;margin-bottom:12px;background:var(--papel2)}
+.loja.fechada{opacity:.75;background:repeating-linear-gradient(135deg,var(--papel2) 0 12px,#e2d8bd 12px 24px)}
+.loja h3{margin:0;font:700 26px var(--mao);flex:1}.estado{font:400 12px var(--maq);letter-spacing:.14em;text-transform:uppercase;border:2px solid currentColor;padding:3px 7px;transform:rotate(-3deg)}
+.estado.on{color:var(--ok)}.estado.off{color:var(--carimbo)}
+.it{display:flex;gap:8px;align-items:center;padding:8px 0;border-bottom:1px dashed #0002;flex-wrap:wrap}.it:last-child{border:0}
+.it .nm{flex:1 1 160px;display:flex;flex-direction:column}.it .nm b{font:700 20px var(--mao)}.it .nm small{font:400 12px var(--maq);color:var(--tinta2)}
+.preco{font:400 18px var(--maq);color:var(--ok);white-space:nowrap}
+.saldo{font:700 34px var(--mao);color:var(--ok)}
+.pers{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed #0002;flex-wrap:wrap}.pers b{flex:1 1 140px;font:700 20px var(--mao)}
+.pers input{width:100px;text-align:right;font:700 20px var(--mao)}
+#md{position:fixed;inset:0;background:#000c;display:flex;align-items:center;justify-content:center;z-index:20;padding:12px}
+.mb{background-color:var(--papel2);color:var(--tinta);border-radius:3px;padding:20px;width:min(480px,100%);max-height:90vh;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.mb h3{margin:0;font:400 22px var(--maq)}.mb label{display:flex;flex-direction:column;font:400 13px var(--maq);color:var(--tinta2);gap:2px}
+.catl{display:flex;flex-direction:column;gap:6px;max-height:50vh;overflow:auto}.cat-i{flex-direction:column;align-items:flex-start;text-align:left;background:var(--papel);box-shadow:none;border:1px solid #7a705d44}
+.cat-i b{font:700 19px var(--mao)}.cat-i small{font:400 12px var(--maq);color:var(--tinta2)}
+#toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translate(-50%,-260%) rotate(-2deg);background:#f2df7c;color:#3d3510;font:700 21px/1.1 var(--mao);padding:14px 20px;box-shadow:0 14px 22px -10px #000c;transition:transform .5s var(--mola);max-width:92%;z-index:60;pointer-events:none}
+#toast.show{transform:translate(-50%,0) rotate(-2deg)}
+.hb{border-left:5px solid var(--fita);padding-left:10px}
+</style></head><body class="quadro">
+<header><a href="index.html">🏠 Início</a><h1 id="tit">Loja</h1><a id="vf" href="ficha.html">📜 Ficha</a></header>
+<main id="app"><p>Carregando…</p></main><div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="comum.js?v=2"></script>
+<script src="sistemas.js?v=1"></script>
+<script>
+if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px">Não consegui carregar o login. Confira a internet.</p>';throw new Error('Mesa indisponível')}
+const db=Mesa.db,$=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),n0=SIS.n0;
+const Q=new URLSearchParams(location.search),CID=Q.get('camp');let FSEL=Q.get('ficha');
+let ME=null,C=null,PAPEL=null,FICHAS=[],LOJAS=[],ITENS=[],CAT=[],COMPRAS=[],SEMSQL=false,tt;
+const mestre=()=>PAPEL=='mestre',moeda=()=>(C&&C.config&&C.config.moeda)||'R$',din=v=>moeda()+' '+n0(v).toLocaleString('pt-BR',{maximumFractionDigits:2});
+function toast(h){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),5000)}
+const desc=it=>[SIS.TIPOS_ITEM.find(t=>t[0]==it.tipo)?.[1],it.catg?'Cat. '+SIS.ROMANO[it.catg]:'',it.esp!==undefined?it.esp+' esp.':'',it.def?'Defesa +'+it.def:'',it.luz?(it.luz.t=='c'?'Lanterna ':'Lampião ')+it.luz.m+' m':'',it.arma&&it.arma.dano].filter(Boolean).join(' · ');
+
+async function carregar(){
+  const[c,cm]=await Promise.all([db.from('campanhas').select('*').eq('id',CID).maybeSingle(),db.from('campanha_membros').select('user_id,papel').eq('campanha_id',CID)]);
+  if(c.error)throw c.error;C=c.data;if(!C)throw new Error('Campanha não encontrada ou você não participa dela.');
+  PAPEL=((cm.data||[]).find(x=>x.user_id==ME.id)||{}).papel||null;
+  const f=await db.from('personagens').select('id,user_id,nome,npc,dinheiro').eq('campanha_id',CID).order('criado_em');
+  if(f.error){if(/dinheiro|column/i.test(f.error.message)){SEMSQL=true;return}throw f.error}
+  FICHAS=f.data;
+  const l=await db.from('lojas').select('*').eq('campanha_id',CID).order('ordem').order('criado_em');
+  if(l.error){SEMSQL=true;return}
+  LOJAS=l.data;const ids=LOJAS.map(x=>x.id);
+  ITENS=ids.length?((await db.from('loja_itens').select('*').in('loja_id',ids).order('ordem').order('criado_em')).data||[]):[];
+  CAT=(await db.from('catalogo').select('*').eq('campanha_id',CID).order('criado_em')).data||[];
+  COMPRAS=mestre()?((await db.from('loja_compras').select('*').eq('campanha_id',CID).order('em')).data||[]).slice(-30).reverse():[];
+  const minhas=FICHAS.filter(x=>x.user_id==ME.id);
+  if(!FICHAS.some(x=>x.id==FSEL))FSEL=(minhas[0]||{}).id||null}
+
+function render(){
+  $('#tit').textContent='Loja · '+(C?C.nome:'');
+  if(FSEL)$('#vf').href='ficha.html?id='+FSEL;
+  if(SEMSQL){$('#app').innerHTML=`<section class="card"><h2>Falta preparar o banco</h2><p>${mestre()?'Rode o arquivo <b>schema_etapa5.sql</b> no SQL Editor do Supabase. Depois recarregue esta página.':'O mestre ainda precisa ativar as lojas.'}</p></section>`;return}
+  $('#app').innerHTML=mestre()?vMestre():vJogador()}
+
+/* ---------- jogador ---------- */
+function vJogador(){
+  const minhas=FICHAS.filter(x=>x.user_id==ME.id),f=FICHAS.find(x=>x.id==FSEL),abertas=LOJAS.filter(l=>l.aberta);
+  return `<section class="card"><h2>Seu personagem</h2>${minhas.length?`<div class="row"><select id="fsel">${minhas.map(x=>`<option value="${x.id}" ${x.id==FSEL?'selected':''}>${esc(x.nome||'Sem nome')}</option>`).join('')}</select><span class="sp"></span><span class="saldo">${esc(din(f?f.dinheiro:0))}</span></div>
+<p class="m" style="font-size:13px;margin:6px 0 0">O dinheiro é dado pelo mestre. O que você compra vai direto para o inventário da ficha.</p>`:'<p>Você ainda não tem ficha nesta campanha.</p>'}</section>
+${abertas.map(l=>`<section class="card"><div class="row"><h2 style="flex:1;margin:0">${esc(l.nome)}</h2><span class="estado on">Aberta</span></div>${l.descricao?`<p class="m">${esc(l.descricao)}</p>`:''}
+${ITENS.filter(i=>i.loja_id==l.id).map(i=>{const sem=i.estoque!==null&&i.estoque<=0,pobre=!f||n0(f.dinheiro)<n0(i.preco);
+  return `<div class="it"><div class="nm"><b>${esc(i.item.n||'Item')}</b><small>${esc(desc(i.item))}${i.estoque!==null?' · estoque '+i.estoque:''}</small></div><span class="preco">${esc(din(i.preco))}</span><button class="prim" data-a="comprar" data-i="${i.id}" ${sem||pobre||!f?'disabled':''}>${sem?'Esgotado':'Comprar'}</button></div>`}).join('')||'<p class="m">Nada à venda agora.</p>'}</section>`).join('')||'<section class="card"><p class="m" style="margin:0">Nenhuma loja aberta agora. O mestre abre as lojas quando fizer sentido na história.</p></section>'}`}
+
+/* ---------- mestre ---------- */
+function vMestre(){
+  const pend=CAT.filter(x=>!x.aprovado);
+  return `<section class="card"><h2>Dinheiro dos personagens</h2>${FICHAS.map(x=>`<div class="pers"><b>${esc(x.nome||'Sem nome')}${x.npc?' <small class=m>(NPC)</small>':''}</b><button data-a="mais" data-f="${x.id}" data-v="-10">−10</button><input type="number" data-din="${x.id}" value="${n0(x.dinheiro)}" min="0" step="0.01"><button data-a="mais" data-f="${x.id}" data-v="10">+10</button></div>`).join('')||'<p class="m">Nenhuma ficha na campanha.</p>'}
+<p class="m" style="font-size:13px">Moeda: <b>${esc(moeda())}</b> (troque em Início → campanha → Sistema e regras).</p></section>
+<section class="card"><h2>Lojas</h2><p class="m" style="margin:0 0 10px;font-size:14px">Só lojas <b>abertas</b> aparecem para os jogadores. Abra e feche conforme a história.</p>
+${LOJAS.map(l=>`<div class="loja ${l.aberta?'':'fechada'}"><div class="row"><h3>${esc(l.nome)}</h3><span class="estado ${l.aberta?'on':'off'}">${l.aberta?'Aberta':'Fechada'}</span></div>
+${l.descricao?`<p class="m" style="margin:4px 0">${esc(l.descricao)}</p>`:''}
+<div class="row" style="margin:8px 0"><button data-a="abrir" data-l="${l.id}">${l.aberta?'Fechar loja':'Abrir loja'}</button><button data-a="itemCat" data-l="${l.id}">＋ Do catálogo</button><button data-a="itemNovo" data-l="${l.id}">＋ Item próprio</button><span class="sp"></span><button class="fino" data-a="editLoja" data-l="${l.id}">Editar</button><button class="fino" data-a="delLoja" data-l="${l.id}">Excluir</button></div>
+${ITENS.filter(i=>i.loja_id==l.id).map(i=>`<div class="it"><div class="nm"><b>${esc(i.item.n||'Item')}</b><small>${esc(desc(i.item))}</small></div>
+<label class="m" style="font-size:12px">Preço <input type="number" data-preco="${i.id}" value="${n0(i.preco)}" min="0" step="0.01" style="width:90px"></label>
+<label class="m" style="font-size:12px">Estoque <input type="number" data-est="${i.id}" value="${i.estoque===null?'':i.estoque}" min="0" placeholder="∞" style="width:64px"></label>
+<button class="fino" data-a="editItem" data-i="${i.id}">Editar</button><button class="fino" data-a="delItem" data-i="${i.id}">✕</button></div>`).join('')||'<p class="m">Loja vazia.</p>'}</div>`).join('')}
+<button class="prim" data-a="novaLoja">＋ Nova loja</button></section>
+<section class="card"><h2>Homebrews e itens da campanha</h2>${pend.length?`<p><b>Esperando sua aprovação:</b></p>${pend.map(x=>`<div class="it hb"><div class="nm"><b>${esc(x.nome)}</b><small>${esc(x.tipo)} · de ${esc(nomeDe(x.criado_por))}${(x.dados.ef||[]).length?' · efeitos: '+x.dados.ef.map(e=>(SIS.ALVOS.find(a=>a[0]==e.a)||[0,e.a])[1]+' '+(e.v>0?'+':'')+e.v+(e.nv?'×nível':'')).join(', '):''}</small>${x.dados.desc?`<small>${esc(x.dados.desc)}</small>`:''}</div><button class="prim" data-a="aprovar" data-c="${x.id}">Aprovar</button><button class="fino" data-a="delCat" data-c="${x.id}">Recusar</button></div>`).join('')}`:'<p class="m">Nada esperando aprovação.</p>'}
+${CAT.filter(x=>x.aprovado).map(x=>`<div class="it"><div class="nm"><b>${esc(x.nome)}</b><small>${esc(x.tipo)}${x.tipo=='item'?' · '+esc(desc(x.dados)):''}</small></div><button class="fino" data-a="delCat" data-c="${x.id}">Remover</button></div>`).join('')}
+<div class="row" style="margin-top:8px"><button data-a="catItem">＋ Item da campanha</button></div>
+<p class="m" style="font-size:13px">Itens da campanha aparecem no catálogo da ficha e da loja. Homebrews aprovados aparecem em Habilidades → “Da campanha”.</p></section>
+<section class="card"><h2>Últimas compras</h2>${COMPRAS.map(x=>`<div class="it"><div class="nm"><b>${esc(x.item_nome)} ×${x.qtd}</b><small>${esc((FICHAS.find(f=>f.id==x.personagem_id)||{}).nome||'—')} · ${new Date(x.em).toLocaleString('pt-BR')}</small></div><span class="preco">${esc(din(x.total))}</span></div>`).join('')||'<p class="m">Nenhuma compra ainda.</p>'}</section>`}
+let NOMES={};const nomeDe=u=>NOMES[u]||'jogador';
+
+/* ---------- janelas ---------- */
+function janela(html,on){const o=document.createElement('div');o.id='md';o.innerHTML=`<div class="mb">${html}</div>`;document.body.append(o);
+  o.addEventListener('click',e=>{if(e.target===o||e.target.closest('[data-x]'))o.remove()});on&&on(o);return o}
+function formItem(it,ok){ // editor de item (nome, tipo, categoria, espaços, regras)
+  it=JSON.parse(JSON.stringify(it||{n:'',tipo:'geral',catg:0,esp:1}));
+  const o=janela(`<h3>${it.n?'Editar item':'Novo item'}</h3>
+<label>Nome<input name="n" value="${esc(it.n)}"></label>
+<div class="row"><label>Tipo<select name="tipo">${SIS.TIPOS_ITEM.map(([k,l])=>`<option value="${k}" ${it.tipo==k?'selected':''}>${l}</option>`).join('')}</select></label>
+<label>Categoria<select name="catg">${[0,1,2,3,4].map(x=>`<option value="${x}" ${(it.catg||0)==x?'selected':''}>${SIS.ROMANO[x]}</option>`).join('')}</select></label>
+<label>Espaços<input name="esp" type="number" step=".5" min="0" value="${it.esp??1}" style="width:70px"></label></div>
+<div class="row"><label>Proteção<select name="sub"><option value="">—</option>${[['leve','Leve'],['pesada','Pesada'],['escudo','Escudo']].map(([k,l])=>`<option value="${k}" ${it.sub==k?'selected':''}>${l}</option>`).join('')}</select></label><label>Defesa<input name="def" type="number" value="${it.def||0}" style="width:64px"></label></div>
+<div class="row"><label>Luz<select name="luzt"><option value="">nenhuma</option><option value="c" ${it.luz&&it.luz.t=='c'?'selected':''}>Lanterna (cone)</option><option value="l" ${it.luz&&it.luz.t=='l'?'selected':''}>Lampião (raio)</option></select></label><label>Alcance (m)<input name="luzm" type="number" step="1.5" min="0" value="${it.luz?it.luz.m:0}" style="width:70px"></label></div>
+<div class="row"><label>Dano (arma)<input name="dano" value="${esc(it.arma?it.arma.dano:'')}" placeholder="1d8" style="width:80px"></label><label>Crítico<input name="crit" value="${esc(it.arma?it.arma.crit:'')}" placeholder="x2" style="width:64px"></label><label>Teste<select name="per"><option>Luta</option><option ${it.arma&&it.arma.per=='Pontaria'?'selected':''}>Pontaria</option></select></label></div>
+<label>Descrição<input name="desc" value="${esc(it.desc||'')}"></label>
+<div class="row"><span class="sp"></span><button data-x class="fino">Cancelar</button><button class="prim" data-ok>Salvar</button></div>`);
+  o.querySelector('[data-ok]').onclick=async()=>{const g=k=>o.querySelector(`[name=${k}]`).value.trim();
+    const r={...it,n:g('n')||'Item',tipo:g('tipo'),catg:+g('catg'),esp:+g('esp')||0,desc:g('desc')};
+    if(r.tipo=='protecao'){r.sub=g('sub')||'leve';r.def=+g('def')||0}else{delete r.sub;delete r.def}
+    if(g('luzt')&&+g('luzm')>0)r.luz={t:g('luzt'),m:+g('luzm')};else delete r.luz;
+    if(r.tipo=='arma')r.arma={...(it.arma||{}),dano:g('dano'),crit:g('crit'),per:g('per')};else delete r.arma;
+    try{await ok(r);o.remove()}catch(e){toast('Erro: '+esc(e.message||e))}}}
+function escolherCatalogo(ok){
+  const L=CAT.filter(x=>x.aprovado&&x.tipo=='item').map(x=>({...x.dados,n:x.nome,ref:'cat:'+x.id})).concat(SIS.CATALOGO[C.sistema||'op']||[]);
+  const o=janela(`<h3>Catálogo</h3><input id="catq" placeholder="Buscar"><div class="catl">${L.map((it,i)=>`<button class="cat-i" data-k="${i}"><b>${esc(it.n)}</b><small>${esc(desc(it))}</small></button>`).join('')||'<p class="m">Catálogo vazio neste sistema: crie itens próprios.</p>'}</div><button data-x class="fino" style="align-self:flex-end">Fechar</button>`);
+  o.oninput=e=>{const q=e.target.value.toLowerCase();o.querySelectorAll('.cat-i').forEach((b,i)=>b.style.display=L[i].n.toLowerCase().includes(q)?'':'none')};
+  o.addEventListener('click',async e=>{const b=e.target.closest('.cat-i');if(!b)return;try{await ok(JSON.parse(JSON.stringify(L[+b.dataset.k])));o.remove()}catch(x){toast('Erro: '+esc(x.message||x))}})}
+function formLoja(l,ok){const o=janela(`<h3>${l?'Editar loja':'Nova loja'}</h3><label>Nome<input name="n" value="${esc(l?l.nome:'')}" placeholder="Ex.: Arsenal da Ordem"></label><label>Descrição<input name="d" value="${esc(l?l.descricao:'')}" placeholder="Opcional"></label><div class="row"><span class="sp"></span><button data-x class="fino">Cancelar</button><button class="prim" data-ok>Salvar</button></div>`);
+  o.querySelector('[data-ok]').onclick=async()=>{try{await ok(o.querySelector('[name=n]').value.trim()||'Loja',o.querySelector('[name=d]').value.trim());o.remove()}catch(e){toast('Erro: '+esc(e.message||e))}}}
+
+const chk=r=>{if(r.error)throw r.error;return r};
+async function recarregar(){await carregar();render()}
+document.addEventListener('click',async e=>{const b=e.target.closest('[data-a]');if(!b)return;const d=b.dataset,a=d.a;
+  try{
+    if(a=='comprar'){const i=ITENS.find(x=>x.id==d.i);if(!confirm(`Comprar ${i.item.n} por ${din(i.preco)}?`))return;b.disabled=true;
+      chk(await db.rpc('comprar',{p_item:i.id,p_ficha:FSEL,p_qtd:1}));toast(`${esc(i.item.n)} comprado! Já está no inventário.`);return recarregar()}
+    if(!mestre())return;
+    if(a=='mais'){const f=FICHAS.find(x=>x.id==d.f);chk(await db.from('personagens').update({dinheiro:Math.max(0,n0(f.dinheiro)+ +d.v)}).eq('id',f.id).select('id'));return recarregar()}
+    if(a=='novaLoja')return formLoja(null,async(n,ds)=>{chk(await db.from('lojas').insert({campanha_id:CID,nome:n,descricao:ds,ordem:LOJAS.length}).select('id'));await recarregar()});
+    if(a=='editLoja'){const l=LOJAS.find(x=>x.id==d.l);return formLoja(l,async(n,ds)=>{chk(await db.from('lojas').update({nome:n,descricao:ds}).eq('id',l.id).select('id'));await recarregar()})}
+    if(a=='delLoja'){if(!confirm('Excluir esta loja e seus itens?'))return;chk(await db.from('lojas').delete().eq('id',d.l).select('id'));return recarregar()}
+    if(a=='abrir'){const l=LOJAS.find(x=>x.id==d.l);chk(await db.from('lojas').update({aberta:!l.aberta}).eq('id',l.id).select('id'));toast(l.aberta?'Loja fechada.':'Loja aberta para os jogadores.');return recarregar()}
+    if(a=='itemCat')return escolherCatalogo(async it=>{chk(await db.from('loja_itens').insert({loja_id:d.l,item:it,preco:0,ordem:ITENS.length}).select('id'));await recarregar();toast('Item na loja. Defina o preço.')});
+    if(a=='itemNovo')return formItem(null,async it=>{chk(await db.from('loja_itens').insert({loja_id:d.l,item:it,preco:0,ordem:ITENS.length}).select('id'));await recarregar()});
+    if(a=='editItem'){const i=ITENS.find(x=>x.id==d.i);return formItem(i.item,async it=>{chk(await db.from('loja_itens').update({item:it}).eq('id',i.id).select('id'));await recarregar()})}
+    if(a=='delItem'){chk(await db.from('loja_itens').delete().eq('id',d.i).select('id'));return recarregar()}
+    if(a=='aprovar'){chk(await db.from('catalogo').update({aprovado:true}).eq('id',d.c).select('id'));toast('Aprovado: já aparece para todos.');return recarregar()}
+    if(a=='delCat'){if(!confirm('Remover do catálogo da campanha?'))return;chk(await db.from('catalogo').delete().eq('id',d.c).select('id'));return recarregar()}
+    if(a=='catItem')return formItem(null,async it=>{const{n,...dados}=it;chk(await db.from('catalogo').insert({campanha_id:CID,tipo:'item',nome:n,dados,aprovado:true,criado_por:ME.id}).select('id'));await recarregar()});
+  }catch(err){toast('Erro: '+esc(err.message||err));b.disabled=false}});
+document.addEventListener('change',async e=>{const t=e.target;
+  try{
+    if(t.id=='fsel'){FSEL=t.value;render();return}
+    if(t.dataset.din){chk(await db.from('personagens').update({dinheiro:Math.max(0,n0(t.value))}).eq('id',t.dataset.din).select('id'));toast('Dinheiro atualizado.');return recarregar()}
+    if(t.dataset.preco){chk(await db.from('loja_itens').update({preco:Math.max(0,n0(t.value))}).eq('id',t.dataset.preco).select('id'));return recarregar()}
+    if('est' in t.dataset){chk(await db.from('loja_itens').update({estoque:t.value===''?null:Math.max(0,Math.round(n0(t.value)))}).eq('id',t.dataset.est).select('id'));return recarregar()}
+  }catch(err){toast('Erro: '+esc(err.message||err))}});
+
+(async()=>{
+  try{
+    if(!CID){$('#app').innerHTML='<section class="card"><p>Abra a loja pela página da campanha.</p></section>';return}
+    const u=await Mesa.exigirLogin();ME={id:u.id};
+    const p=await db.from('profiles').select('id,nome');(p.data||[]).forEach(x=>NOMES[x.id]=x.nome);
+    await carregar();render();
+    /* tempo real: o mestre abre/fecha a loja e muda preços; todos veem na hora */
+    let rt;const de=()=>{clearTimeout(rt);rt=setTimeout(recarregar,400)};
+    db.channel('loja:'+CID).on('postgres_changes',{event:'*',schema:'public',table:'lojas',filter:'campanha_id=eq.'+CID},de).on('postgres_changes',{event:'*',schema:'public',table:'loja_itens'},de)
+      .on('postgres_changes',{event:'UPDATE',schema:'public',table:'personagens',filter:'campanha_id=eq.'+CID},de).subscribe();
+  }catch(e){$('#app').innerHTML=`<section class="card"><p>Não consegui abrir a loja: ${esc(e.message||e)}</p></section>`}
+})();
+</script></body></html>

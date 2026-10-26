@@ -9,7 +9,7 @@ Site: https://gabriellimakuiawinski-alt.github.io/Open-Rpg/ (GitHub Pages, branc
 | estrutura, cache, como gerar `mesa.html` | docs/arquitetura.md |
 | tabelas, permissões, SQL | docs/banco.md |
 | tabletop (mapa, tokens, fog, música, dados, caderno) | docs/mesa.md |
-| tela inicial e ficha | docs/inicio-ficha.md |
+| tela inicial, ficha, sistemas e loja | docs/inicio-ficha.md |
 | sons e trilha | docs/som.md |
 | testes | docs/testes.md |
 | o que falta / ideias | docs/pendencias.md |
@@ -35,4 +35,4 @@ Não dá para conferir o deploy do Pages daqui; avise o usuário para abrir em a
 Antes de publicar: `python3 tools/build/build.py` e rode os testes (docs/testes.md).
 
 ## Estado atual
-Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase `schema_etapa3b_musica.sql` e depois `schema_etapa4.sql`.
+Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase `schema_etapa3b_musica.sql`, depois `schema_etapa4.sql`, depois `schema_etapa5.sql`.

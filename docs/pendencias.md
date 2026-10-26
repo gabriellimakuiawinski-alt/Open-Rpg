@@ -1,11 +1,15 @@
 # Pendências e ideias
 
 ## Do usuário
-- Rodar `schema_etapa3b_musica.sql` e depois `schema_etapa4.sql` no Supabase (SQL Editor). Não confirmado.
+- Rodar `schema_etapa3b_musica.sql`, depois `schema_etapa4.sql`, depois `schema_etapa5.sql` no Supabase (SQL Editor). Não confirmado.
 - Testar com 2 contas/dispositivos: música, dados, PV/PE/SAN, caderno.
 
 ## Já publicado
 Visual dossiê, animações do mapa, ícones SVG, música e efeitos compartilhados, PV/PE/SAN sincronizados, rolagens compartilhadas/secretas, Documentos na ficha, caderno do jogador, exportações, sons e trilha na página inicial.
+
+## Etapa 5 (publicada)
+Sistema por campanha (Ordem Paranormal automática / Modular), loja e dinheiro, homebrews com efeito automático, luz do token pelo inventário.
+Próximos passos possíveis: rituais e poderes do livro no catálogo (no Supabase, não no repositório), origens/trilhas com efeitos prontos, munição gasta ao atacar, rolagens da ficha no log da mesa.
 
 ## Ideias (não feitas)
 - Rolagens da ficha no log da mesa; imagem do personagem compartilhada ficha↔token; abrir a ficha pelo token.

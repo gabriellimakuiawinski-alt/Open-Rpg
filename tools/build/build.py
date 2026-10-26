@@ -165,8 +165,25 @@ rep("else f.fill(P)})}\nif(S.fg.length){x.save();x.setTransform(1,0,0,1,0,0);x.g
 
 rep("S.q=COARSE||(navigator.hardwareConcurrency||4)<=4?'l':'n';", "S.q=COARSE||window.LEVE||(navigator.hardwareConcurrency||4)<=4?'l':'n';")
 
+# ---- etapa 5: luz do token pelo inventário da ficha (campanha de Ordem Paranormal) ----
+LB = """<div class=q><button data-k=lc class="${t.lo&&isCone(t)?'on':''}">🔦 Lanterna</button><button data-k=ll class="${t.lo&&!isCone(t)?'on':''}">🏮 Lampião</button></div>"""
+LC = """Luz: raio <input type=number data-f=lz value=${t.lz||0} min=0 step=.5 style="width:58px">q ${isCone(t)?`cone <input type=number data-f=la value=${t.la>0&&t.la<360?t.la:60} min=15 max=180 style="width:58px">°`:''}<br>"""
+rep(LB, "${luzBotoes(t)}")
+rep(LC, "${luzCampos(t)}")
+rep("function isCone(t){",
+    "/* Ordem Paranormal: token ligado a ficha usa a melhor luz do inventário (o banco também garante isso) */\n"
+    "let SISM;const luzAuto=t=>SISM=='op'&&!!t.pj&&PERS.has(t.pj),luzInvM=t=>window.SIS?SIS.luz({inv:(PERS.get(t.pj)||{}).inv||{items:[]}}):{c:0,l:0,cn:'',ln:''};\n"
+    "function luzInv(t,modo){return Math.round((luzInvM(t)[modo]||0)/(S.gm||1.5)*2)/2}\n"
+    "function luzBotoes(t){if(!luzAuto(t))return `" + LB + "`;const c=luzInv(t,'c'),l=luzInv(t,'l');\n"
+    " return `<div class=q><button data-k=lc class=\"${t.lo&&isCone(t)?'on':''}\" ${c||(t.lo&&isCone(t))?'':'disabled title=\"Sem lanterna no inventário\"'}>🔦 Lanterna</button><button data-k=ll class=\"${t.lo&&!isCone(t)?'on':''}\" ${l||(t.lo&&!isCone(t))?'':'disabled title=\"Sem lampião no inventário\"'}>🏮 Lampião</button></div>`}\n"
+    "function luzCampos(t){if(!luzAuto(t))return `" + LC + "`;const L=luzInvM(t),its=((PERS.get(t.pj)||{}).inv||{}).items||[],ver=GER||(PERS.get(t.pj)||{}).user_id===ME.id;\n"
+    " return `<span class=m>Luz pelo inventário:</span> 🔦 ${L.c?esc(L.cn)+' ('+L.c+' m)':'nenhuma'} · 🏮 ${L.l?esc(L.ln)+' ('+L.l+' m)':'nenhum'}<br>${t.lo&&isCone(t)?`cone <input type=number data-f=la value=${t.la>0&&t.la<360?t.la:60} min=15 max=180 style=\"width:58px\">°<br>`:''}${ver&&its.length?`<details class=inv><summary>🎒 Inventário (${its.length})</summary>${its.map(i=>`<div class=m>${esc(i.n||'Item')}${+i.qtd>1?' ×'+(+i.qtd):''}${i.eq?' ✓':''}</div>`).join('')}</details>`:''}`}\n"
+    "function isCone(t){")
+rep("else if(k=='lc'||k=='ll'){const m=k=='lc';if(sel.lo&&isCone(sel)==m)sel.lo=0;else{sel.lo=1;",
+    "else if(k=='lc'||k=='ll'){const m=k=='lc';if(sel.lo&&isCone(sel)==m)sel.lo=0;else if(luzAuto(sel)){const z=luzInv(sel,m?'c':'l');if(!z){toast(m?'Sem lanterna no inventário da ficha.':'Sem lampião no inventário da ficha.');return}sel.lo=1;sel.lm=m?'c':'l';sel.lz=z;if(m&&!(sel.la>0&&sel.la<360))sel.la=60}else{sel.lo=1;")
+rep("if(!sel.lz)sel.lz=m?10:6}}else if(k=='rl'", "if(!sel.lz)sel.lz=m?10:6}}else if(k=='rl'")
 FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet"><link rel="stylesheet" href="tema.css?v=9"><link rel="stylesheet" href="tema-mesa.css?v=9">'
 s=s.replace("</head>",FONTS+"</head>",1)
-s=s.replace("</body>",'<script src="mesa-fx.js?v=9"></script><script src="mesa-icones.js?v=9"></script><script src="mesa-musica.js?v=9"></script><script src="mesa-dados.js?v=9"></script><script src="mesa-notas.js?v=9"></script><script src="mesa-exportar.js?v=9"></script></body>',1)
+s=s.replace("</body>",'<script src="sistemas.js?v=1"></script><script src="mesa-fx.js?v=9"></script><script src="mesa-icones.js?v=9"></script><script src="mesa-musica.js?v=9"></script><script src="mesa-dados.js?v=9"></script><script src="mesa-notas.js?v=9"></script><script src="mesa-exportar.js?v=9"></script></body>',1)
 open(OUT, "w", encoding="utf-8").write(s)
 print("mesa.html gerado:", len(s), "bytes")

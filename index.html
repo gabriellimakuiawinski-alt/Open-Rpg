@@ -314,6 +314,7 @@ const $=s=>document.querySelector(s),
 esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),
 uuid=()=>crypto.randomUUID?crypto.randomUUID():'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g,c=>{const r=Math.random()*16|0;return(c=='x'?r:(r&3|8)).toString(16)}),
 PAPEL={mestre:'Mestre',admin:'Admin',jogador:'Jogador'},
+SISN={op:'Ordem Paranormal',modular:'Modular'},nomeSis=c=>SISN[c&&c.sistema]||(c&&'sistema' in c?'Ordem Paranormal':'Ordem Paranormal'),
 ini=s=>String(s||'?').trim().split(/\s+/).slice(0,2).map(w=>w[0]).join('').toUpperCase()||'?',
 plural=(n,a,b)=>n+' '+(n==1?a:b),
 atras=d=>{const s=(Date.now()-new Date(d))/1000;if(s<90)return'agora há pouco';const m=s/60;if(m<60)return'há '+Math.round(m)+' min';const h=m/60;if(h<24)return'há '+Math.round(h)+' h';const dd=Math.round(h/24);return dd==1?'ontem':dd<30?'há '+dd+' dias':'em '+new Date(d).toLocaleDateString('pt-BR')};
@@ -342,7 +343,7 @@ let ME=null,S={camps:[],cm:[],mesas:[],mb:[],fichas:[],nomes:{}},ARTE=null,aba='
 
 async function carregar(){
   const[c,cm,m,mb,f,p]=await Promise.all([
-    db.from('campanhas').select('id,nome,mestre_id,codigo,criado_em').order('criado_em'),
+    db.from('campanhas').select('*').order('criado_em'),
     db.from('campanha_membros').select('campanha_id,user_id,papel'),
     db.from('mesas').select('id,nome,campanha_id,mestre_id,codigo,cena_ativa,criado_em').order('criado_em'),
     db.from('membros').select('mesa_id,user_id,papel,ultimo_acesso').eq('user_id',ME.id),
@@ -454,7 +455,8 @@ function renderCamp(id){
   const A=[['fichas','Fichas',nf],['mesas','Mesas',nm],['grupo','Grupo',ng]];
   const corpo=aba=='mesas'?abaMesas(c,pp):aba=='grupo'?abaGrupo(c,pp):abaFichas(c,pp);
   return`${topo()}<a class="volta" href="#/">${IC.volta}Início</a>
-<div class="cab"><span class="etq">${esc(PAPEL[pp])}</span><h1>${esc(c.nome)}</h1><p>Você é ${esc(PAPEL[pp].toLowerCase())} · ${plural(ng,'pessoa','pessoas')}</p></div>
+<div class="cab"><span class="etq">${esc(PAPEL[pp])}</span><h1>${esc(c.nome)}</h1><p>Você é ${esc(PAPEL[pp].toLowerCase())} · ${plural(ng,'pessoa','pessoas')} · sistema <b>${esc(nomeSis(c))}</b></p>
+<div class="acoes" style="margin-top:10px"><a class="btn papel-b" href="loja.html?camp=${c.id}">🛒 ${pp=='mestre'?'Lojas e dinheiro':'Loja'}</a>${pp=='mestre'?`<button class="btn papel-b" data-a="sistema">Sistema e regras</button>`:''}</div></div>
 <div class="divisorias abas" role="tablist">${A.map(([k,n,q])=>`<button role="tab" class="${aba==k?'on':''}" aria-selected="${aba==k}" data-a="aba" data-t="${k}">${n}<small>${q}</small></button>`).join('')}</div>
 <div class="folha papel" id="corpo">${corpo}</div>`}
 
@@ -513,8 +515,10 @@ const minhasCampsMestre=()=>S.camps.filter(c=>meuPapel(c.id)=='mestre'),minhasCa
 
 async function novaCamp(){
   let novo=null;
-  await pedir({titulo:'Nova campanha',texto:'A campanha reúne o grupo e as fichas de todos. Você será o mestre.',campos:[{id:'nome',rot:'Nome da campanha',ph:'Ex.: Sombras de Ravenna'}],ok:'Criar campanha',carimbo:'Arquivada',validar:v=>v.nome?'':'Dê um nome à campanha.'},
-    async v=>{const id=uuid(),{error}=await db.from('campanhas').insert({id,nome:v.nome,mestre_id:ME.id});if(error)throw error;novo=id});
+  await pedir({titulo:'Nova campanha',texto:'A campanha reúne o grupo e as fichas de todos. Você será o mestre.',campos:[{id:'nome',rot:'Nome da campanha',ph:'Ex.: Sombras de Ravenna'},{id:'sistema',rot:'Sistema',val:'op',opcoes:[['op','Ordem Paranormal (ficha automática)'],['modular','Modular (ficha livre, tudo editável)']],ajuda:v=>v=='op'?'NEX, PV/PE/SAN, Defesa, carga e luz se calculam sozinhos.':'Você e os jogadores montam a ficha do jeito que quiserem.'}],ok:'Criar campanha',carimbo:'Arquivada',validar:v=>v.nome?'':'Dê um nome à campanha.'},
+    async v=>{const id=uuid();let{error}=await db.from('campanhas').insert({id,nome:v.nome,mestre_id:ME.id,sistema:v.sistema});
+      if(error&&/sistema|column/i.test(error.message||'')){({error}=await db.from('campanhas').insert({id,nome:v.nome,mestre_id:ME.id}));if(!error)setTimeout(()=>aviso('Para escolher o sistema, rode o <b>schema_etapa5.sql</b> no Supabase.'),900)}
+      if(error)throw error;novo=id});
   if(novo){await carregar();location.hash='#/c/'+novo;aba='fichas';desenhar();aviso('Campanha criada. Convide o grupo pelo código, na aba <b>Grupo</b>.')}}
 
 async function novaMesa(pref){
@@ -595,6 +599,16 @@ async function acao(a,d){
   if(a=='copiar'){try{await navigator.clipboard.writeText(d.c);aviso('Código copiado.')}catch(e){aviso('Código: <b>'+esc(d.c)+'</b>')}return}
   const c=campDe(cid());if(!c)return;
   if(a=='exportar')return exportarCamp(c);
+  if(a=='sistema'){if(!('sistema' in c)){aviso('Rode o <b>schema_etapa5.sql</b> no Supabase para escolher o sistema.');return}
+    const k=c.config||{},sn=[['1','Sim'],['0','Não']];
+    await pedir({titulo:'Sistema e regras',texto:'Trocar o sistema muda a ficha de todos nesta campanha. Nada é apagado: dá para voltar.',campos:[
+      {id:'sistema',rot:'Sistema',val:c.sistema||'op',opcoes:[['op','Ordem Paranormal (ficha automática)'],['modular','Modular (ficha livre)']]},
+      {id:'moeda',rot:'Símbolo do dinheiro',val:k.moeda||'R$',ph:'R$'},
+      {id:'determinacao',rot:'Regra de Determinação (PD no lugar de PE e SAN)',val:k.determinacao?'1':'0',opcoes:sn},
+      {id:'catalogoLivre',rot:'Jogadores pegam itens do catálogo sozinhos',val:k.catalogoLivre===false?'0':'1',opcoes:[['1','Sim'],['0','Não (só pela loja ou pelo mestre)']]}],ok:'Salvar',carimbo:'Atualizada'},
+      async v=>{const config={...k,moeda:v.moeda||'R$',determinacao:v.determinacao=='1',catalogoLivre:v.catalogoLivre=='1'};
+        const{data,error}=await db.from('campanhas').update({sistema:v.sistema,config}).eq('id',c.id).select('id');if(error)throw error;if(!data.length)throw new Error('Sem permissão.')});
+    await carregar();desenhar();return}
   if(a=='renomear'){await pedir({titulo:'Renomear campanha',campos:[{id:'nome',rot:'Novo nome',val:c.nome}],ok:'Salvar',carimbo:'Atualizada',validar:v=>v.nome?'':'O nome não pode ficar vazio.'},
       async v=>{const{data,error}=await db.from('campanhas').update({nome:v.nome}).eq('id',c.id).select('id');if(error)throw error;if(!data.length)throw new Error('Sem permissão.')});await carregar();desenhar()}
   else if(a=='remover'){await pedir({titulo:'Remover '+d.n+'?',texto:'A pessoa sai da campanha e das mesas dela. As fichas continuam com ela, mas deixam de aparecer aqui.',ok:'Remover',perigo:true},

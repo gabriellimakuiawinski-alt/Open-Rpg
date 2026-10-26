@@ -9,6 +9,7 @@ with sync_playwright() as p:
     pgx.admin(f"update public.cenas set escuro=true,escuridao=.9,versao=coalesce(versao,0)+1 where id='{CA}'");emit(pj,'cenas','UPDATE',CA);emit(pm,'cenas','UPDATE',CA);pj.wait_for_timeout(600)
     chk("jogador recebe cena escura em tempo real",pj.evaluate("S.nt")==1)
     chk("mestre recebe cena escura em tempo real",pm.evaluate("S.nt")==1)
+    pgx.admin(f"update public.personagens set dados=jsonb_set(dados,'{{inv}}','{{\"items\":[{{\"n\":\"Lampião\",\"luz\":{{\"t\":\"l\",\"m\":6}},\"qtd\":1}}]}}') where id='{d['fJ']}'")  # luz vem do inventário (Ordem Paranormal)
     pgx.admin(f"update public.tokens set dados=dados||'{{\"lo\":1,\"lz\":4}}'::jsonb where id='{d['tHeroi']}'");emit(pj,'tokens','UPDATE',d['tHeroi']);emit(pm,'tokens','UPDATE',d['tHeroi']);pj.wait_for_timeout(600)
     chk("luz do token chega ao jogador",pj.evaluate("lightsData().length")==1)
     chk("luz do token chega ao mestre",pm.evaluate("lightsData().length")==1)

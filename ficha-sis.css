@@ -1,0 +1,87 @@
+/* ficha-sis.css — peças novas da ficha e decoração por sistema
+   body.sis-op      : Ordem Paranormal (arquivo de agente, sigilo, selos)
+   body.sis-modular : Modular (caderno quadriculado, tinta azul) */
+
+/* ---------- peças comuns ---------- */
+.mini{background:var(--papel3);color:var(--tinta);border-radius:4px;padding:7px 11px;font:400 13px var(--maq);box-shadow:0 2px 0 #8c8167}
+.mini:hover{background:var(--pasta)}.mini.fino{background:transparent;box-shadow:none;text-decoration:underline dashed;text-underline-offset:4px}
+.alerta{margin:8px 0 0;padding:8px 10px;border-left:4px solid var(--carimbo);background:#b3261e14;color:var(--carimbo);font:400 14px/1.35 var(--maq)}
+.mini-l{font-size:13px;margin:0 0 8px}
+.g3{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:4px 12px}
+.g2b{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:0 8px}
+.carteira{display:flex;align-items:center;gap:10px;flex-wrap:wrap;margin-top:10px;font:400 16px var(--maq)}
+.carteira b{font:700 22px var(--mao);color:var(--ok)}
+.loja-l{color:var(--tinta)!important;background:var(--fita);border-radius:4px;text-decoration:none!important;box-shadow:0 3px 0 #8c7a2a}
+#md .mb .catl{display:flex;flex-direction:column;gap:6px;max-height:55vh;overflow:auto}
+.cat-i{display:flex;flex-direction:column;align-items:flex-start;text-align:left;background:var(--papel);border:1px solid #7a705d44;border-radius:4px;padding:8px 10px;color:var(--tinta)}
+.cat-i b{font:700 19px var(--mao)}.cat-i small{font:400 12px var(--maq);color:var(--tinta2)}
+#catq{margin-bottom:4px}
+details.mec,details.ajuste{margin:4px 0;font:400 13px var(--maq);color:var(--tinta2)}
+details.mec summary,details.ajuste summary{cursor:pointer;padding:4px 0}
+.ef{display:flex;gap:6px;align-items:center;margin:4px 0}.ef select{flex:1}.ef input[type=number]{width:62px}
+.tags{display:flex;gap:6px;flex-wrap:wrap}.tags span{font:400 12px var(--maq);background:var(--papel3);color:var(--tinta);padding:3px 8px;border-radius:3px}
+.op-it.eq{border-color:var(--ok);box-shadow:inset 4px 0 0 var(--ok)}
+.eqb{flex:none;font:400 13px var(--maq);border:2px solid var(--ok);color:var(--ok);padding:6px 10px}.eqb.on{background:var(--ok);color:var(--papel2)}
+.op-po.off{opacity:.55}.usar{background:#2b4a94;color:var(--papel2);font:400 13px var(--maq);box-shadow:0 3px 0 #18295a}.usar:active{box-shadow:none}
+.op-po.t-ritual{border-left:5px solid #7b2d8e}.op-po.t-homebrew{border-left:5px solid var(--fita);background-image:linear-gradient(135deg,#dcc66a22 0 12px,transparent 12px)}
+.op-po.t-trilha{border-left:5px solid #2b4a94}.op-po.t-classe{border-left:5px solid var(--carimbo)}
+.b5{width:46px!important;font-size:14px!important}
+
+/* avisos de NEX */
+.aviso-nex{background-color:#f2df7c!important;border:2px dashed #8c7a2a;animation:nex-in .6s var(--mola)}
+@keyframes nex-in{from{transform:scale(.96) rotate(-1deg);opacity:0}}
+.av-l{padding:8px 0;border-bottom:1px dashed #0002}.av-l:last-of-type{border:0}
+.av-t{font:400 15px var(--maq);color:var(--tinta);margin-bottom:6px}.av-t b{color:var(--carimbo)}
+.av-b{display:flex;gap:6px;flex-wrap:wrap}
+
+/* selos (Defesa, deslocamento...) */
+.selos{display:flex;gap:10px;flex-wrap:wrap;align-items:stretch;margin:6px 0 12px}
+.selo{min-width:84px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:8px;border:2px solid var(--tinta);border-radius:6px;background:var(--papel2);transform:rotate(-1deg)}
+.selo:nth-child(odd){transform:rotate(1deg)}.selo b{font:400 30px/1 var(--maq);color:var(--tinta)}.selo small{font:400 11px var(--maq);letter-spacing:.08em;text-transform:uppercase;color:var(--tinta2);text-align:center}
+.selo.larga{flex:2;min-width:150px}.selo.larga b{font-size:20px}
+.selo-nex{width:96px;flex:none}
+.anel{width:96px;height:96px;display:block}.anel .a0{fill:none;stroke:#0002;stroke-width:8}.anel .a1{fill:none;stroke:var(--carimbo);stroke-width:8;stroke-linecap:round;transition:stroke-dasharray .8s var(--ease)}
+.anel .at1{font:400 22px var(--maq);fill:var(--tinta)}.anel .at2{font:400 10px var(--maq);fill:var(--tinta2);letter-spacing:.12em}
+
+/* atributos em pentágono */
+.penta{position:relative;width:min(330px,88vw);aspect-ratio:1;margin:6px auto 0}
+.penta svg{position:absolute;inset:0;width:100%;height:100%}.penta svg *{fill:none;stroke:#1f1b1640;stroke-width:.8}
+.pn{position:absolute;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:0;width:86px;height:86px;border-radius:50%;background:var(--papel2);border:3px solid var(--tinta);box-shadow:0 6px 10px -6px #000a;justify-content:center}
+.pn span{font:400 13px var(--maq);letter-spacing:.1em;color:var(--tinta2)}
+.pn input.big{width:56px;height:40px;font:700 34px/1 var(--mao);text-align:center;border:0;padding:0;color:var(--caneta)}
+
+/* combate */
+.defesa{display:flex;gap:16px;align-items:center;flex-wrap:wrap}
+.escudo-d{width:110px;height:124px;flex:none;display:flex;flex-direction:column;align-items:center;justify-content:center;background:var(--tinta);color:var(--papel2);clip-path:polygon(50% 0,100% 14%,96% 62%,50% 100%,4% 62%,0 14%)}
+.escudo-d b{font:400 46px/1 var(--maq)}.escudo-d small{font:400 11px var(--maq);letter-spacing:.14em;text-transform:uppercase}
+.det{list-style:none;margin:0;padding:0;flex:1;min-width:160px}.det li{display:flex;justify-content:space-between;border-bottom:1px dashed #0002;padding:4px 0;font:400 15px var(--maq)}
+.arma{display:flex;align-items:center;gap:8px;padding:8px 0;border-bottom:1px dashed #0002}.ar-n{flex:1;display:flex;flex-direction:column}.ar-n b{font:700 21px var(--mao)}.ar-n small{font:400 12px var(--maq);color:var(--tinta2)}
+.res{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.btn-res{display:flex;flex-direction:column;align-items:center;background:var(--papel2);border:2px solid var(--tinta);color:var(--tinta);padding:10px 4px}
+.btn-res b{font:400 15px var(--maq)}.btn-res small{font:400 12px var(--maq);color:var(--carimbo)}
+
+/* ---------- Ordem Paranormal: arquivo de agente ---------- */
+body.sis-op .card{position:relative}
+body.sis-op .dossie{overflow:hidden;background-image:linear-gradient(90deg,transparent 0 calc(100% - 26px),#b3261e18 calc(100% - 26px)),var(--grao)}
+body.sis-op .sigilo{position:absolute;right:-40px;top:-30px;width:230px;height:230px;opacity:.09;pointer-events:none}
+body.sis-op .sigilo *{fill:none;stroke:#5b0e0e;stroke-width:2.5}
+body.sis-op .carimbo-op{position:absolute;right:14px;top:12px;font:400 12px var(--maq);letter-spacing:.2em;text-transform:uppercase;color:var(--carimbo);border:2px solid currentColor;padding:4px 8px 3px;transform:rotate(4deg);opacity:.85}
+body.sis-op #tabs button.on{background:var(--papel);box-shadow:inset 0 3px 0 var(--carimbo)}
+body.sis-op .op-st .bar{height:18px;border-radius:2px}
+body.sis-op .st-pv .bar i{box-shadow:0 0 12px #ee444466}body.sis-op .st-pe .bar i{box-shadow:0 0 12px #b980ff66}body.sis-op .st-san .bar i{box-shadow:0 0 12px #44aaff66}
+body.sis-op .op-st .sth .k{font:400 20px var(--maq);width:auto!important}
+body.sis-op header{border-bottom-color:#b3261e66}
+body.sis-op main::before{content:"";position:fixed;inset:0;pointer-events:none;z-index:-1;background:radial-gradient(ellipse at 80% 0,#5b0e0e33,transparent 60%)}
+
+/* ---------- Modular: caderno quadriculado ---------- */
+body.sis-modular .card{background-image:linear-gradient(#2b4a9414 1px,transparent 1px),linear-gradient(90deg,#2b4a9414 1px,transparent 1px);background-size:22px 22px;border-left:6px double #2b4a9433}
+body.sis-modular h2{color:#2b4a94}
+body.sis-modular .modular-cab{position:relative}
+body.sis-modular .carimbo-mod{position:absolute;right:14px;top:12px;font:400 12px var(--maq);letter-spacing:.2em;text-transform:uppercase;color:#2b4a94;border:2px dashed currentColor;padding:4px 8px 3px;transform:rotate(-3deg)}
+body.sis-modular #tabs button.on{box-shadow:inset 0 3px 0 #2b4a94}
+body.carimbo-mod,.carimbo-mod{display:none}body.sis-modular .carimbo-mod{display:block}
+
+@media(max-width:600px){.selo{min-width:70px}.selo b{font-size:24px}.pn{width:72px;height:72px}.pn input.big{font-size:28px}.escudo-d{width:92px;height:104px}.escudo-d b{font-size:38px}}
+@media(prefers-reduced-motion:reduce){.aviso-nex{animation:none}}
+.op-it .itr,.op-po .itr{flex-wrap:wrap}.op-it .itr .in,.op-po .itr .in{flex:1 1 160px}
+.op-it label.sm select{width:auto;min-width:64px}.op-it label.sm input[type=number]{width:58px}
+#app>.add{color:var(--papel2);border-color:#f3ecd866;background:#ffffff0d}#app>.add:hover{background:#ffffff1a}
