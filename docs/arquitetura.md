@@ -10,6 +10,9 @@ Páginas estáticas, sem framework, sem build para o resto (só `mesa.html` é g
 - `tema.css` — tokens e classes do visual "dossiê" (`--tabua --papel --pasta --tinta --carimbo --fita`, fontes Special Elite / Caveat / Hanken Grotesk). `tema-mesa.css` — tema do tabletop.
 - `som.js` — ver docs/som.md.
 - Módulos do tabletop: `mesa-fx.js mesa-icones.js mesa-musica.js mesa-dados.js mesa-notas.js mesa-exportar.js` (ver docs/mesa.md).
+- `sistemas.js` — `window.SIS`: sistemas (op/modular), regras de Ordem Paranormal (`derivar`, `aplicar`, `luz`, `marcos`), catálogo base (só números), dados. Usado por ficha, loja e mesa.
+- `ficha-op.js` — telas e ações da ficha de Ordem Paranormal (`window.OP`). `ficha-sis.css` — peças novas e decoração por sistema (`body.sis-op` / `body.sis-modular`).
+- `loja.html` — lojas e dinheiro (`?camp=<id>&ficha=<id>`): mestre gerencia, jogador compra via RPC `comprar`.
 - `schema*.sql` — banco (docs/banco.md).
 - `tools/` — gerador e testes (docs/testes.md).
 

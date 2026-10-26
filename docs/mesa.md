@@ -13,6 +13,9 @@ Mapa com cenas, tokens, fog/escuridão, paredes e luzes, biblioteca de arquivos,
 ## Sincronização PV/PE/SAN
 Token ↔ ficha por triggers no banco (`dados` do token ↔ `stats` da ficha). Barras no token: `hp/pv`, `mn/mm` (PE), `sn/sm` (SAN), `lo/lz` (luz).
 
+## Luz pelo inventário (campanha Ordem Paranormal)
+Token ligado a ficha: botões Lanterna/Lampião só ligam se a ficha tem item com `luz` do tipo; alcance = melhor item (`luzInv`, metros ÷ `S.gm`). Sem campo de alcance para ninguém nesse caso. O banco garante (`token_luz_auto`). Menu mostra o inventário (mestre e dono). `SISM` = sistema da campanha; `PERS` traz `inv`; `rtPers` atualiza ao vivo.
+
 ## Fog e luz
 Escuro/escuridão/névoa por cena; `lightsData` gera luz dos tokens; `cena_visivel` decide o que o jogador recebe. Testado para mestre e jogador (`tools/tests/e/fog.py`).
 

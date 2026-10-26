@@ -1,0 +1,96 @@
+# Etapa 5: ficha de Ordem Paranormal automática, ficha Modular, loja/dinheiro e luz do token pelo inventário
+from lib2 import *
+import lib
+d=seed()
+P='/tmp/open-rpg-shots/'
+with sync_playwright() as p:
+    b=p.chromium.launch()
+    # ---------- ficha OP ----------
+    pg=abre_pg(b,'J','ficha.html?id='+d['fJ']);pg.wait_for_timeout(2000);ev=pg.evaluate
+    chk("ficha da campanha abre como Ordem Paranormal",ev("document.body.classList.contains('sis-op')"))
+    chk("abas da ficha OP",ev("[...document.querySelectorAll('#tabs button')].map(b=>b.textContent).join()")=='Agente,Combate,Perícias,Inventário,Habilidades,Documentos')
+    vig=pg.locator('.pn input').nth(4);vig.fill('3');vig.blur();pg.wait_for_timeout(300)
+    chk("VIG 3 → PV 23 (combatente NEX 5%)",ev("curF().stats[0].max")==23,ev("curF().stats[0].max"))
+    pg.select_option('select[data-p="op.nex"]','20');pg.wait_for_timeout(400)
+    chk("NEX 20% → PV 44 e atual sobe junto",ev("[curF().stats[0].max,curF().stats[0].cur].join()")=='44,44',ev("[curF().stats[0].max,curF().stats[0].cur].join()"))
+    chk("NEX 20% → PE 12, SAN 21",ev("[curF().stats[1].max,curF().stats[2].max].join()")=='12,21')
+    chk("avisos de trilha, poder e atributo",ev("curF().op.avisos.map(a=>a.k).join()")=='trilha,poder,atr',ev("curF().op.avisos.map(a=>a.k).join()"))
+    pg.locator('[data-act="op-atr"][data-at="agi"]').first.click();pg.wait_for_timeout(300)
+    chk("aumento de atributo aplicado e aviso some",ev("curF().attrs.find(a=>a.id=='agi').v")==2 and len(ev("curF().op.avisos"))==2)
+    pg.click('[data-tab=i]');pg.click('[data-act="op-cat"]');pg.fill('#catq','Proteção leve');pg.locator('.cat-i:visible').first.click();pg.wait_for_timeout(200)
+    pg.locator('[data-act="op-eq"]').first.click();pg.wait_for_timeout(300)
+    chk("equipar proteção leve: Defesa 12 → 17",ev("OP.calc(curF()).D.def")==17,ev("OP.calc(curF()).D.def"))
+    chk("aviso da Defesa na tela",'17' in pg.locator('#toast').inner_text())
+    pg.locator('[data-act="op-eq"]').first.click();pg.wait_for_timeout(200)
+    chk("desequipar volta a Defesa",ev("OP.calc(curF()).D.def")==12)
+    chk("jogador não edita regras do item (só o mestre)",pg.locator('details.mec').count()==0)
+    pg.click('[data-tab=h]');pg.click('[data-act="op-nova"][data-t="homebrew"]');pg.wait_for_timeout(200)
+    pg.locator('.op-po input.in').last.fill('Pele Grossa');pg.locator('[data-act="op-ef+"]').last.click();pg.wait_for_timeout(200)
+    pg.locator('.op-po .ef select').last.select_option('def');pg.locator('.op-po .ef input[type=number]').last.fill('2');pg.locator('.op-po .ef input[type=number]').last.blur();pg.wait_for_timeout(300)
+    chk("homebrew com efeito +2 Defesa soma sozinho",ev("OP.calc(curF()).D.def")==14,ev("OP.calc(curF()).D.def"))
+    pg.locator('[data-act="op-share"]').last.click();pg.wait_for_timeout(600)
+    chk("homebrew enviado para a campanha (pendente)",q(f"select count(*) from public.catalogo where nome='Pele Grossa' and not aprovado")==1)
+    pg.wait_for_timeout(1000)
+    chk("ficha OP salva no banco",q(f"select (dados->'op'->>'nex')::int from public.personagens where id='{d['fJ']}'")==20)
+    pg.click('[data-tab=n]');pg.wait_for_timeout(200)
+    chk("OP: aba Documentos com documentos e notas",pg.locator('h2:has-text("Documentos")').count()==1 and pg.locator('[data-p=notas]').count()==1)
+    pg.screenshot(path=P+'t15_ficha.png',full_page=True)
+    chk("sem erros (ficha)",not pg.errs,pg.errs);pg.ctx.close()
+
+    # ---------- loja: mestre ----------
+    pgx.admin(f"update public.campanhas set config='{{\"moeda\":\"$\"}}' where id='{ids(9,1)}'")
+    pg=abre_pg(b,'M','loja.html?camp='+ids(9,1));pg.wait_for_timeout(1800);ev=pg.evaluate
+    chk("mestre vê painel de dinheiro",pg.locator('[data-din]').count()>=1)
+    pg.click('[data-a=novaLoja]');pg.fill('#md [name=n]','Arsenal');pg.click('#md [data-ok]');pg.wait_for_timeout(700)
+    pg.click('[data-a=itemCat]');pg.fill('#catq','Lanterna tática');pg.locator('#md .cat-i:visible').first.click();pg.wait_for_timeout(700)
+    pg.locator('[data-preco]').first.fill('30');pg.locator('[data-preco]').first.blur();pg.wait_for_timeout(700)
+    pg.click('[data-a=abrir]');pg.wait_for_timeout(700)
+    pg.locator(f'[data-din="{d["fJ"]}"]').fill('100');pg.locator(f'[data-din="{d["fJ"]}"]').blur();pg.wait_for_timeout(700)
+    chk("mestre deu dinheiro",q(f"select dinheiro::int from public.personagens where id='{d['fJ']}'")==100)
+    chk("loja criada e aberta com item de 30",q("select coalesce((select jsonb_build_object('a',l.aberta,'p',i.preco::int) from public.lojas l join public.loja_itens i on i.loja_id=l.id limit 1),'{}'::jsonb)")=={'a':True,'p':30},q("select jsonb_build_object('l',(select jsonb_agg(to_jsonb(l)) from public.lojas l),'i',(select jsonb_agg(to_jsonb(i)) from public.loja_itens i))"))
+    chk("homebrew pendente aparece para aprovar",pg.locator('[data-a=aprovar]').count()==1)
+    pg.click('[data-a=aprovar]');pg.wait_for_timeout(600)
+    chk("mestre aprovou o homebrew",q("select to_jsonb(bool_and(aprovado)) from public.catalogo")==True)
+    pg.screenshot(path=P+'t15_loja_mestre.png',full_page=True)
+    chk("sem erros (loja mestre)",not pg.errs,pg.errs);pg.ctx.close()
+
+    # ---------- loja: jogador compra ----------
+    pg=abre_pg(b,'J','loja.html?camp='+ids(9,1)+'&ficha='+d['fJ']);pg.wait_for_timeout(1800)
+    chk("jogador vê saldo",'$ 100' in pg.locator('.saldo').inner_text(),pg.locator('.saldo').inner_text())
+    pg.click('[data-a=comprar]');pg.wait_for_timeout(1200)
+    chk("compra: dinheiro 70 e lanterna no inventário",q(f"select jsonb_build_object('d',dinheiro::int,'n',(select count(*) from jsonb_array_elements(dados->'inv'->'items') x where x->>'n'='Lanterna tática')) from public.personagens where id='{d['fJ']}'")=={'d':70,'n':1})
+    pg.screenshot(path=P+'t15_loja_jog.png',full_page=True)
+    chk("sem erros (loja jogador)",not pg.errs,pg.errs);pg.ctx.close()
+
+    # ---------- mesa: luz pelo inventário ----------
+    pgx.admin(f"update public.mesas set cena_ativa='{d['cA']}' where id='{d['m']}'")
+    mp=lib.abre(b,'J',d);ev=mp.evaluate
+    chk("mesa sabe que a campanha é OP",ev("SISM")=='op')
+    ev(f"sel=S.tok.find(t=>t.id=='{d['tHeroi']}');tmOpen=true;ui()");mp.wait_for_timeout(300)
+    chk("menu mostra luz pelo inventário e esconde o alcance",mp.locator('#tm [data-f=lz]').count()==0 and 'Lanterna tática' in mp.locator('#tm').inner_text())
+    mp.click('#tm [data-k=lc]');mp.wait_for_timeout(1500)
+    chk("ligar lanterna usa 12 quadrados da lanterna tática",ev(f"(t=>[t.lo,t.lz].join())(S.tok.find(t=>t.id=='{d['tHeroi']}'))")=='1,12',ev(f"(t=>[t.lo,t.lz].join())(S.tok.find(t=>t.id=='{d['tHeroi']}'))"))
+    chk("banco confirma a luz",q(f"select (dados->>'lz')::numeric from public.tokens where id='{d['tHeroi']}'")==12)
+    chk("lampião bloqueado sem lampião no inventário",mp.locator('#tm [data-k=ll]').is_disabled())
+    mp.screenshot(path=P+'t15_mesa.png')
+    chk("sem erros (mesa)",not [e for e in mp.errs if 'TUNNEL' not in e],mp.errs)
+
+    # ---------- início: criar campanha Modular e trocar sistema ----------
+    pg=abre_pg(b,'X','index.html',sess=True);pg.wait_for_timeout(1500)
+    pg.click('.tile:has-text("Criar campanha")');pg.fill('#jan input[name=nome]','Livre');pg.select_option('#jan select[name=sistema]','modular');pg.click('#jan button[type=submit]');pg.wait_for_selector('.cab h1',timeout=6000)
+    chk("campanha criada como Modular",q("select to_jsonb(sistema) from public.campanhas where nome='Livre'")=='modular')
+    chk("página da campanha mostra o sistema",'Modular' in pg.inner_text('.cab'))
+    pg.click('[data-a=sistema]');pg.select_option('#jan select[name=sistema]','op');pg.fill('#jan input[name=moeda]','PO');pg.select_option('#jan select[name=determinacao]','1');pg.click('#jan button[type=submit]');pg.wait_for_timeout(1500)
+    chk("mestre troca para OP com Determinação",q("select jsonb_build_object('s',sistema,'m',config->>'moeda','d',config->'determinacao') from public.campanhas where nome='Livre'")=={'s':'op','m':'PO','d':True})
+    cid=q("select to_jsonb(id) from public.campanhas where nome='Livre'")
+    chk("sem erros (início)",not pg.errs,pg.errs);pg.ctx.close()
+    pg=abre_pg(b,'X','ficha.html?nova=1&camp='+cid);pg.wait_for_timeout(2000);ev=pg.evaluate
+    chk("Determinação: barra PD no lugar de PE e SAN",ev("[...document.querySelectorAll('.op-st .k')].map(e=>e.textContent).join()")=='PV,PD',ev("[...document.querySelectorAll('.op-st .k')].map(e=>e.textContent).join()"))
+    pgx.admin(f"update public.campanhas set sistema='modular' where id='{cid}'");pg.reload();pg.wait_for_timeout(2000)
+    chk("ficha Modular: visual próprio e campos livres",ev("document.body.classList.contains('sis-modular')") and pg.locator('[data-act=add][data-l=info]').count()==1)
+    pg.click('[data-tab=n]');pg.click('[data-act=add][data-l=secoes]');pg.wait_for_timeout(300);pg.fill('[data-p="secoes.0.t"]','Contatos');pg.wait_for_timeout(1200)
+    chk("Modular: seção livre criada e salva",q(f"select dados->'secoes'->0->>'t' from public.personagens where campanha_id='{cid}' limit 1")=='Contatos' if False else q(f"select to_jsonb(dados->'secoes'->0->>'t') from public.personagens where campanha_id='{cid}' limit 1")=='Contatos')
+    pg.screenshot(path=P+'t15_modular.png',full_page=True)
+    chk("sem erros (modular)",not pg.errs,pg.errs);pg.ctx.close()
+    b.close()
+report()

@@ -82,7 +82,8 @@ function snapLast(){LAST.s.clear();LAST.m.clear();LAST.t.clear();LAST.f.clear();
 
 /* ---------- carregar dados da mesa ---------- */
 async function carregarTudo(keep){
- const[c,pa,pe]=await Promise.all([sb.from('cenas').select('*').eq('mesa_id',MESA.id).order('ordem').order('criado_em'),sb.from('pastas').select('*').eq('mesa_id',MESA.id),(MESA.campanha_id?sb.from('personagens').select('id,user_id,nome,npc,privada').eq('campanha_id',MESA.campanha_id):Promise.resolve({data:[]}))]);
+ if(MESA.campanha_id&&SISM===undefined){try{const q=await sb.from('campanhas').select('*').eq('id',MESA.campanha_id);SISM=(q.data&&q.data[0]&&q.data[0].sistema)||null}catch(e){SISM=null}}
+ const[c,pa,pe]=await Promise.all([sb.from('cenas').select('*').eq('mesa_id',MESA.id).order('ordem').order('criado_em'),sb.from('pastas').select('*').eq('mesa_id',MESA.id),(MESA.campanha_id?sb.from('personagens').select('id,user_id,nome,npc,privada,inv:dados->inv').eq('campanha_id',MESA.campanha_id):Promise.resolve({data:[]}))]);
  if(c.error)throw c.error;
  PERS=new Map((pe.data||[]).map(p=>[p.id,p]));
  const ids=c.data.map(x=>x.id);let mp={data:[]},tk={data:[]};
@@ -179,6 +180,8 @@ function rtMesa(p){const n=p.new,antes=MESA.cena_ativa,mov=MESA.jogadores_movem,
  if(!GER&&n.jogadores_movem!==mov)toast(n.jogadores_movem?'O mestre liberou o movimento.':'O mestre travou o movimento dos jogadores.');
  if(!GER&&n.jogadores_adicionam!==add)toast(n.jogadores_adicionam?'Agora você pode enviar imagens.':'O mestre bloqueou o envio de imagens.');
  nuvemPanel();dockQ();ui()}
+/* ficha mudou (inventário): atualiza a luz disponível no menu do token */
+function rtPers(p){const r=p.new;if(!r||!r.id)return;const o=PERS.get(r.id);if(!o)return;if(r.dados&&r.dados.inv)o.inv=r.dados.inv;if(r.nome!==undefined)o.nome=r.nome;if(sel&&sel.pj==r.id&&semFoco())ui()}
 function rtMemb(p){const r=p.new||p.old;if(!r||r.user_id!==ME.id)return;
  if(p.eventType=='DELETE'){alert('Você não faz mais parte desta mesa.');localStorage.removeItem('mesa_atual');location.href='ficha.html';return}
  if(p.new&&p.new.papel!==ROLE){toast('Seu papel mudou para '+p.new.papel+'. Recarregando…');setTimeout(()=>location.reload(),900)}}
@@ -188,7 +191,7 @@ async function rtArq(p){if(p.eventType=='DELETE'){LIB.delete(p.old.id);dockQ();d
 function ouvir(){if(!sb.channel)return;const T=(table,extra)=>({event:'*',schema:'public',table,...(extra||{})});
  (window.CHM=sb.channel('mesa:'+MESA.id)).on('broadcast',{event:'musica'},p=>{try{window.MusicaSync&&MusicaSync.rx(p.payload)}catch(e){}}).on('broadcast',{event:'dado'},p=>{try{window.DadoRx&&DadoRx(p.payload)}catch(e){}}).on('postgres_changes',T('tokens'),rtTok).on('postgres_changes',T('cenas',{filter:'mesa_id=eq.'+MESA.id}),rtCena).on('postgres_changes',T('mapas_cena'),rtMapa)
  .on('postgres_changes',{event:'UPDATE',schema:'public',table:'mesas',filter:'id=eq.'+MESA.id},rtMesa).on('postgres_changes',T('membros',{filter:'mesa_id=eq.'+MESA.id}),rtMemb)
- .on('postgres_changes',T('arquivos',{filter:'mesa_id=eq.'+MESA.id}),rtArq).subscribe(st=>{if(st=='SUBSCRIBED'){try{window.MusicaSync&&MusicaSync.conectou()}catch(e){}if(ouvir.ok)resync();ouvir.ok=1}else if(st=='CHANNEL_ERROR'||st=='TIMED_OUT')cs('⚠ tempo real caiu',1)})}
+ .on('postgres_changes',T('arquivos',{filter:'mesa_id=eq.'+MESA.id}),rtArq);if(MESA.campanha_id)window.CHM.on('postgres_changes',{event:'UPDATE',schema:'public',table:'personagens',filter:'campanha_id=eq.'+MESA.campanha_id},rtPers);window.CHM.subscribe(st=>{if(st=='SUBSCRIBED'){try{window.MusicaSync&&MusicaSync.conectou()}catch(e){}if(ouvir.ok)resync();ouvir.ok=1}else if(st=='CHANNEL_ERROR'||st=='TIMED_OUT')cs('⚠ tempo real caiu',1)})}
 
 /* ---------- painel da sala e escolha da mesa ---------- */
 function nuvemPanel(){const el=document.getElementById('pl');if(!el||!MESA)return;const a=scene(MESA.cena_ativa),pap={mestre:'GM',admin:'ADM',jogador:'JOG'}[ROLE];

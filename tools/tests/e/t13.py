@@ -1,6 +1,7 @@
 from lib2 import *
 import json,base64
 d=seed(); C=ids(9,1)
+pgx.admin(f"update public.campanhas set sistema='modular' where id='{C}'")  # layout clássico (Documentos dentro do Inventário)
 PNG=base64.b64decode("iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAADUlEQVR42mP8z8BQDwAEhQGAhKmMIQAAAABJRU5ErkJggg==")
 open('/tmp/doc.png','wb').write(PNG)
 def espera(pg): pg.wait_for_function("document.getElementById('st')&&/conectado|salvo/.test(document.getElementById('st').textContent)",timeout=9000); pg.wait_for_selector('#app .card',timeout=9000)
