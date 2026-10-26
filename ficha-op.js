@@ -212,18 +212,62 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   function setTab(t) { const b = document.querySelector(`[data-tab="${t}"]`); if (b) b.click(); else render() }
 
   /* catálogo base + itens da campanha */
+  /* catálogo de itens: livro_itens (global) + itens da campanha + extras locais (luz do token etc.) */
+  let ITENS = null;
+  const ABAS_IT = [['arma', 'Armas'], ['protecao', 'Proteções'], ['municao', 'Munição'], ['acessorio', 'Acessórios'], ['explosivo', 'Explosivos'], ['operacional', 'Operacionais'], ['paranormal', 'Paranormais'], ['modificacao', 'Modificações'], ['campanha', 'Campanha'], ['outros', 'Outros']];
+  async function itensCarrega() {
+    if (ITENS) return ITENS;
+    const r = await db.from('livro_itens').select('ref,grupo,subgrupo,nome,ordem,dados').eq('sistema', 'op').order('ordem');
+    ITENS = (r.error ? [] : r.data).map(x => ({ ...x.dados, n: x.nome, ref: 'livro:' + x.ref, _g: x.grupo, _sub: x.subgrupo || '' }));
+    const nomes = new Set(ITENS.map(x => x.n));
+    S.CATALOGO.op.filter(x => !nomes.has(x.n)).forEach(x => ITENS.push({ ...x, _g: 'outros', _sub: '' }));   // Celular, Lanterna, Vela, Lampião…
+    if (r.error || !r.data.length) toast('Itens do livro indisponíveis (rode o SQL schema_etapa6d_itens.sql no Supabase).');
+    return ITENS;
+  }
+  const infoIt = it => esc([S.TIPOS_ITEM.find(t => t[0] == it.tipo)?.[1], it.tipo == 'modificacao' ? '' : 'Cat. ' + S.ROMANO[it.catg || 0], it.tipo == 'modificacao' ? '' : n0(it.esp) + ' esp.', it._sub && it._g == 'arma' ? it._sub : '', it.def && 'Def +' + it.def, it.luz && (it.luz.t == 'c' ? 'cone ' : 'raio ') + it.luz.m + 'm', it.arma && [it.arma.dano, it.arma.crit && 'crít. ' + it.arma.crit, it.arma.alc].filter(Boolean).join(' '), (it.ef || []).length ? 'efeito automático' : ''].filter(Boolean).join(' · '));
   async function catalogo(f) {
+    const base = await itensCarrega();
     let extra = [];
-    if (f._camp) try { const r = await db.from('catalogo').select('id,tipo,nome,dados,aprovado').eq('campanha_id', f._camp).eq('tipo', 'item'); if (!r.error) extra = r.data.filter(x => x.aprovado).map(x => ({ ...x.dados, n: x.nome, ref: 'cat:' + x.id })) } catch (e) { }
-    const L = extra.concat(S.CATALOGO.op);
+    if (f._camp) try { const r = await db.from('catalogo').select('id,tipo,nome,dados,aprovado').eq('campanha_id', f._camp).eq('tipo', 'item'); if (!r.error) extra = r.data.filter(x => x.aprovado).map(x => ({ ...x.dados, n: x.nome, ref: 'cat:' + x.id, _g: 'campanha', _sub: '' })) } catch (e) { }
+    const L = extra.concat(base);
+    let ab = 'arma', q = '';
+    const tem = g => L.some(x => x._g == g);
     const o = document.createElement('div'); o.id = 'md';
-    o.innerHTML = `<div class="mb"><h3>Catálogo</h3><input id="catq" placeholder="Buscar item"><div class="catl">${L.map((it, i) => `<button class="cat-i" data-k="${i}"><b>${esc(it.n)}</b><small>${esc([S.TIPOS_ITEM.find(t => t[0] == it.tipo)?.[1], 'Cat. ' + S.ROMANO[it.catg || 0], it.esp + ' esp.', it.def && 'Def +' + it.def, it.luz && (it.luz.t == 'c' ? 'cone ' : 'raio ') + it.luz.m + 'm', it.arma && it.arma.dano].filter(Boolean).join(' · '))}</small></button>`).join('')}</div>
+    const lista = () => {
+      const t = q.toLowerCase(), A = t ? L : L.filter(x => x._g == ab);
+      let ult = null, h = '';
+      A.filter(x => !t || x.n.toLowerCase().includes(t)).forEach(x => { if (!t && x._sub != ult && x._g == 'arma') { ult = x._sub; h += titulo2(x._sub) } h += `<button class="cat-i" data-k="${L.indexOf(x)}"><b>${esc(x.n)}</b><small>${infoIt(x)}</small>${x.desc ? `<small style="white-space:normal">${esc(x.desc)}</small>` : ''}</button>` });
+      return h || '<p class="m">Nada por aqui.</p>';
+    };
+    const tela = () => {
+      o.innerHTML = `<div class="mb"><h3>Catálogo</h3><input id="catq" placeholder="Buscar item" value="${esc(q)}"><div class="g2b">${ABAS_IT.filter(a => tem(a[0])).map(a => `<button class="mini" data-ab="${a[0]}" ${!q && a[0] == ab ? 'style="outline:2px solid currentColor"' : ''}>${a[1]}</button>`).join('')}</div><div class="catl" id="catlst">${lista()}</div>
 <p class="m" style="font-size:12px;margin:0">${f._camp && !mestre(f) ? 'Você pega o item; o mestre confere a patente e pode remover.' : ''}</p><button data-x style="align-self:flex-end">Fechar</button></div>`;
-    document.body.append(o);
-    o.oninput = e => { if (e.target.id == 'catq') { const q = e.target.value.toLowerCase(); o.querySelectorAll('.cat-i').forEach((b, i) => b.style.display = L[i].n.toLowerCase().includes(q) ? '' : 'none') } };
-    o.onclick = e => { if (e.target === o || e.target.closest('[data-x]')) { o.remove(); return }
-      const b = e.target.closest('.cat-i'); if (!b) return; const it = JSON.parse(JSON.stringify(L[+b.dataset.k]));
+      const i = o.querySelector('#catq'); if (q) { i.focus(); i.setSelectionRange(q.length, q.length) }
+    };
+    tela(); document.body.append(o);
+    o.oninput = e => { if (e.target.id == 'catq') { q = e.target.value; o.querySelector('#catlst').innerHTML = lista() } };
+    o.onclick = e => {
+      if (e.target === o || e.target.closest('[data-x]')) { o.remove(); return }
+      const a = e.target.closest('[data-ab]'); if (a) { ab = a.dataset.ab; q = ''; tela(); return }
+      const b = e.target.closest('.cat-i'); if (!b) return; const it0 = L[+b.dataset.k];
+      if (it0.tipo == 'modificacao') return aplicaMod(f, it0, () => o.remove());
+      const it = JSON.parse(JSON.stringify(it0)); ['_g', '_sub', 'mc'].forEach(k => delete it[k]); it.mc = it0.mc || '';
       f.inv.items.push({ ...it, id: S.uid(), qtd: 1, eq: false, desc: it.desc || '' }); calc(f); touch(f); o.remove(); render(); toast(esc(it.n) + ' adicionado ao inventário.') };
+  }
+  /* modificação: escolhe um item compatível do inventário; sobe a categoria em 1 e ajusta espaço/Defesa */
+  function aplicaMod(f, m, fecha) {
+    const ap = m.aplica || [], its = f.inv.items.map((it, i) => [it, i]).filter(([it]) => ap.includes(it.mc) && !(it.mods || []).includes(m.n));
+    if (!its.length) { toast('Nenhum item do inventário aceita ' + esc(m.n) + '. Adicione primeiro a arma, proteção ou acessório do livro.'); return }
+    const o = document.createElement('div'); o.id = 'md';
+    o.innerHTML = `<div class="mb"><h3>${esc(m.n)}</h3><p class="m" style="margin:0">${esc(m.desc)} Aplicar sobe a categoria do item em I. Em qual item?</p><div class="catl">${its.map(([it, i]) => `<button class="cat-i" data-i="${i}"><b>${esc(it.n)}</b><small>Cat. ${S.ROMANO[Math.round(n0(it.catg))]}${(it.mods || []).length ? ' · ' + esc(it.mods.join(', ')) : ''}</small></button>`).join('')}</div><button data-x style="align-self:flex-end">Cancelar</button></div>`;
+    document.body.append(o);
+    o.onclick = e => {
+      if (e.target === o || e.target.closest('[data-x]')) { o.remove(); return }
+      const b = e.target.closest('.cat-i'); if (!b) return; const it = f.inv.items[+b.dataset.i], d = m.mod || {};
+      it.mods = (it.mods || []).concat(m.n); it.catg = Math.min(4, Math.round(n0(it.catg)) + (d.catg || 0));
+      it.esp = Math.max(0, n0(it.esp) + (d.esp || 0)); if (d.def) it.def = n0(it.def) + d.def;
+      it.desc = ((it.desc || '') + ' [' + m.n + ': ' + m.desc + ']').trim();
+      calc(f); touch(f); o.remove(); fecha(); render(); toast(esc(m.n) + ' aplicada em ' + esc(it.n) + '.') };
   }
   async function daCampanha(f) {
     const r = await db.from('catalogo').select('id,tipo,nome,dados,aprovado,criado_por').eq('campanha_id', f._camp).eq('tipo', 'habilidade');
