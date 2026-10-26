@@ -18,7 +18,9 @@ function html(t){
   const opt=f.skills.map(s=>`<option>${esc(s.n)}</option>`).join('');
   const linha=(i,k)=>{const eqv=i.tipo=='arma'||i.tipo=='protecao',gast=i.tipo=='consumivel';
     return `<div class="q" style="align-items:center"><span class="m" style="flex:1">${esc(i.n||'Item')}${n0(i.qtd)>1?' x'+n0(i.qtd):''}</span>${eqv?`<button data-mf="eq" data-i="${k}" class="${i.eq?'on':''}" style="width:auto">${i.eq?'Equipado':'Equipar'}</button>`:''}${gast?`<button data-mf="usar" data-i="${k}" style="width:auto">Usar</button>`:''}</div>`};
-  return `<h5>Ficha de ${esc(p.nome||'personagem')}</h5>
+  const mon=f.op&&f.op.classe=='criatura',pv=(f.stats||[]).find(s=>s.id=='pv');
+  const painelPv=mon&&pv?`<div class="q" style="align-items:center;gap:4px"><b style="min-width:60px">PV ${n0(pv.cur)}/${n0(pv.max)}</b><button data-mf="pv" data-d="-10" style="width:auto">−10</button><button data-mf="pv" data-d="-1" style="width:auto">−1</button><button data-mf="pv" data-d="1" style="width:auto">+1</button><button data-mf="pv" data-d="10" style="width:auto">+10</button></div>`:'';
+  return `<h5>${mon?'Monstro':'Ficha'} de ${esc(p.nome||'personagem')}</h5>${painelPv}
 <div class="m">Defesa ${D.def} | Desloc. ${D.desloc} m | PE por turno ${D.limPE} | Carga ${D.usado}/${D.cap}</div>
 <div class="q"><select data-mf-sel style="flex:1;min-width:0">${opt}</select><button data-mf="rolar" style="width:auto">Rolar</button><a class="m" href="ficha.html?id=${p.id}" target="_blank" rel="noopener" style="align-self:center">Abrir ficha</a></div>
 ${armas.length?`<h5>Armas</h5>${armas.map(a=>`<div class="q" style="align-items:center"><span class="m" style="flex:1">${esc(a.n)} (${esc(S.armaEf(a).dano||'?')})${(a.mods||[]).length?' · '+esc(a.mods.map(S.modNome).join(', ')):''}</span><button data-mf="atk" data-i="${its.indexOf(a)}" style="width:auto">Atacar</button><button data-mf="dano" data-i="${its.indexOf(a)}" style="width:auto">Dano</button></div>`).join('')}`:''}
@@ -38,6 +40,7 @@ document.addEventListener('click',async e=>{
   else if(k=='atk'){const it=f.inv.items[i];if(!it)return;const ar=it.arma||{},sk=f.skills.find(s=>s.n==(ar.per||'Luta'))||{a:'for',t:0,o:0,n:ar.per||'Luta'};
     const ef=S.armaEf(it),bn=bonusPer(f,D,sk)+ef.atk,r=S.teste(av(f,sk.a),bn);logm(`${esc(nome)} · ${esc(it.n)} ataque (${esc(sk.n)}): [${r.r}] → ${r.d}${bn?' '+sinal(bn):''} = <b>${r.total}</b>${ef.crit?' (crít. '+esc(ef.crit)+')':''}`)}
   else if(k=='dano'){const it=f.inv.items[i];if(!it)return;const dn=S.armaEf(it).dano,r=S.rolar(dn);if(!r)return toast('Essa arma está sem dano na ficha.');logm(`${esc(nome)} · ${esc(it.n)} dano ${esc(dn)}: ${r.txt} = <b>${r.total}</b>`)}
+  else if(k=='pv'){const dd=+b.dataset.d;await grava(t,g=>{const s=(g.stats||[]).find(x=>x.id=='pv');if(!s)return;s.cur=Math.max(0,Math.min(n0(s.max),n0(s.cur)+dd))})}
   else if(k=='eq'){const id=f.inv.items[i]&&f.inv.items[i].id;await grava(t,g=>{const it=g.inv.items.find(x=>x.id==id);if(!it)return;it.eq=!it.eq;
       if(it.eq&&it.tipo=='protecao')g.inv.items.forEach(o=>{if(o!==it&&o.tipo=='protecao'&&o.eq&&((o.sub=='escudo')==(it.sub=='escudo')))o.eq=false})})}
   else if(k=='usar'){const id=f.inv.items[i]&&f.inv.items[i].id,nm=f.inv.items[i]&&f.inv.items[i].n;

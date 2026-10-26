@@ -2,7 +2,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="tema.css?v=9">
-<link rel="stylesheet" href="ficha-sis.css?v=2">
+<link rel="stylesheet" href="ficha-sis.css?v=2"><link rel="stylesheet" href="ficha-monstro.css?v=1">
 <style>
 :root{--bg:var(--tabua);--p:var(--papel);--p2:var(--papel3);--m:var(--tinta2);--a:var(--carimbo)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -78,7 +78,7 @@ h2::after{content:"";flex:1;border-bottom:2px dashed #00000026}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>
 <script src="sistemas.js?v=3"></script>
-<script src="ficha-op.js?v=12"></script>
+<script src="ficha-op.js?v=12"></script><script src="ficha-monstro.js?v=1"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px;font-size:16px">Não consegui carregar o login. Confira a internet e se o arquivo <b>comum.js</b> está na mesma pasta deste arquivo.</p>';throw new Error('Mesa indisponível')}
 const db=Mesa.db;
@@ -242,13 +242,13 @@ function derive(){const f=curF();if(!f)return;
 const rotulo=x=>(x.nome||'Sem nome')+(x._dono!=ME.id?' — '+(x._donoNome||'outro'):'');
 function renderSel(){$('#sel').innerHTML=ALL.map(x=>`<option value="${x.id}" ${x.id==SEL?'selected':''}>${esc(rotulo(x))}</option>`).join('')}
 function render(){const f=curF();renderSel();
-  const op=ehOP(f),T=op?OP.TABS:TABS;
+  const op=ehOP(f),mon=op&&window.MON&&MON.ehMonstro(f),T=mon?MON.TABS:op?OP.TABS:TABS;document.body.classList.toggle('sis-monstro',!!mon);
   document.body.classList.toggle('sis-op',op);document.body.classList.toggle('sis-modular',!!f&&!op);
   if(!T.some(x=>x[0]==tab))tab='g';
   /* Ordem Paranormal: aplica as regras antes de desenhar; se algo mudou e dá para editar, grava */
   if(op){const antes=ss(dadosDe(f));OP.calc(f);if(ss(dadosDe(f))!=antes&&podeEditar(f))touch(f)}
   $('#tabs').innerHTML=T.map(([k,l])=>`<button data-tab=${k} class="${tab==k?'on':''}">${l}</button>`).join('');
-  const v=f?(op?OP.views[tab]:{g:vGeral,p:vPericias,i:vInv,n:vNotas}[tab])(f):'';
+  const v=f?(mon&&MON.views[tab]?MON.views[tab]:op?OP.views[tab]:{g:vGeral,p:vPericias,i:vInv,n:vNotas}[tab])(f):'';
   $('#app').innerHTML=f&&!podeEditar(f)?`<fieldset disabled style="border:0;padding:0;margin:0;min-width:0">${v}</fieldset>`:v;const del=document.querySelector('[data-act=delf]');if(del)del.disabled=!!f&&f._dono!=ME.id;derive()}
 
 /* ============ AÇÕES ============ */
@@ -279,6 +279,7 @@ document.addEventListener('click',async e=>{
     if(a=='new'){const n=nova('Novo personagem');await inserir(n);ALL.push(n);ordenar();SEL=n.id;tab='g';render();return}
     if(a=='imp'){$('#fi').click();return}
     if(!f)return;
+    if(a&&a.startsWith('mon-')){if(MON.acao(a,d,f))return}
     if(a&&a.startsWith('op-')){if(!podeEditar(f)){toast('Somente leitura.');return}await OP.acao(a,d,f);return}
     if(a=='secr+'){f.secoes[+d.i].l=f.secoes[+d.i].l||[];f.secoes[+d.i].l.push({n:'',v:''});touch(f);render();return}
     if(a=='secr-'){f.secoes[+d.i].l.splice(+d.j,1);touch(f);render();return}

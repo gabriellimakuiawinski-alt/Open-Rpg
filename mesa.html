@@ -324,7 +324,10 @@ function escolherMesa(ms,mb){return new Promise(ok=>{const o=document.createElem
 function nuvemRole(){document.body.classList.add(ROLE=='mestre'?'mst':ROLE=='admin'?'adm':'jog');
  if(!GER){C.splice(0,2);dk=mk='chr';pv=true}
  const rm=document.getElementById('rm');if(rm&&!document.getElementById('cs')){const s=document.createElement('div');s.id='cs';s.className='m';s.style.cssText='font-size:11px;padding:0 10px 4px';rm.insertBefore(s,document.getElementById('pl'))}cs('carregando…')}
-const fichaSel=t=>!MESA.campanha_id?`<p class="m" style="margin:6px 0">Mesa sem campanha: não tem fichas.</p>`:`<label class="m" style="display:block;margin:6px 0">Ficha vinculada <select data-f="pj" style="max-width:100%"><option value="">(nenhuma)</option>${[...PERS.values()].map(p=>`<option value="${p.id}" ${t.pj==p.id?'selected':''}>${esc(p.nome||'Sem nome')}${p.npc?' (NPC)':''}</option>`).join('')}</select></label>`;
+const ehMon=p=>!!(p&&p.dados&&p.dados.op&&p.dados.op.classe=='criatura');
+const fichaSel=t=>{if(!MESA.campanha_id)return `<p class="m" style="margin:6px 0">Mesa sem campanha: não tem fichas.</p>`;
+ const L=[...PERS.values()],op=p=>`<option value="${p.id}" ${t.pj==p.id?'selected':''}>${esc(p.nome||'Sem nome')}</option>`,g=(r,a)=>a.length?`<optgroup label="${r}">${a.map(op).join('')}</optgroup>`:'';
+ return `<label class="m" style="display:block;margin:6px 0">Ficha vinculada <select data-f="pj" style="max-width:100%"><option value="">(nenhuma)</option>${g('Personagens',L.filter(p=>!p.npc&&!ehMon(p)))}${g('NPCs',L.filter(p=>p.npc&&!ehMon(p)))}${g('Monstros',L.filter(ehMon))}</select></label>`};
 
 /* ---------- início ---------- */
 async function nuvemMain(){
@@ -661,4 +664,4 @@ for(const q of L){if(!/^(audio\/|video\/mp4)/.test(q.type)&&!/\.(mp3|mp4|m4a|ogg
 const p=curPl();if(tg=='pl'&&p)p.t.push(...ids);if(bad)toast(bad+' arquivo(s) ignorado(s): use mp3, mp4, m4a, ogg ou wav.');save();mpr();if(noDB)toast(NODB)};
 /* início */
 nuvemMain();
-</script><script src="sistemas.js?v=3"></script><script src="mesa-fx.js?v=9"></script><script src="mesa-musica.js?v=9"></script><script src="mesa-dados.js?v=9"></script><script src="mesa-ficha.js?v=2"></script><script src="mesa-notas.js?v=10"></script><script src="mesa-exportar.js?v=9"></script></body></html>
+</script><script src="sistemas.js?v=3"></script><script src="mesa-fx.js?v=9"></script><script src="mesa-musica.js?v=9"></script><script src="mesa-dados.js?v=9"></script><script src="mesa-ficha.js?v=3"></script><script src="mesa-notas.js?v=10"></script><script src="mesa-exportar.js?v=9"></script></body></html>
