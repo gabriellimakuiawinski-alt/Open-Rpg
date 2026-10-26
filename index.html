@@ -181,6 +181,9 @@ section{margin-top:38px}
 .jog .av{width:44px;height:52px;flex:none;background:#c9bf9f;border:2px solid var(--lapis);display:grid;place-items:center;font:400 22px var(--maq);color:var(--tinta2)}
 .jog .c{flex:1;min-width:0}.jog b{display:block;font:400 17px var(--maq);overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.jog small{font:700 19px var(--mao);color:var(--caneta)}
 .jog select{width:auto;font:400 14px var(--maq)}
+.exc{color:var(--carimbo);border:2px solid currentColor;background:none;border-radius:4px;padding:3px 7px;font:400 12px var(--maq);cursor:pointer}
+.camp .exc,.fch .exc{position:absolute;right:8px;bottom:8px;z-index:3;background:var(--papel,#e9e0c8)}
+.camp,.fch{position:relative}
 .jog .mini{color:var(--carimbo);border:2px solid currentColor;background:none;border-radius:4px;padding:4px 8px;font:400 12px var(--maq)}
 .codigo{display:inline-flex;align-items:center;gap:12px;font:400 14px var(--maq);color:var(--tinta2)}
 .codigo b{font:400 24px var(--maq);letter-spacing:.2em;color:var(--carimbo);border:2px dashed var(--carimbo);padding:3px 10px 1px}
@@ -387,14 +390,14 @@ function htmlHero(){
 
 function htmlCamps(){
   const l=S.camps.map(c=>{const n=S.cm.filter(m=>m.campanha_id==c.id).length,nm=S.mesas.filter(m=>m.campanha_id==c.id).length,nf=S.fichas.filter(f=>f.campanha_id==c.id).length;
-    return`<a class="camp" href="#/c/${c.id}"><span class="aba-pasta">Campanha</span><span class="etq">${esc(PAPEL[meuPapel(c.id)]||'')}</span><div class="c"><b>${esc(c.nome)}</b><small>${plural(n,'pessoa','pessoas')} · ${plural(nm,'mesa','mesas')}</small><small>${plural(nf,'ficha','fichas')}</small></div></a>`}).join('');
+    return`<a class="camp" href="#/c/${c.id}"><span class="aba-pasta">Campanha</span><span class="etq">${esc(PAPEL[meuPapel(c.id)]||'')}</span><div class="c"><b>${esc(c.nome)}</b><small>${plural(n,'pessoa','pessoas')} · ${plural(nm,'mesa','mesas')}</small><small>${plural(nf,'ficha','fichas')}</small></div>${meuPapel(c.id)=='mestre'?`<button class="mini exc" data-del="camp" data-id="${c.id}" title="Excluir">Excluir</button>`:''}</a>`}).join('');
   return l?`<div class="grade">${l}</div>`:`<div class="vazia"><b>Nenhuma campanha ainda</b>Crie uma para reunir seu grupo e as fichas, ou entre com o código que o mestre te passou.</div>`}
 
 function linhaMesa(m,comCamp=true){
   const c=campDe(m.campanha_id),b=S.mb.find(x=>x.mesa_id==m.id),pp=b?b.papel:null,
   quando=b&&b.ultimo_acesso?'aberta '+atras(b.ultimo_acesso):'ainda não aberta';
   const cod=!c&&pp=='mestre'?`<button class="mini" data-a="copiar" data-c="${esc(m.codigo)}" title="Copiar o código para convidar jogadores">Código ${esc(m.codigo)}</button>`:'';
-  return`<div class="lin"><a class="c" href="mesa.html?mesa=${m.id}"><b>${esc(m.nome)}</b><small>${comCamp?(c?esc(c.nome):'Mesa avulsa, sem fichas')+' · ':''}${esc(PAPEL[pp]||'')} · ${esc(quando)}</small></a>${cod}</div>`}
+  return`<div class="lin"><a class="c" href="mesa.html?mesa=${m.id}"><b>${esc(m.nome)}</b><small>${comCamp?(c?esc(c.nome):'Mesa avulsa, sem fichas')+' · ':''}${esc(PAPEL[pp]||'')} · ${esc(quando)}</small></a>${cod}${pp=='mestre'?`<button class="mini exc" data-del="mesa" data-id="${m.id}" title="Excluir">Excluir</button>`:''}</div>`}
 
 function htmlMesas(){
   const l=[...S.mesas].sort((a,b)=>{const x=(S.mb.find(m=>m.mesa_id==a.id)||{}).ultimo_acesso||'',y=(S.mb.find(m=>m.mesa_id==b.id)||{}).ultimo_acesso||'';return y>x?1:y<x?-1:0}).map(m=>linhaMesa(m)).join('');
@@ -406,7 +409,7 @@ function barras(f){
 function cartaoFicha(f){
   const info=Array.isArray(f.info)?f.info:[],g=n=>((info.find(i=>i.n==n)||{}).v||'').toString().trim(),
   sub=['Classe','Origem','NEX'].map(g).filter(Boolean).join(' · ');
-  return`<a class="fch fichario pin" href="ficha.html?id=${f.id}"><div class="top"><b>${esc(f.nome||'Sem nome')}</b><span class="sel2">${f.npc?'<span class="npc">NPC</span>':''}${f.privada?'<span>privada</span>':''}</span></div>${sub?`<div class="sub">${esc(sub)}</div>`:''}${barras(f)}</a>`}
+  return`<a class="fch fichario pin" href="ficha.html?id=${f.id}"><div class="top"><b>${esc(f.nome||'Sem nome')}</b><span class="sel2">${f.npc?'<span class="npc">NPC</span>':''}${f.privada?'<span>privada</span>':''}</span></div>${sub?`<div class="sub">${esc(sub)}</div>`:''}${barras(f)}${f.user_id==ME.id?`<button class="mini exc" data-del="ficha" data-id="${f.id}" title="Excluir">Excluir</button>`:''}</a>`}
 
 function htmlMinhasFichas(){
   const fs=S.fichas.filter(f=>f.user_id==ME.id);
@@ -422,6 +425,7 @@ ${htmlHero()}
 <button class="tile papel2 fichario pin" data-a="novaFicha"><span class="ic">${IC.ficha}</span><span><b>Criar ficha</b><small>o seu personagem</small></span></button>
 <button class="tile papel2 fichario pin" data-a="novaCamp"><span class="ic">${IC.camp}</span><span><b>Criar campanha</b><small>grupo com fichas</small></span></button>
 <button class="tile papel2 fichario pin" data-a="entrar"><span class="ic">${IC.chave}</span><span><b>Entrar com código</b><small>convite de um mestre</small></span></button>
+<a class="tile papel2 fichario pin" href="inimigos.html" style="text-decoration:none;color:inherit"><span class="ic">${IC.camp}</span><span><b>Inimigos</b><small>seus monstros e os do livro</small></span></a>
 </div>
 <section><div class="titulo"><h2>Suas campanhas</h2><span class="chip">${nc}</span></div>${htmlCamps()}</section>
 <section><div class="titulo"><h2>Suas mesas</h2><span class="chip">${nm}</span></div>${htmlMesas()}</section>
@@ -469,7 +473,7 @@ function renderCamp(id){
   const corpo=aba=='mesas'?abaMesas(c,pp):aba=='grupo'?abaGrupo(c,pp):aba=='pedidos'?abaPedidos(c):abaFichas(c,pp);
   return`${topo()}<a class="volta" href="#/">${IC.volta}Início</a>
 <div class="cab"><span class="etq">${esc(PAPEL[pp])}</span><h1>${esc(c.nome)}</h1><p>Você é ${esc(PAPEL[pp].toLowerCase())} · ${plural(ng,'pessoa','pessoas')} · sistema <b>${esc(nomeSis(c))}</b></p>
-<div class="acoes" style="margin-top:10px"><a class="btn papel-b" href="loja.html?camp=${c.id}">${pp=='mestre'?'Lojas e dinheiro':'Loja'}</a><a class="btn papel-b" href="quadro.html?camp=${c.id}">Quadro de investigação</a>${pp=='mestre'?`<button class="btn papel-b" data-a="sistema">Sistema e regras</button>`:''}</div></div>
+<div class="acoes" style="margin-top:10px"><a class="btn papel-b" href="loja.html?camp=${c.id}">${pp=='mestre'?'Lojas e dinheiro':'Loja'}</a><a class="btn papel-b" href="quadro.html?camp=${c.id}">Quadro de investigação</a>${pp=='mestre'?`<a class="btn papel-b" href="inimigos.html">Inimigos</a>`:''}${pp=='mestre'?`<button class="btn papel-b" data-a="sistema">Sistema e regras</button>`:''}</div></div>
 <div class="divisorias abas" role="tablist">${A.map(([k,n,q])=>`<button role="tab" class="${aba==k?'on':''}" aria-selected="${aba==k}" data-a="aba" data-t="${k}">${n}<small>${q}</small></button>`).join('')}</div>
 <div class="folha papel" id="corpo">${corpo}</div>`}
 
@@ -634,7 +638,17 @@ async function acao(a,d){
   else if(a=='excluirCamp'){let ok=false;await pedir({titulo:'Excluir "'+c.nome+'"?',texto:'As mesas continuam existindo, mas sem campanha e sem fichas. As fichas ficam com seus donos. Isso não tem como desfazer.',ok:'Excluir campanha',perigo:true},
       async()=>{const{data,error}=await db.from('campanhas').delete().eq('id',c.id).select('id');if(error)throw error;if(!data.length)throw new Error('Sem permissão.');ok=true});
       if(ok){await carregar();location.hash='#/';desenhar();aviso('Campanha excluída.')}}}
+async function excluir(tipo,id){
+  const T={camp:['campanhas','campanha','As mesas continuam existindo, mas sem campanha e sem fichas. As fichas ficam com seus donos.'],
+    mesa:['mesas','mesa','Apaga a mesa com o mapa, os tokens e as cenas dela.'],ficha:['personagens','ficha','A ficha some para sempre.']}[tipo];
+  const it=tipo=='camp'?campDe(id):tipo=='mesa'?S.mesas.find(m=>m.id==id):S.fichas.find(f=>f.id==id);
+  const nome=it?(it.nome||'sem nome'):'';let ok=false;
+  await pedir({titulo:'Excluir '+T[1]+' "'+nome+'"?',texto:T[2]+' Isso não tem como desfazer.',ok:'Excluir',perigo:true},
+    async()=>{const{data,error}=await db.from(T[0]).delete().eq('id',id).select('id');if(error)throw error;if(!data.length)throw new Error('Sem permissão.');ok=true});
+  if(ok){await carregar();desenhar();aviso(T[1][0].toUpperCase()+T[1].slice(1)+' excluída.')}}
 document.addEventListener('click',async e=>{
+  const ex=e.target.closest('[data-del]');
+  if(ex){e.preventDefault();e.stopPropagation();try{await excluir(ex.dataset.del,ex.dataset.id)}catch(err){aviso('Erro: '+esc(err.message||err))}return}
   const pa=e.target.closest('a.camp');
   if(pa&&e.button==0&&!e.metaKey&&!e.ctrlKey&&!e.shiftKey){e.preventDefault();pa.classList.add('abre');setTimeout(()=>{location.hash=pa.getAttribute('href')},240);return}
   const b=e.target.closest('[data-a]');if(!b)return;

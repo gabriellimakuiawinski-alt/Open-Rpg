@@ -22,6 +22,7 @@
       ex: { 5: 'Eclético e Perito (2 PE, +1d6)', 25: 'Perito (3 PE, +1d8)', 40: 'Engenhosidade (veterano)', 55: 'Perito (4 PE, +1d10)', 75: 'Engenhosidade (expert)', 85: 'Perito (5 PE, +1d12)' } },
     ocultista: { n: 'Ocultista', pv: [12, 2], pe: [4, 4], san: [20, 5], pd: [10, 5], poder: 'Poder de ocultista',
       ex: { 5: 'Escolhido pelo Outro Lado (1º círculo)', 25: 'Escolhido pelo Outro Lado (2º círculo)', 55: 'Escolhido pelo Outro Lado (3º círculo)', 85: 'Escolhido pelo Outro Lado (4º círculo)' } },
+    criatura: { n: 'Criatura', oculta: true, pv: [0, 0], pe: [0, 0], san: [0, 0], pd: [0, 0], poder: 'Habilidade', ex: {} },
     sobrevivente: { n: 'Sobrevivente', estagio: true, pv: [8, 2], pe: [2, 1], san: [8, 2], pd: [4, 2], poder: 'Habilidade',
       ex: { 1: 'Empenho', 2: 'Trilha (1ª habilidade)', 3: 'Aumento de atributo', 4: 'Trilha (2ª habilidade)', 5: 'Cicatrizado' } }
   };
@@ -86,6 +87,7 @@
     let peMax, sanMax, pdMax = 0;
     if (cfg.determinacao) { pdMax = Math.max(0, prog(C.pd, A('pre')) + (E.pe || 0) + n0(b.pe)); peMax = pdMax; sanMax = 0 }
     else { peMax = Math.max(0, prog(C.pe, A('pre')) + (E.pe || 0) + n0(b.pe)); sanMax = Math.max(0, C.san[0] + (n - 1) * C.san[1] + (E.san || 0) + n0(b.san)) }
+    if (C.criatura) { peMax = 0; sanMax = 0; pdMax = 0 }
     const itens = ((f.inv && f.inv.items) || []).filter(temQtd);
     const forca = A('for'), cap = (forca > 0 ? forca * 5 : 2) + (E.carga || 0) + n0(b.carga);
     const usado = itens.reduce((t, it) => t + n0(it.esp) * (it.qtd === undefined ? 1 : n0(it.qtd)), 0);
@@ -186,7 +188,7 @@
   const MODEF = { 'Certeira': { atk: 2 }, 'Alongada': { atk: 2 }, 'Cruel': { dano: '+2' }, 'Perigosa': { marg: 2 }, 'Mira Laser': { marg: 2 }, 'Dum Dum': { mult: 1 }, 'Explosiva': { dano: '+2d6' }, 'Calibre Grosso': { dado: 1 } };
   const modNome = m => typeof m == 'string' ? m : (m && m.n) || '';
   function armaEf(it) {
-    const a = it.arma || {}, r = { dano: a.dano || '', crit: a.crit || '', atk: 0, mods: [] };
+    const a = it.arma || {}, r = { dano: a.dano || '', crit: a.crit || '', atk: n0(a.atk), mods: [] };
     (it.mods || []).forEach(m => { const e = MODEF[modNome(m)]; if (!e) return; r.mods.push(modNome(m));
       if (e.atk) r.atk += e.atk;
       if (e.dado && r.dano) r.dano = r.dano.replace(/(\d*)d(\d+)/i, (x, q, d) => ((+q || 1) + e.dado) + 'd' + d);

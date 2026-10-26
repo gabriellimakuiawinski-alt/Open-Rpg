@@ -61,7 +61,7 @@ ${S.ATR.map(([id, ab, nome]) => { const i = idxAt(f, id), [x, y] = pos[id];
   /* ---------- telas ---------- */
   function vAgente(f) {
     const D = ULT, op = f.op, C = D.classe, meu = f._dono == ME.id, pp = meuPapel(f._camp);
-    const nexOpts = S.NEX.map(x => [x, x + '%']), cls = Object.entries(S.CLASSES).map(([k, c]) => [k, c.n]);
+    const nexOpts = S.NEX.map(x => [x, x + '%']), cls = Object.entries(S.CLASSES).filter(([k, c]) => !c.oculta || op.classe == k).map(([k, c]) => [k, c.n]);
     return `${meu ? '' : `<p class=m style="margin:0 0 10px;color:var(--giz2)">Ficha de <b>${esc(f._donoNome || 'outro jogador')}</b>. ${podeEditar(f) ? 'Você a edita como ' + (pp == 'mestre' ? 'mestre' : 'admin') + ' da campanha.' : 'Somente leitura.'}</p>`}${avisos(f)}
 <section class="card dossie">${sigilo}<div class="carimbo-op">Arquivo de agente</div>
 <label class=fld>Nome do personagem${inp('nome', f.nome)}</label>

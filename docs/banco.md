@@ -44,3 +44,5 @@ Sincronia ficha↔token: `token_para_ficha, ficha_para_tokens, stats_aplica, bar
 - Nunca confiar em checagem só no cliente.
 
 - Etapa 8 (`schema_etapa8_pedidos.sql`, independente; precisa só de etapa 3 e personagens): tabela `pedidos` (campanha_id, personagem_id, autor, tipo `modificacao`, titulo, detalhe, dados jsonb, estado `pendente|aprovado|recusado|aplicado`, resposta). Jogador (dono da ficha) cria pendente; mestre/admin (`c_gerir`) decide pendente→aprovado/recusado; o autor só marca aprovado→aplicado (trigger `pedidos_travas`). Select: autor ou gerir. Realtime ligado.
+
+- Etapa 9 (`schema_etapa9_inimigos.sql`, independente): tabela `inimigos` (dono, nome, elemento, vd, dados jsonb). Só o dono vê e mexe (RLS). Inimigos prontos do livro: tabela global `livro_inimigos` (etapa 9b, à parte).

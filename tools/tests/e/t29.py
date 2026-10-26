@@ -1,0 +1,43 @@
+# Etapa 9: inimigos — criar, salvar no perfil, usar na campanha como NPC
+from lib2 import *
+d=seed()
+CID=ids(9,1)
+with sync_playwright() as p:
+    b=p.chromium.launch()
+    pm=abre_pg(b,'M','inimigos.html');pm.wait_for_timeout(2500)
+    pm.click('header [data-a="novo"]');pm.wait_for_timeout(300)
+    pm.fill('#e_nome','Carente de teste');pm.select_option('#e_elem','Sangue');pm.fill('#e_vd','300')
+    pm.fill('#e_pv','700');pm.fill('#e_def','40');pm.fill('#e_des','12')
+    for k,v in dict(agi=4,**{'for':4},int=2,pre=3,vig=4).items(): pm.fill('#e_a_'+k,str(v))
+    pm.fill('#e_fort','25');pm.fill('#e_refl','25');pm.fill('#e_vont','15');pm.fill('#e_per','Atletismo +20, Enganação +15')
+    pm.click('[data-m="at"]');pm.locator('.e_at .n').fill('Garras de Sangue');pm.locator('.e_at .a').fill('Corpo a corpo');pm.locator('.e_at .t').fill('35');pm.locator('.e_at .d').fill('2d8+20 Sangue')
+    pm.click('[data-m="hb"]');pm.locator('.e_hb .n').fill('Regeneração');pm.locator('.e_hb textarea').fill('Cura acelerada 20.')
+    pm.click('[data-s]');pm.wait_for_timeout(900)
+    chk("inimigo salvo no perfil",q("select to_jsonb(count(*)) from public.inimigos where nome='Carente de teste' and dono='%s'"%U['M'])==1)
+    chk("aparece na lista",pm.locator('.en:has-text("Carente de teste")').count()==1)
+    pm.locator('.en:has-text("Carente de teste")').click();pm.wait_for_timeout(300)
+    chk("bloco mostra PV, defesa e ataque",'PV' in pm.inner_text('#md') and '700' in pm.inner_text('#md') and 'Garras de Sangue' in pm.inner_text('#md'))
+    pm.click('[data-a="usar"]');pm.wait_for_timeout(700)
+    pm.fill('#uq','2');pm.click('[data-a="ok"]');pm.wait_for_timeout(1500)
+    n=q("select to_jsonb(count(*)) from public.personagens where npc and privada and nome like 'Carente de teste %%'")
+    chk("2 fichas de NPC criadas na campanha",n==2,n)
+    st=q("select dados->'stats' from public.personagens where nome='Carente de teste 1'")
+    pv=[s for s in st if s['id']=='pv'][0]
+    chk("PV da ficha = 700 (cheio)",pv['max']==700 and pv['cur']==700,pv)
+    # abre a ficha como mestre e confere Defesa/ataque
+    fid=q("select to_jsonb(id) from public.personagens where nome='Carente de teste 1'")
+    pf=abre_pg(b,'M','ficha.html?id='+fid);pf.wait_for_timeout(2500)
+    D=pf.evaluate("SIS.derivar(curF(),{})")
+    chk("Defesa 40 e deslocamento 12 na ficha",D['def']==40 and D['desloc']==12,(D['def'],D['desloc']))
+    chk("ataque virou arma com bônus 35",pf.evaluate("(()=>{const a=curF().inv.items[0];return a.n=='Garras de Sangue'&&SIS.armaEf(a).atk==35&&a.arma.dano=='2d8+20 Sangue'})()"))
+    chk("Fortitude +25 e habilidade Regeneração",pf.evaluate("curF().skills.find(s=>s.n=='Fortitude').o==25&&curF().poderes.some(p=>p.n=='Regeneração')"))
+    # outro usuário não vê o inimigo
+    r=pgx.run(U['J'],"select coalesce(jsonb_agg(id),'[]'::jsonb) from public.inimigos")
+    chk("outro jogador não vê meus inimigos",r.get('data')==[],r)
+    # excluir
+    pm.reload();pm.wait_for_timeout(2000);pm.locator('.en:has-text("Carente de teste")').click();pm.wait_for_timeout(300)
+    pm.once('dialog',lambda dlg:dlg.accept());pm.click('[data-a="del"]');pm.wait_for_timeout(900)
+    chk("inimigo excluído",q("select to_jsonb(count(*)) from public.inimigos")==0)
+    chk("sem erros",not pm.errs and not pf.errs,(pm.errs,pf.errs))
+    b.close()
+report()
