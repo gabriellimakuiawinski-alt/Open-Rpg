@@ -1,0 +1,31 @@
+from lib import *
+d=seed()
+MESA=d['m']; F1=ids(8,1); F2=ids(8,2)
+pgx.admin(f"insert into public.arquivos(id,mesa_id,tipo,nome,path,criado_por) values ('{F1}','{MESA}','aud','Tema do Vilao','{MESA}/{F1}-a.mp3','{U['M']}'),('{F2}','{MESA}','aud','Segredo','{MESA}/{F2}-b.mp3','{U['M']}')")
+errs=[]
+with sync_playwright() as p:
+    b=p.chromium.launch(args=['--autoplay-policy=no-user-gesture-required'])
+    # ---- mestre: ao tocar, publica a faixa e transmite
+    pm=abre(b,'M',d);pm.on('pageerror',lambda e:errs.append(str(e)));pm.wait_for_timeout(1200)
+    chk("mestre: interruptor 'Transmitir' no painel de música",pm.locator('#mtx').count()==1)
+    pm.evaluate(f"(()=>{{Q=['{F1}'];qi=0;AU.src='data:audio/wav;base64,UklGRiQAAABXQVZFZm10IBAAAAABAAEAQB8AAEAfAAABAAgAZGF0YQAAAAA=';AU.dispatchEvent(new Event('play'))}})()")
+    pm.wait_for_timeout(900)
+    sent=pm.evaluate("window.__sent||[]")
+    chk("mestre: transmite id da faixa e estado",any(s.get('id')==F1 and 'playing' in s for s in sent),sent)
+    chk("mestre: banco guarda a faixa tocando",pgx.aj(f"select to_jsonb(musica_id) from public.mesas where id='{MESA}'")==F1)
+    pm.evaluate("document.getElementById('mtx').click()");pm.wait_for_timeout(500)
+    chk("mestre: desligar transmissão avisa 'parar' e limpa o banco",any(s.get('parar') for s in pm.evaluate("window.__sent")) and pgx.aj(f"select to_jsonb(musica_id) from public.mesas where id='{MESA}'") is None)
+    pm.evaluate("document.getElementById('mtx').click()");pm.wait_for_timeout(500)
+    # ---- jogador: recebe e mostra o player
+    pgx.admin(f"update public.mesas set musica_id='{F1}' where id='{MESA}'")
+    pj=abre(b,'J',d);pj.on('pageerror',lambda e:errs.append(str(e)));pj.wait_for_timeout(1200)
+    chk("jogador: sem player antes de tocar",pj.locator('#mx-musica:not(.hid)').count()==0)
+    chk("jogador: pede o estado ao entrar",any(s.get('pedir') for s in pj.evaluate("window.__sent||[]")))
+    pj.evaluate(f"window.__bc({{payload:{{id:'{F1}',n:'Tema do Vilao',playing:true,pos:1}}}})");pj.wait_for_timeout(1200)
+    chk("jogador: player aparece com o nome da faixa",'Tema do Vilao' in pj.inner_text('#mx-musica'),pj.inner_html('body')[-300:])
+    pj.screenshot(path=S+'/mx_musica.png')
+    pj.evaluate("window.__bc({payload:{parar:1}})");pj.wait_for_timeout(300)
+    chk("jogador: 'parar' esconde o player",pj.locator('#mx-musica.hid').count()==1)
+    chk("sem erros de script",not errs,errs)
+    b.close()
+report()

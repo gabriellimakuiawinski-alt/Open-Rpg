@@ -1,0 +1,9 @@
+#!/bin/bash
+# recria o banco de teste "e2e" com o schema real
+P="psql -h /tmp/pgtest -p 54329 -U postgres -v ON_ERROR_STOP=1 -q"
+$P -d postgres -c "drop database if exists e2e" -c "create database e2e" || exit 1
+D="$(cd "$(dirname "$0")" && pwd)"; S=$D; R="$(cd "$D/../../.." && pwd)"
+for f in $S/stub.sql $R/schema.sql $R/schema_etapa2.sql $R/schema_etapa2b.sql $R/schema_etapa3.sql $R/schema_etapa3.sql $R/schema_etapa3b_musica.sql $R/schema_etapa4.sql; do
+  $P -d e2e -f $f > /tmp/mkdb.out 2>&1 || { echo "ERRO em $f"; cat /tmp/mkdb.out; exit 1; }
+done
+echo "banco e2e pronto (schema 1 + 2 + 2b, 2b rodado duas vezes)"

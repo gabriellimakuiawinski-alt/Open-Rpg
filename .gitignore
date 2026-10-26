@@ -1,0 +1,5 @@
+__pycache__/
+*.pyc
+tools/tests/e/*.png
+!tools/tests/e/map.png
+node_modules/
