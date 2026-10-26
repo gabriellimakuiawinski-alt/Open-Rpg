@@ -1,0 +1,22 @@
+from lib import *
+d=seed()
+png(S+'/tok.png')
+with sync_playwright() as p:
+    b=p.chromium.launch()
+    pg=abre(b,'M',d)
+    ev=pg.evaluate
+    chk("mestre: papel e classe",ev("ROLE")=='mestre' and ev("document.body.classList.contains('mst')"))
+    chk("mestre: 2 cenas carregadas",ev("S.scenes.length")==2,ev("S.scenes.length"))
+    chk("mestre: cena atual = ativa",ev("S.cur")==d['cA'])
+    chk("mestre: 4 tokens na cena A (inclui oculto)",ev("S.tok.length")==4,ev("S.tok.length"))
+    chk("mestre: biblioteca com 4 arquivos",ev("LIB.size")==4,ev("LIB.size"))
+    chk("mestre: mapa na cena",ev("S.maps.length")==1)
+    chk("mestre: token lido com campos do app",ev("(()=>{const t=S.tok.find(t=>t.n=='Goblin');return t.hp==10&&t.z==1&&t.hid==0&&t.lk==0&&!!t.cb})()"))
+    chk("mestre: token travado/oculto lidos",ev("S.tok.find(t=>t.n=='Chefe Secreto').hid==1&&S.tok.find(t=>t.n=='Lacaio Travado').lk==1"))
+    chk("mestre: PERS carregou ficha",ev("PERS.size")==1)
+    pg.wait_for_timeout(800)
+    chk("sem escrita desnecessaria ao abrir",not [c for c in ev("__calls") if c.split()[0] in('insert','upsert','update','delete')],ev("__calls"))
+    pg.screenshot(path=S+'/m1.png')
+    print(pg.errs)
+    b.close()
+report()

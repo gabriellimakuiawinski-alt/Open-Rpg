@@ -1,0 +1,41 @@
+from lib import *
+d=seed(); C=ids(9,1); AV=ids(6,1)
+pgx.admin(f"insert into public.mesas(id,nome,mestre_id) values ('{AV}','Oneshot','{U['M']}')")
+pgx.admin(f"insert into public.cenas(id,mesa_id,nome,ordem) values ('{ids(2,7)}','{AV}','Cena avulsa',0)")
+pgx.admin(f"insert into public.personagens(id,user_id,campanha_id,nome,npc,dados) values ('{ids(5,2)}','{U['M']}','{C}','Vilao NPC',true,'{{}}')")
+with sync_playwright() as p:
+    b=p.chromium.launch()
+    pg=abre(b,'M',d)
+    chk("mesa de campanha: acesso registrado",pgx.aj(f"select to_jsonb(ultimo_acesso is not null) from public.membros where mesa_id='{d['m']}' and user_id='{U['M']}'")==True)
+    panel=pg.inner_text('#pl')
+    chk("painel de campanha: link Fichas e Inicio, sem codigo de mesa",'Fichas' in panel and 'Início' in panel and 'Código da mesa' not in panel,panel)
+    pg.evaluate("document.querySelector('#pl')&&0")
+    # selecionar token e abrir painel para ver o seletor de ficha
+    html=pg.evaluate("typeof fichaSel=='function'?fichaSel({pj:null}):'sem'")
+    chk("ficha vinculavel: fichas da campanha (inclui NPC para o mestre)",'Heroi do J' in html and 'Vilao NPC' in html,html[:200])
+    pg.context.close()
+    pg=abre_pg=None
+    ctx=b.new_context(viewport={"width":1100,"height":800})
+    import lib
+    pg=lib.abre(b,'M',{**d,'m':AV})
+    panel=pg.inner_text('#pl')
+    chk("mesa avulsa: mostra o codigo da mesa",pgx.aj(f"select to_jsonb(codigo) from public.mesas where id='{AV}'") in panel,panel)
+    chk("mesa avulsa: sem link de fichas",'Fichas' not in panel)
+    html=pg.evaluate("fichaSel({pj:null})")
+    chk("mesa avulsa: aviso 'nao tem fichas' e sem seletor",'não tem fichas' in html and '<select' not in html,html)
+    chk("mesa avulsa: nenhuma ficha carregada",pg.evaluate("PERS.size")==0)
+    pg.context.close()
+    # jogador J na mesa da campanha: fichas publicas apenas (nao ve NPC) - GER nao usa fichaSel
+    pg=abre(b,'J',d)
+    chk("jogador abre a mesa e tem acesso registrado",pgx.aj(f"select to_jsonb(ultimo_acesso is not null) from public.membros where mesa_id='{d['m']}' and user_id='{U['J']}'")==True)
+    chk("jogador nao recebe ficha NPC no cliente",pg.evaluate("[...PERS.values()].every(p=>!p.npc)"))
+    pg.context.close()
+    # sem ?mesa e sem mesa guardada: vai para o inicio
+    ctx=b.new_context(); ctx.route("**/@supabase/supabase-js@2",lambda r:r.fulfill(status=200,content_type="application/javascript",body=lib.MOCK))
+    ctx.route("**/fonts.g*/**",lambda r:r.abort())
+    ctx.add_init_script("localStorage.setItem('me','%s')"%U['X'])
+    ctx.expose_function("pgcall",lambda s:json.dumps(pgx.handle(json.loads(s)),default=str))
+    pg=ctx.new_page(); pg.goto(URL); pg.wait_for_timeout(2500)
+    chk("sem mesa escolhida: volta para o inicio",pg.url.endswith('index.html'),pg.url)
+    b.close()
+report()
