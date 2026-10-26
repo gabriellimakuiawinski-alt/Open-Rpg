@@ -96,7 +96,7 @@ ${D.pesadaSemProf ? '<p class="alerta">Proteção pesada sem a habilidade Prote�
 <p class="m" style="font-size:13px;margin:8px 0 0">Equipe proteções no <b>Inventário</b>: a Defesa muda sozinha.</p></section>
 <section class="card"><h2>Ataques</h2>${armas.map(([it, i]) => { const a = it.arma || {}, ef = S.armaEf(it), per = a.per || 'Luta', sk = f.skills.find(s => s.n == per);
       return `<div class="arma"><div class="ar-n"><b>${esc(it.n || 'Arma')}</b><small>${esc([ef.dano, ef.crit && 'crít. ' + ef.crit, ef.atk && 'ataque ' + sinal(ef.atk), a.alc, a.td].filter(Boolean).join(' · '))}${(it.mods || []).length ? ' · ' + esc(it.mods.map(S.modNome).join(', ')) : ''}</small></div>
-<button class="roll" data-act="op-atk" data-i="${i}" title="Atacar (${esc(per)})">Atacar</button><button class="mini" data-act="op-dano" data-i="${i}">Dano</button></div>` }).join('') || '<p class="m">Nenhuma arma no inventário.</p>'}</section>
+<button class="roll" data-act="op-atk" data-i="${i}" title="Atacar (${esc(per)})">Atacar</button><button class="mini" data-act="op-dano" data-i="${i}">Dano</button><button class="mini" data-act="op-modif" data-i="${i}">Modificar</button></div>` }).join('') || '<p class="m">Nenhuma arma no inventário.</p>'}</section>
 <section class="card"><h2>Resistências</h2><div class="res">${res.map(([n]) => { const i = f.skills.findIndex(s => s.n == n); return i < 0 ? '' : `<button class="btn-res" data-act="roll" data-i="${i}"><b>${n}</b><small id="rs${i}"></small></button>` }).join('')}</div>
 ${D.res ? `<p class="m" style="font-size:13px">Habilidades: ${sinal(D.res)} em testes de resistência (já somado).</p>` : ''}</section>`;
   }
@@ -111,7 +111,7 @@ ${f.skills.map((s, i) => `<div class="sk"><button class="roll" data-act="roll" d
     const M = podeMec(f), tipo = it.tipo || 'geral', luzT = it.luz ? (it.luz.t == 'c' ? 'Lanterna (cone)' : 'Lampião (raio)') + ' ' + n0(it.luz.m) + ' m' : '';
     const eqv = tipo == 'protecao' || tipo == 'arma';
     const tag = [tipo == 'protecao' ? 'Defesa ' + sinal(n0(it.def)) : '', luzT].filter(Boolean);
-    return `<div class="it op-it ${it.eq ? 'eq' : ''}"><div class="itr">${inp(`inv.items.${i}.n`, it.n, 'placeholder="Nome do item" class=in')}${eqv ? `<button class="eqb ${it.eq ? 'on' : ''}" data-act="op-eq" data-i="${i}">${it.eq ? 'Equipado' : 'Equipar'}</button>` : ''}<button class=x data-act=del data-l=items data-i=${i}>Remover</button></div>
+    return `<div class="it op-it ${it.eq ? 'eq' : ''}"><div class="itr">${inp(`inv.items.${i}.n`, it.n, 'placeholder="Nome do item" class=in')}${eqv ? `<button class="eqb ${it.eq ? 'on' : ''}" data-act="op-eq" data-i="${i}">${it.eq ? 'Equipado' : 'Equipar'}</button>` : ''}${podeMod(it) ? `<button class="mini" data-act="op-modif" data-i="${i}">Modificar</button>` : ''}<button class=x data-act=del data-l=items data-i=${i}>Remover</button></div>
 <div class="itr"><label class=sm>Tipo ${sel(`inv.items.${i}.tipo`, S.TIPOS_ITEM, tipo, 'data-rr' + (M ? '' : ' disabled'))}</label><label class=sm>Cat. ${sel(`inv.items.${i}.catg`, [0, 1, 2, 3, 4].map(x => [x, S.ROMANO[x]]), Math.round(n0(it.catg)), 'data-n data-rr' + (M ? '' : ' disabled'))}</label><label class=sm>Esp.${num(`inv.items.${i}.esp`, it.esp, 'min=0 step=.5' + (M ? '' : ' disabled'))}</label><label class=sm>Qtd${num(`inv.items.${i}.qtd`, it.qtd === undefined ? 1 : it.qtd, 'min=0 data-rr')}</label></div>
 ${(it.mods || []).length ? `<div class="mods">${it.mods.map((m, k) => `<span class="modt">${esc(S.modNome(m))}${typeof m == 'object' && m.desc ? ` <small>${esc(m.desc)}</small>` : ''} <button class="mini" data-act="op-modx" data-i="${i}" data-k="${k}">Remover</button></span>`).join('')}</div>` : ''}
 ${tag.length ? `<div class="tags">${tag.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
@@ -205,6 +205,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
       toast(`${esc(it.n)} · ataque (${esc(sk.n)}): [${r.r}] → ${r.d}${b ? ' ' + sinal(b) : ''} = <b>${r.total}</b>`); return true }
     if (a == 'op-dano') { const it = f.inv.items[+d.i], dn = S.armaEf(it).dano, r = S.rolar(dn); toast(r ? `${esc(it.n)} · dano ${esc(dn)}: ${r.txt} = <b>${r.total}</b>` : 'Preencha o dano da arma (ex.: 1d8).'); return true }
     if (a == 'op-ped-x') { db.from('pedidos').delete().eq('id', d.id).then(() => { PED = (PED || []).filter(x => x.id != d.id); render() }); return true }
+    if (a == 'op-modif') { modificar(f, +d.i); return true }
     if (a == 'op-modx') { const it = f.inv.items[+d.i], m = (it.mods || [])[+d.k]; if (!m) return true;
       if (typeof m == 'object') { it.catg = Math.max(0, Math.round(n0(it.catg)) - (m.catg || 0)); it.esp = Math.max(0, n0(it.esp) - (m.esp || 0)); if (m.def) it.def = n0(it.def) - m.def }
       it.mods.splice(+d.k, 1); calc(f); touch(f); render(); toast(esc(S.modNome(m)) + ' removida de ' + esc(it.n) + '.'); return true }
@@ -305,21 +306,40 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     const L = (PED || []).filter(x => x.estado != 'aplicado' || Date.now() - new Date(x.criado_em) < 864e5 * 3); if (!L.length) return '';
     const ET = { pendente: 'esperando o mestre', aprovado: 'aprovado', recusado: 'recusado', aplicado: 'aplicado' };
     return `<section class="card"><h2>Pedidos ao mestre</h2>${L.map(x => `<div class="itr"><span class="m" style="flex:1"><b>${esc(x.titulo)}</b> — ${ET[x.estado]}${x.resposta ? '. Mestre: ' + esc(x.resposta) : ''}</span>${x.estado == 'pendente' || x.estado == 'recusado' ? `<button class="mini" data-act="op-ped-x" data-id="${x.id}">${x.estado == 'pendente' ? 'Cancelar' : 'Limpar'}</button>` : ''}</div>`).join('')}</section>` };
-  /* modificação: escolhe um item compatível do inventário; sobe a categoria em 1 e ajusta espaço/Defesa */
+  /* classes de modificação que o item aceita: pelo catálogo (mc) ou, se for item próprio/antigo, pelo tipo */
+  const mcsDe = it => it.mc ? [it.mc] : it.tipo == 'arma' ? ((it.arma || {}).per == 'Pontaria' ? ['disparo', 'fogo'] : ['corpo']) : it.tipo == 'protecao' ? ['protecao'] : it.tipo == 'geral' ? ['acessorio'] : [];
+  const podeMod = it => mcsDe(it).length > 0;
+  const tem1 = (it, m) => (it.mods || []).map(S.modNome).includes(m.n);
+  /* aplica a modificação neste item (checa a patente; se não couber, oferece pedido ao mestre) */
+  function aplicaNoItem(f, it, m) {
+    const d = m.mod || {}, c0 = Math.round(n0(it.catg)), c1 = Math.min(4, c0 + (d.catg || 0)), D = ULT || calc(f).D;
+    const efeito = { catg: c1 - c0, esp: Math.min(0, d.esp || 0), def: d.def || 0 };
+    if (c1 > c0 && c1 >= 1 && !mestre(f) && D.porCat[c1] + 1 > D.patente[3][c1 - 1]) { pedeAoMestre(f, it, m, efeito, D, c1); return }
+    poeMod(f, it, m, efeito); render(); toast(esc(m.n) + ' aplicada em ' + esc(it.n) + '.');
+  }
+  /* do catálogo: escolhe um item compatível do inventário */
   function aplicaMod(f, m, fecha) {
-    const ap = m.aplica || [], its = f.inv.items.map((it, i) => [it, i]).filter(([it]) => ap.includes(it.mc) && !(it.mods || []).map(S.modNome).includes(m.n));
-    if (!its.length) { toast('Nenhum item do inventário aceita ' + esc(m.n) + '. Adicione primeiro a arma, proteção ou acessório do livro.'); return }
+    const ap = m.aplica || [], its = f.inv.items.map((it, i) => [it, i]).filter(([it]) => mcsDe(it).some(c => ap.includes(c)) && !tem1(it, m));
+    if (!its.length) { toast('Nenhum item do inventário aceita ' + esc(m.n) + '. Adicione primeiro a arma, proteção ou item comum.'); return }
     const o = document.createElement('div'); o.id = 'md';
-    o.innerHTML = `<div class="mb"><h3>${esc(m.n)}</h3><p class="m" style="margin:0">${esc(m.desc)} A modificação fica equipada na arma e não ocupa espaço. Ela sobe a categoria do item em I e por isso depende da sua patente. Em qual item?</p><div class="catl">${its.map(([it, i]) => `<button class="cat-i" data-i="${i}"><b>${esc(it.n)}</b><small>Cat. ${S.ROMANO[Math.round(n0(it.catg))]}${(it.mods || []).length ? ' · ' + esc(it.mods.map(S.modNome).join(', ')) : ''}</small></button>`).join('')}</div><button data-x style="align-self:flex-end">Cancelar</button></div>`;
+    o.innerHTML = `<div class="mb"><h3>${esc(m.n)}</h3><p class="m" style="margin:0">${esc(m.desc)} A modificação fica equipada no item e não ocupa espaço. Ela sobe a categoria do item em I e por isso depende da sua patente. Em qual item?</p><div class="catl">${its.map(([it, i]) => `<button class="cat-i" data-i="${i}"><b>${esc(it.n)}</b><small>Cat. ${S.ROMANO[Math.round(n0(it.catg))]}${(it.mods || []).length ? ' · ' + esc(it.mods.map(S.modNome).join(', ')) : ''}</small></button>`).join('')}</div><button data-x style="align-self:flex-end">Cancelar</button></div>`;
     document.body.append(o);
     o.onclick = e => {
       if (e.target === o || e.target.closest('[data-x]')) { o.remove(); return }
-      const b = e.target.closest('.cat-i'); if (!b) return; const it = f.inv.items[+b.dataset.i], d = m.mod || {};
-      const c0 = Math.round(n0(it.catg)), c1 = Math.min(4, c0 + (d.catg || 0)), D = ULT || calc(f).D;
-      const efeito = { catg: c1 - c0, esp: Math.min(0, d.esp || 0), def: d.def || 0 };
-      if (c1 > c0 && c1 >= 1 && !mestre(f) && D.porCat[c1] + 1 > D.patente[3][c1 - 1]) { o.remove(); pedeAoMestre(f, it, m, efeito, D, c1); return }
-      poeMod(f, it, m, efeito);
-      o.remove(); fecha(); render(); toast(esc(m.n) + ' aplicada em ' + esc(it.n) + '.') };
+      const b = e.target.closest('.cat-i'); if (!b) return; o.remove(); fecha(); aplicaNoItem(f, f.inv.items[+b.dataset.i], m) };
+  }
+  /* botão Modificar: todas as modificações que este item aceita, de qualquer categoria */
+  async function modificar(f, i) {
+    const it = f.inv.items[i]; if (!it) return;
+    const cl = mcsDe(it); if (!cl.length) { toast('Este item não pode ser modificado.'); return }
+    const base = await itensCarrega(), L = base.filter(x => x.tipo == 'modificacao' && (x.aplica || []).some(c => cl.includes(c)));
+    if (!L.length) { toast('Nenhuma modificação do livro para este item (o mestre precisa rodar o SQL dos itens).'); return }
+    const o = document.createElement('div'); o.id = 'md';
+    o.innerHTML = `<div class="mb"><h3>Modificar ${esc(it.n)}</h3><p class="m" style="margin:0">Todas as modificações que este item aceita. Cada uma sobe a categoria em I; se a sua patente não permitir, você pode pedir ao mestre.</p><div class="catl">${L.map((m, k) => `<button class="cat-i" data-k="${k}" ${tem1(it, m) ? 'disabled' : ''}><b>${esc(m.n)}${tem1(it, m) ? ' (já aplicada)' : ''}</b><small style="white-space:normal">${esc(m.desc)}</small></button>`).join('')}</div><button data-x style="align-self:flex-end">Fechar</button></div>`;
+    document.body.append(o);
+    o.onclick = e => {
+      if (e.target === o || e.target.closest('[data-x]')) { o.remove(); return }
+      const b = e.target.closest('.cat-i'); if (!b || b.disabled) return; o.remove(); aplicaNoItem(f, it, L[+b.dataset.k]) };
   }
   async function daCampanha(f) {
     const r = await db.from('catalogo').select('id,tipo,nome,dados,aprovado,criado_por').eq('campanha_id', f._camp).eq('tipo', 'habilidade');
