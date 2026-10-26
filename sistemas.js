@@ -247,8 +247,30 @@
   ], modular: [] };
   const TIPOS_ITEM = [['geral', 'Geral'], ['arma', 'Arma'], ['protecao', 'Proteção'], ['municao', 'Munição'], ['consumivel', 'Consumível'], ['paranormal', 'Paranormal']];
 
+  /* Calculador de VD (Valor de Desafio) de criaturas.
+     Não existe regra publicada: a fórmula foi ajustada nas 48 criaturas do bestiário do livro (o Anfitrião, VD 413, ficou de fora).
+     VD ≈ -304,6 + 78,25 × ln(PV) + 1,547 × (Fortitude + Reflexos + Vontade), arredondado ao passo de 20 (mínimo 20).
+     Na conferência cruzada o erro médio foi ~25; metade das criaturas cai a 1 passo do VD do livro. É uma estimativa.
+     Habilidades, imunidades e dano dos ataques não entram na conta. */
+  function calcVD(d) {
+    d = d || {};
+    const pv = Math.max(1, n0(d.pv)), sv = n0(d.fort) + n0(d.refl) + n0(d.vont);
+    const bruto = -304.6 + 78.25 * Math.log(pv) + 1.547 * sv;
+    const vd = Math.max(20, Math.round(bruto / 20) * 20);
+    return { bruto: Math.round(bruto), vd, min: Math.max(20, vd - 40), max: vd + 40 };
+  }
+  // criaturas do livro mais parecidas (PV, defesa e testes de resistência); lista = [{nome, vd, dados}]
+  function parecidos(d, lista, n) {
+    d = d || {};
+    const lp = Math.log(Math.max(1, n0(d.pv))), sv = n0(d.fort) + n0(d.refl) + n0(d.vont), df = n0(d.def);
+    return (lista || []).map(e => {
+      const x = e.dados || {}, dist = Math.pow((Math.log(Math.max(1, n0(x.pv))) - lp) / 0.5, 2) + Math.pow((n0(x.fort) + n0(x.refl) + n0(x.vont) - sv) / 10, 2) + Math.pow((n0(x.def) - df) / 8, 2);
+      return { e, dist };
+    }).sort((a, b) => a.dist - b.dist).slice(0, n || 3).map(x => x.e);
+  }
+
   window.SIS = { SISTEMAS, ATR, PERICIAS, TREINO, CLASSES, NEX, PATENTES, CIRCULO_PE, ROMANO, ALVOS, CATALOGO, TIPOS_ITEM,
-    nivel, marcos, derivar, aplicar, prepararOP, luz, rolar, teste, uid, n0, armaEf, modNome, MODEF,
+    nivel, marcos, derivar, aplicar, prepararOP, luz, rolar, teste, uid, n0, armaEf, modNome, MODEF, calcVD, parecidos,
     sistemaDe: (camp, f) => (camp && SISTEMAS[camp.sistema] ? camp.sistema : camp ? 'op' : (f && SISTEMAS[f.sistema] ? f.sistema : 'op')),
     cfgDe: camp => (camp && camp.config && typeof camp.config == 'object' ? camp.config : {}) };
 })();
