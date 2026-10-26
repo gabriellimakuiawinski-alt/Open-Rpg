@@ -71,7 +71,7 @@ h2::after{content:"";flex:1;border-bottom:2px dashed #00000026}
 #docver{position:fixed;inset:0;z-index:40;background:#000d;display:flex;align-items:center;justify-content:center;padding:14px;animation:pg .25s ease}
 #docver .dv{max-width:min(640px,100%);max-height:92vh;overflow:auto;background:var(--papel2);color:var(--tinta);padding:18px;display:flex;flex-direction:column;gap:12px;border-radius:3px;box-shadow:0 30px 60px -20px #000}
 #docver b{font:400 22px var(--maq)}#docver img{max-width:100%;border:6px solid #f8f4e8;box-shadow:0 6px 14px -8px #000}#docver p{margin:0;white-space:pre-wrap;font:700 21px/1.25 var(--mao);color:var(--caneta)}#docver button{align-self:flex-end;color:var(--tinta)}
-</style></head><body class="quadro">
+</style><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone-192.png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><script src="pwa.js" defer></script></head><body class="quadro">
 <header><select id="sel"></select><button data-act="new">＋ Nova</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><button data-act="delf" class="x">Excluir</button><span class="sp"></span><span id="st"></span><a href="index.html" class="tl" title="Voltar ao início">Início</a><a href="mesa.html" class="tl" title="Abrir o tabletop">Tabletop</a><button data-act="sair" id="who" title="Sair da conta"></button></header>
 <nav id="tabs"></nav><main id="app"></main><div id="toast"></div>
 <input type="file" id="fi" accept=".json,application/json" hidden>

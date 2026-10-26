@@ -27,3 +27,5 @@ Todo CSS/JS tem `?v=N`. Ao mudar um arquivo, subir o N dele (e checar se `index.
 
 ## Escopo léxico no tabletop
 Os scripts extras são *classic scripts* e enxergam as variáveis do script principal: `sb, MESA, ME, GER, DONO, VIEW, S, sel, selM, AU, Q, qi, LIB, fx, logm, toast, RC, lightsData, draw`. `GER/DONO` são definidos de forma **assíncrona**; módulos devem esperar (`MusicaSync.conectou()` é chamado quando o canal realtime entra em SUBSCRIBED) em vez de ler no carregamento.
+
+- App (PWA): manifest.webmanifest, sw.js (não guarda cache), pwa.js, icones/ (gerados de tools/pwa/icone.svg). Tags em index/ficha/loja/quadro e injetadas no mesa.html pelo build.py.

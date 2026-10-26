@@ -33,7 +33,7 @@ input:focus,select:focus{outline:0;border-bottom:2px solid var(--carimbo)}select
 #toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translate(-50%,-260%) rotate(-2deg);background:#f2df7c;color:#3d3510;font:700 21px/1.1 var(--mao);padding:14px 20px;box-shadow:0 14px 22px -10px #000c;transition:transform .5s var(--mola);max-width:92%;z-index:60;pointer-events:none}
 #toast.show{transform:translate(-50%,0) rotate(-2deg)}
 .hb{border-left:5px solid var(--fita);padding-left:10px}
-</style></head><body class="quadro">
+</style><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone-192.png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><script src="pwa.js" defer></script></head><body class="quadro">
 <header><a href="index.html">Início</a><h1 id="tit">Loja</h1><a id="vf" href="ficha.html">Ficha</a></header>
 <main id="app"><p>Carregando…</p></main><div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
