@@ -7,6 +7,8 @@
   const cfgDe = f => S.cfgDe(campDe(f));
   const mestre = f => !!f._camp && meuPapel(f._camp) == 'mestre';
   /* números de regra (defesa, luz, efeitos de item) só o mestre muda; sem campanha, o dono */
+  /* o mestre mexe livre nas fichas de NPC e nas dos jogadores; na própria ficha de personagem vale a patente (pedido) */
+  const livre = f => mestre(f) && (f._npc || f._dono != ME.id);
   const podeMec = f => f._camp ? mestre(f) : f._dono == ME.id;
   const idxAt = (f, id) => f.attrs.findIndex(a => a.id == id);
   const sinal = v => (v > 0 ? '+' : '') + v;
@@ -286,7 +288,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   /* pedidos desta ficha: carrega, aplica os aprovados e mostra o estado no Inventário */
   let PED = null, PEDF = null, PEDCH = null;
   async function pedidosCarrega(f) {
-    if (!f._camp || mestre(f) || f._dono != ME.id) { PED = []; return }
+    if (!f._camp || livre(f) || f._dono != ME.id) { PED = []; return }
     const r = await db.from('pedidos').select('id,titulo,estado,resposta,dados,criado_em').eq('personagem_id', f.id).order('criado_em', { ascending: false });
     if (r.error) { PED = null; return }
     PED = r.data; let mudou = false;
@@ -301,7 +303,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     if (PEDCH && PEDCH.f == f.id) return; try { if (PEDCH) db.removeChannel(PEDCH.c) } catch (e) { }
     try { const c = db.channel('ped-' + f.id).on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos', filter: 'personagem_id=eq.' + f.id }, () => { PEDF = null; pedidosCarrega(f) }); c.subscribe(); PEDCH = { f: f.id, c } } catch (e) { }
   }
-  const vPedidos = f => { if (!f._camp || mestre(f) || f._dono != ME.id) return '';
+  const vPedidos = f => { if (!f._camp || livre(f) || f._dono != ME.id) return '';
     if (PEDF !== f.id) { PEDF = f.id; setTimeout(() => { pedidosOuve(f); pedidosCarrega(f) }, 0) }
     const L = (PED || []).filter(x => x.estado != 'aplicado' || Date.now() - new Date(x.criado_em) < 864e5 * 3); if (!L.length) return '';
     const ET = { pendente: 'esperando o mestre', aprovado: 'aprovado', recusado: 'recusado', aplicado: 'aplicado' };
@@ -314,7 +316,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   function aplicaNoItem(f, it, m) {
     const d = m.mod || {}, c0 = Math.round(n0(it.catg)), c1 = Math.min(4, c0 + (d.catg || 0)), D = ULT || calc(f).D;
     const efeito = { catg: c1 - c0, esp: Math.min(0, d.esp || 0), def: d.def || 0 };
-    if (c1 > c0 && c1 >= 1 && !mestre(f) && D.porCat[c1] + 1 > D.patente[3][c1 - 1]) { pedeAoMestre(f, it, m, efeito, D, c1); return }
+    if (c1 > c0 && c1 >= 1 && !livre(f) && D.porCat[c1] + 1 > D.patente[3][c1 - 1]) { pedeAoMestre(f, it, m, efeito, D, c1); return }
     poeMod(f, it, m, efeito); render(); toast(esc(m.n) + ' aplicada em ' + esc(it.n) + '.');
   }
   /* do catálogo: escolhe um item compatível do inventário */
