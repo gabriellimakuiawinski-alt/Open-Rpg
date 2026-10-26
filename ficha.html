@@ -1,7 +1,7 @@
 <!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Ficha</title>
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="tema.css?v=8">
+<link rel="stylesheet" href="tema.css?v=9">
 <style>
 :root{--bg:var(--tabua);--p:var(--papel);--p2:var(--papel3);--m:var(--tinta2);--a:var(--carimbo)}
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
@@ -74,8 +74,8 @@ h2::after{content:"";flex:1;border-bottom:2px dashed #00000026}
 <header><select id="sel"></select><button data-act="new">＋ Nova</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><button data-act="delf" class="x">Excluir</button><span class="sp"></span><span id="st"></span><a href="index.html" class="tl" title="Voltar ao início">🏠 Início</a><a href="mesa.html" class="tl" title="Abrir o tabletop">🎲 Tabletop</a><button data-act="sair" id="who" title="Sair da conta"></button></header>
 <nav id="tabs"></nav><main id="app"></main><div id="toast"></div>
 <input type="file" id="fi" accept=".json,application/json" hidden>
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="comum.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="comum.js?v=2"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px;font-size:16px">Não consegui carregar o login. Confira a internet e se o arquivo <b>comum.js</b> está na mesma pasta deste arquivo.</p>';throw new Error('Mesa indisponível')}
 const db=Mesa.db;

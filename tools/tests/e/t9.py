@@ -31,7 +31,7 @@ with sync_playwright() as p:
     chk("jogador nao recebe ficha NPC no cliente",pg.evaluate("[...PERS.values()].every(p=>!p.npc)"))
     pg.context.close()
     # sem ?mesa e sem mesa guardada: vai para o inicio
-    ctx=b.new_context(); ctx.route("**/@supabase/supabase-js@2",lambda r:r.fulfill(status=200,content_type="application/javascript",body=lib.MOCK))
+    ctx=b.new_context(); ctx.route("**/@supabase/supabase-js@2**",lambda r:r.fulfill(status=200,content_type="application/javascript",body=lib.MOCK))
     ctx.route("**/fonts.g*/**",lambda r:r.abort())
     ctx.add_init_script("localStorage.setItem('me','%s')"%U['X'])
     ctx.expose_function("pgcall",lambda s:json.dumps(pgx.handle(json.loads(s)),default=str))

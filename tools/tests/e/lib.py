@@ -45,7 +45,7 @@ def seed():
     return d
 def abre(b,user,d,wait=True):
     ctx=b.new_context(viewport={"width":1100,"height":800})
-    ctx.route("**/@supabase/supabase-js@2",lambda r:r.fulfill(status=200,content_type="application/javascript",body=MOCK))
+    ctx.route("**/@supabase/supabase-js@2**",lambda r:r.fulfill(status=200,content_type="application/javascript",body=MOCK))
     ctx.add_init_script("localStorage.setItem('me','%s')"%U[user])
     ctx.expose_function("pgcall",lambda s:json.dumps(pgx.handle(json.loads(s)),default=str))
     pg=ctx.new_page();pg.errs=[];pg.ctx=ctx;pg.user=user

@@ -40,7 +40,10 @@ function troca(root){
     const f=document.createDocumentFragment();let last=0,t=n.nodeValue,m;re.lastIndex=0;
     while((m=re.exec(t))){f.append(t.slice(last,m.index));const i=document.createElement('i');i.className='ie';i.innerHTML=S_(IC[m[1]]);f.append(i);last=m.index+m[0].length}
     f.append(t.slice(last));n.replaceWith(f)})}
-let q=0;const go=()=>{q=0;obs.disconnect();try{troca(document.body)}finally{obs.observe(document.body,{childList:true,subtree:true,characterData:true})}};
-const obs=new MutationObserver(()=>{if(!q)q=requestAnimationFrame(go)});
-go();
+/* só examina o que mudou (antes varria a página inteira a cada mudança de texto) */
+let q=0;const pend=new Set();const OPT={childList:true,subtree:true,characterData:true};
+const go=()=>{q=0;obs.disconnect();try{const L=[...pend];pend.clear();L.forEach(n=>{if(!n.isConnected)return;if(n.nodeType==3){if(n.parentNode)troca(n.parentNode)}else if(n.nodeType==1)troca(n)})}finally{obs.observe(document.body,OPT)}};
+const tem=n=>{const t=n.nodeType==3?n.nodeValue:n.nodeType==1?n.textContent:'';re.lastIndex=0;const r=!!t&&re.test(t);re.lastIndex=0;return r};
+const obs=new MutationObserver(ms=>{ms.forEach(m=>{if(m.type=='characterData'){if(tem(m.target))pend.add(m.target)}else m.addedNodes.forEach(n=>{if(tem(n))pend.add(n)})});if(pend.size&&!q)q=requestAnimationFrame(go)});
+obs.disconnect();troca(document.body);obs.observe(document.body,OPT);
 })();

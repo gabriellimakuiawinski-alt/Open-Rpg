@@ -2,6 +2,16 @@
    (ficha.html agora; mesa.html depois). A URL e a chave "publishable" são públicas
    por natureza: quem protege os dados são as regras do banco (schema.sql).
    NUNCA coloque aqui a chave "secret" / "service_role". */
+/* aparelho fraco (celular, poucos núcleos/memória, economia de dados, menos movimento):
+   as páginas desligam enfeites pesados quando html.leve existe */
+(function () {
+  try {
+    const n = navigator, mm = q => matchMedia(q).matches;
+    const leve = mm('(pointer: coarse)') || (n.hardwareConcurrency || 4) <= 4 || (n.deviceMemory || 8) <= 4 ||
+      !!(n.connection && n.connection.saveData) || mm('(prefers-reduced-motion: reduce)');
+    window.LEVE = leve; if (leve) document.documentElement.classList.add('leve');
+  } catch (e) { window.LEVE = false; }
+})();
 (function () {
   const SUPABASE_URL = 'https://riltokltdqpccckpqmal.supabase.co';
   const SUPABASE_KEY = 'sb_publishable_j_yGg0oW5UdCar9Wkfg-zw_Baf8JMwL';

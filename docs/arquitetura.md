@@ -6,7 +6,7 @@ Páginas estáticas, sem framework, sem build para o resto (só `mesa.html` é g
 - `index.html` — início: splash, campanhas, mesas, fichas, abas, exportar. Roteamento por hash (`#/c/<uuid>`). Carrega `som.js`.
 - `ficha.html` — ficha de personagem (seção Documentos, sem peso).
 - `mesa.html` — tabletop. **Gerado** (ver abaixo).
-- `comum.js` — `window.Mesa = {db, exigirLogin, sair}`; cria o cliente Supabase e a tela de login (papel com carimbo).
+- `comum.js` — define `window.LEVE` e a classe `html.leve` (celular/aparelho fraco/economia de dados/menos movimento: as páginas desligam enfeites pesados); `window.Mesa = {db, exigirLogin, sair}`; cria o cliente Supabase e a tela de login (papel com carimbo).
 - `tema.css` — tokens e classes do visual "dossiê" (`--tabua --papel --pasta --tinta --carimbo --fita`, fontes Special Elite / Caveat / Hanken Grotesk). `tema-mesa.css` — tema do tabletop.
 - `som.js` — ver docs/som.md.
 - Módulos do tabletop: `mesa-fx.js mesa-icones.js mesa-musica.js mesa-dados.js mesa-notas.js mesa-exportar.js` (ver docs/mesa.md).
@@ -19,6 +19,7 @@ Páginas estáticas, sem framework, sem build para o resto (só `mesa.html` é g
 - Se um `rep()` falhar, o texto original não bate: leia o trecho no original antes de ajustar.
 
 ## Cache
+Supabase JS fixado em versão exata (`@2.118.0/dist/umd/supabase.js`) nas 3 páginas: cache longo no celular. Para atualizar, troque o número nas 3 (no `build.py` para a mesa).
 Todo CSS/JS tem `?v=N`. Ao mudar um arquivo, subir o N dele (e checar se `index.html`/`ficha.html`/`build.py` usam o mesmo número para o mesmo arquivo). Já houve tela "bugada" no celular por CSS novo com JS antigo em cache.
 
 ## Escopo léxico no tabletop

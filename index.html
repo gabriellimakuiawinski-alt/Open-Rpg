@@ -260,9 +260,11 @@ section{margin-top:38px}
 .radio .ondas i{width:3px;height:35%;background:currentColor;border-radius:1px}
 .radio .ondas i:nth-child(2){height:70%}.radio .ondas i:nth-child(3){height:50%}
 .radio.tocando{color:var(--fita);border-color:#dcc66a66}
-.radio.tocando .ondas i{animation:eq 1.1s ease-in-out infinite}
+.radio.tocando .ondas i{height:100%;transform-origin:50% 100%;will-change:transform;animation:eq 1.1s ease-in-out infinite}
 .radio.tocando .ondas i:nth-child(2){animation-delay:.25s}.radio.tocando .ondas i:nth-child(3){animation-delay:.5s}.radio.tocando .ondas i:nth-child(4){animation-delay:.12s}
-@keyframes eq{0%,100%{height:30%}50%{height:100%}}
+@keyframes eq{0%,100%{transform:scaleY(.3)}50%{transform:scaleY(1)}}
+/* aparelho fraco: sem animações decorativas infinitas */
+.leve .luz{animation:none}.leve .hero.vazio .seta path{animation:traco 1s .6s var(--ease) forwards}
 .radio.mudo{opacity:.55}.radio.mudo::after{content:"";position:absolute;width:26px;height:2px;background:var(--carimbo2);transform:rotate(-40deg);border-radius:2px}
 #som-pop{position:fixed;z-index:45;width:min(270px,calc(100vw - 24px));display:flex;flex-direction:column;gap:10px;padding:18px 16px 14px;color:var(--tinta);border-radius:3px;background-color:var(--papel2);background-image:var(--grao);background-blend-mode:multiply;box-shadow:0 3px 0 #8c8167,0 24px 36px -14px #000;transform-origin:85% 0;animation:pop .35s var(--mola)}
 #som-pop.hid{display:none}
@@ -300,8 +302,8 @@ section{margin-top:38px}
 <div id="vel"><div id="jan" class="papel" role="dialog" aria-modal="true"></div></div>
 <div id="aviso" class="nota-adesiva" role="status"></div>
 
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-<script src="comum.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="comum.js?v=2"></script>
 <script src="som.js?v=9"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px;font-size:16px">Não consegui carregar o login. Confira a internet e se o arquivo <b>comum.js</b> está na mesma pasta deste arquivo.</p>';throw new Error('Mesa indisponível')}
@@ -672,15 +674,19 @@ function conta(ch){const n=+ch.dataset.n;if(!(n>0)){ch.textContent=ch.dataset.n?
 
 /* ============ ambiente: poeira na luz da luminária ============ */
 (function(){
-  const cv=$('#poeira');if(!cv||calmo)return;const g=cv.getContext('2d');let W,H,P=[];
-  const tam=()=>{const d=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*d;cv.height=H*d;g.setTransform(d,0,0,d,0,0);
-    P=Array.from({length:Math.round(Math.min(60,W*H/16000))},()=>({x:Math.random()*W,y:Math.random()*H,r:.6+Math.random()*1.8,v:3+Math.random()*9,f:Math.random()*6.28,a:.08+Math.random()*.3}))};
+  /* aparelho fraco: sem poeira (era uma animação de tela cheia rodando sem parar) */
+  const cv=$('#poeira');if(!cv||calmo||window.LEVE){if(cv)cv.remove();return}const g=cv.getContext('2d');let W,H,P=[];
+  const tam=()=>{W=innerWidth;H=innerHeight;cv.width=W;cv.height=H;
+    P=Array.from({length:Math.round(Math.min(40,W*H/24000))},()=>({x:Math.random()*W,y:Math.random()*H,r:.6+Math.random()*1.8,v:3+Math.random()*9,f:Math.random()*6.28,a:.08+Math.random()*.3}))};
   tam();addEventListener('resize',tam);
-  let ult=performance.now();
-  (function quadro(t){requestAnimationFrame(quadro);if(document.hidden)return;const dt=Math.min(.05,(t-ult)/1000);ult=t;g.clearRect(0,0,W,H);
+  /* 24 quadros por segundo bastam para poeira lenta; para quando a aba some */
+  let ult=performance.now(),vai=0;
+  function quadro(t){if(document.hidden){vai=0;return}requestAnimationFrame(quadro);if(t-ult<40)return;const dt=Math.min(.08,(t-ult)/1000);ult=t;g.clearRect(0,0,W,H);g.fillStyle='#fff3d6';
     for(const p of P){p.y-=p.v*dt;p.x+=Math.sin(t/2400+p.f)*7*dt;if(p.y<-5){p.y=H+5;p.x=Math.random()*W}
       const luz=Math.max(0,1-Math.hypot(p.x/W-.22,p.y/H-.05)*1.25);
-      g.globalAlpha=p.a*(.35+luz)*(.7+.3*Math.sin(t/700+p.f));g.fillStyle='#fff3d6';g.beginPath();g.arc(p.x,p.y,p.r,0,6.283);g.fill()}})(ult)})();
+      g.globalAlpha=p.a*(.35+luz)*(.7+.3*Math.sin(t/700+p.f));g.beginPath();g.arc(p.x,p.y,p.r,0,6.283);g.fill()}}
+  const liga=()=>{if(!vai&&!document.hidden){vai=1;ult=performance.now();requestAnimationFrame(quadro)}};
+  document.addEventListener('visibilitychange',liga);liga()})();
 
 /* ============ tempo real: o início se mantém atualizado ============ */
 let rt;function recarregar(){clearTimeout(rt);rt=setTimeout(async()=>{if(fecha)return recarregar();try{await carregar();desenhar()}catch(e){}},500)}
