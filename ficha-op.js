@@ -134,7 +134,7 @@ ${f._camp ? `<a class="tl loja-l" href="loja.html?camp=${f._camp}&ficha=${f.id}"
 <p class="m" style="font-size:13px;margin:6px 0 0">Patente <b>${esc(pat[1])}</b>: até ${[1, 2, 3, 4].filter(c => pat[3][c - 1]).map(c => pat[3][c - 1] + '× cat. ' + S.ROMANO[c]).join(', ') || 'só categoria 0'}.</p>
 ${D.excesso.length ? `<p class="alerta">Acima do limite da patente: ${esc(D.excesso.join('; '))}.</p>` : ''}
 <p class="m" style="font-size:13px;margin:6px 0 0">Luz para a mesa: ${D.luz.c ? `Lanterna: ${esc(D.luz.cn)} (${D.luz.c} m)` : 'sem lanterna'} · ${D.luz.l ? `Lampião: ${esc(D.luz.ln)} (${D.luz.l} m)` : 'sem lampião'}</p></section>
-<section class="card"><h2>Itens</h2>${f.inv.items.map((it, i) => itemCard(f, it, i)).join('') || '<p class=m>Inventário vazio.</p>'}
+${vPedidos(f)}<section class="card"><h2>Itens</h2>${f.inv.items.map((it, i) => itemCard(f, it, i)).join('') || '<p class=m>Inventário vazio.</p>'}
 <div class="g2b"><button class=add data-act=add data-l=items>＋ Item próprio</button>${podeMec(f) || cfgDe(f).catalogoLivre !== false ? '<button class=add data-act="op-cat">＋ Do catálogo</button>' : ''}</div></section>`;
   }
 
@@ -204,6 +204,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
       at = av(f, sk.a), b = n0(sk.t) + n0(sk.o) + n0(ULT.per[sk.n]) + S.armaEf(it).atk, r = S.teste(at, b);
       toast(`${esc(it.n)} · ataque (${esc(sk.n)}): [${r.r}] → ${r.d}${b ? ' ' + sinal(b) : ''} = <b>${r.total}</b>`); return true }
     if (a == 'op-dano') { const it = f.inv.items[+d.i], dn = S.armaEf(it).dano, r = S.rolar(dn); toast(r ? `${esc(it.n)} · dano ${esc(dn)}: ${r.txt} = <b>${r.total}</b>` : 'Preencha o dano da arma (ex.: 1d8).'); return true }
+    if (a == 'op-ped-x') { db.from('pedidos').delete().eq('id', d.id).then(() => { PED = (PED || []).filter(x => x.id != d.id); render() }); return true }
     if (a == 'op-modx') { const it = f.inv.items[+d.i], m = (it.mods || [])[+d.k]; if (!m) return true;
       if (typeof m == 'object') { it.catg = Math.max(0, Math.round(n0(it.catg)) - (m.catg || 0)); it.esp = Math.max(0, n0(it.esp) - (m.esp || 0)); if (m.def) it.def = n0(it.def) - m.def }
       it.mods.splice(+d.k, 1); calc(f); touch(f); render(); toast(esc(S.modNome(m)) + ' removida de ' + esc(it.n) + '.'); return true }
@@ -258,6 +259,52 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
       const it = JSON.parse(JSON.stringify(it0)); ['_g', '_sub', 'mc'].forEach(k => delete it[k]); it.mc = it0.mc || '';
       f.inv.items.push({ ...it, id: S.uid(), qtd: 1, eq: false, desc: it.desc || '' }); calc(f); touch(f); o.remove(); render(); toast(esc(it.n) + ' adicionado ao inventário.') };
   }
+  /* põe a modificação no item (sem checar patente) */
+  function poeMod(f, it, m, e) {
+    it.mods = (it.mods || []).concat([{ n: m.n, desc: m.desc, catg: e.catg, esp: e.esp, def: e.def }]);
+    it.catg = Math.min(4, Math.round(n0(it.catg)) + e.catg); it.esp = Math.max(0, n0(it.esp) + e.esp); if (e.def) it.def = n0(it.def) + e.def;
+    calc(f); touch(f);
+  }
+  /* patente não permite: oferece mandar um pedido ao mestre (aba Pedidos da campanha) */
+  function pedeAoMestre(f, it, m, e, D, c1) {
+    const lim = D.patente[3][c1 - 1], txt = `Sua patente (${D.patente[1]}) permite ${lim} item(ns) de categoria ${S.ROMANO[c1]}; ${esc(m.n)} deixaria ${esc(it.n)} nessa categoria.`;
+    if (!f._camp) { toast(txt + ' Não dá para aplicar.'); return }
+    const o = document.createElement('div'); o.id = 'md';
+    o.innerHTML = `<div class="mb"><h3>Patente não permite</h3><p class="m" style="margin:0">${txt} Quer pedir ao mestre? Ele avalia na aba Pedidos da campanha e, se aprovar, a modificação entra sozinha na arma.</p><div class="g2b"><button class="add" data-env>Enviar pedido ao mestre</button><button data-x>Cancelar</button></div></div>`;
+    document.body.append(o);
+    o.onclick = async ev => {
+      if (ev.target === o || ev.target.closest('[data-x]')) { o.remove(); return }
+      if (!ev.target.closest('[data-env]')) return;
+      if ((PED || []).some(x => x.estado == 'pendente' && x.dados && x.dados.item == it.id && x.dados.m && x.dados.m.n == m.n)) { o.remove(); toast('Esse pedido já está esperando o mestre.'); return }
+      const r = await db.from('pedidos').insert({ campanha_id: f._camp, personagem_id: f.id, tipo: 'modificacao', titulo: `${m.n} em ${it.n}`,
+        detalhe: `${f.nome || 'Personagem'} (${D.patente[1]}) quer aplicar ${m.n} em ${it.n}. Categoria ${S.ROMANO[Math.round(n0(it.catg))]} → ${S.ROMANO[c1]}. ${m.desc || ''}`.trim(), dados: { item: it.id, m: { n: m.n, desc: m.desc }, e } });
+      o.remove();
+      if (r.error) { toast('Não consegui enviar o pedido (o mestre precisa rodar o SQL da etapa 8).'); return }
+      PEDF = null; toast('Pedido enviado ao mestre.'); render() };
+  }
+  /* pedidos desta ficha: carrega, aplica os aprovados e mostra o estado no Inventário */
+  let PED = null, PEDF = null, PEDCH = null;
+  async function pedidosCarrega(f) {
+    if (!f._camp || mestre(f) || f._dono != ME.id) { PED = []; return }
+    const r = await db.from('pedidos').select('id,titulo,estado,resposta,dados,criado_em').eq('personagem_id', f.id).order('criado_em', { ascending: false });
+    if (r.error) { PED = null; return }
+    PED = r.data; let mudou = false;
+    for (const x of PED.filter(x => x.estado == 'aprovado')) {
+      const it = f.inv.items.find(i => i.id == (x.dados || {}).item), d = x.dados || {};
+      if (it && d.m && !(it.mods || []).some(mm => S.modNome(mm) == d.m.n)) { poeMod(f, it, d.m, d.e || { catg: 1, esp: 0, def: 0 }); toast(`Pedido aprovado: ${esc(d.m.n)} aplicada em ${esc(it.n)}.`) }
+      const u = await db.from('pedidos').update({ estado: 'aplicado' }).eq('id', x.id); if (!u.error) { x.estado = 'aplicado'; mudou = true }
+    }
+    render();
+  }
+  function pedidosOuve(f) {
+    if (PEDCH && PEDCH.f == f.id) return; try { if (PEDCH) db.removeChannel(PEDCH.c) } catch (e) { }
+    try { const c = db.channel('ped-' + f.id).on('postgres_changes', { event: '*', schema: 'public', table: 'pedidos', filter: 'personagem_id=eq.' + f.id }, () => { PEDF = null; pedidosCarrega(f) }); c.subscribe(); PEDCH = { f: f.id, c } } catch (e) { }
+  }
+  const vPedidos = f => { if (!f._camp || mestre(f) || f._dono != ME.id) return '';
+    if (PEDF !== f.id) { PEDF = f.id; setTimeout(() => { pedidosOuve(f); pedidosCarrega(f) }, 0) }
+    const L = (PED || []).filter(x => x.estado != 'aplicado' || Date.now() - new Date(x.criado_em) < 864e5 * 3); if (!L.length) return '';
+    const ET = { pendente: 'esperando o mestre', aprovado: 'aprovado', recusado: 'recusado', aplicado: 'aplicado' };
+    return `<section class="card"><h2>Pedidos ao mestre</h2>${L.map(x => `<div class="itr"><span class="m" style="flex:1"><b>${esc(x.titulo)}</b> — ${ET[x.estado]}${x.resposta ? '. Mestre: ' + esc(x.resposta) : ''}</span>${x.estado == 'pendente' || x.estado == 'recusado' ? `<button class="mini" data-act="op-ped-x" data-id="${x.id}">${x.estado == 'pendente' ? 'Cancelar' : 'Limpar'}</button>` : ''}</div>`).join('')}</section>` };
   /* modificação: escolhe um item compatível do inventário; sobe a categoria em 1 e ajusta espaço/Defesa */
   function aplicaMod(f, m, fecha) {
     const ap = m.aplica || [], its = f.inv.items.map((it, i) => [it, i]).filter(([it]) => ap.includes(it.mc) && !(it.mods || []).map(S.modNome).includes(m.n));
@@ -269,10 +316,10 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
       if (e.target === o || e.target.closest('[data-x]')) { o.remove(); return }
       const b = e.target.closest('.cat-i'); if (!b) return; const it = f.inv.items[+b.dataset.i], d = m.mod || {};
       const c0 = Math.round(n0(it.catg)), c1 = Math.min(4, c0 + (d.catg || 0)), D = ULT || calc(f).D;
-      if (c1 > c0 && c1 >= 1 && D.porCat[c1] + 1 > D.patente[3][c1 - 1]) { toast(`Sua patente (${esc(D.patente[1])}) só permite ${D.patente[3][c1 - 1]} item(ns) de categoria ${S.ROMANO[c1]}. Não dá para aplicar ${esc(m.n)}.`); return }
-      it.mods = (it.mods || []).concat([{ n: m.n, desc: m.desc, catg: c1 - c0, esp: Math.min(0, d.esp || 0), def: d.def || 0 }]); it.catg = c1;
-      it.esp = Math.max(0, n0(it.esp) + Math.min(0, d.esp || 0)); if (d.def) it.def = n0(it.def) + d.def;
-      calc(f); touch(f); o.remove(); fecha(); render(); toast(esc(m.n) + ' aplicada em ' + esc(it.n) + '.') };
+      const efeito = { catg: c1 - c0, esp: Math.min(0, d.esp || 0), def: d.def || 0 };
+      if (c1 > c0 && c1 >= 1 && !mestre(f) && D.porCat[c1] + 1 > D.patente[3][c1 - 1]) { o.remove(); pedeAoMestre(f, it, m, efeito, D, c1); return }
+      poeMod(f, it, m, efeito);
+      o.remove(); fecha(); render(); toast(esc(m.n) + ' aplicada em ' + esc(it.n) + '.') };
   }
   async function daCampanha(f) {
     const r = await db.from('catalogo').select('id,tipo,nome,dados,aprovado,criado_por').eq('campanha_id', f._camp).eq('tipo', 'habilidade');

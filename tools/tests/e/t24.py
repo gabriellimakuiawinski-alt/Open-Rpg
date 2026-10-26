@@ -23,7 +23,7 @@ with sync_playwright() as p:
     pg.click('[data-tab=i]');pg.click('[data-act="op-cat"]');pg.click('#md [data-ab="modificacao"]');pg.locator('#md .cat-i:has-text("Perigosa")').click();pg.wait_for_timeout(300)
     pg.locator('#md .cat-i:has-text("Katana")').click();pg.wait_for_timeout(300)
     chk("Recruta não pode: patente bloqueia categoria II",ev(f"(()=>{{const i={it};return i.catg==1&&i.mods.length==0}})()"))
-    chk("avisa a patente",'patente' in pg.inner_text('body') and 'Não dá para aplicar' in pg.inner_text('body'))
+    chk("avisa a patente e oferece pedido ao mestre",pg.locator('#md [data-env]').count()==1)
     chk("sem erros",not pg.errs,pg.errs)
     b.close()
 report()

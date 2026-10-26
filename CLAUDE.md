@@ -36,4 +36,4 @@ Não dá para conferir o deploy do Pages daqui; avise o usuário para abrir em a
 Antes de publicar: `python3 tools/build/build.py` e rode os testes (docs/testes.md).
 
 ## Estado atual
-Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase `schema_etapa3b_musica.sql`, depois `schema_etapa4.sql`, depois `schema_etapa5.sql`, depois `schema_etapa6_livro.sql`, depois `schema_etapa6b_rituais.sql`, depois `schema_etapa6c_origens.sql`, depois `schema_etapa6d_itens.sql`, depois `schema_etapa7_quadro.sql`.
+Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase `schema_etapa3b_musica.sql`, depois `schema_etapa4.sql`, depois `schema_etapa5.sql`, depois `schema_etapa6_livro.sql`, depois `schema_etapa6b_rituais.sql`, depois `schema_etapa6c_origens.sql`, depois `schema_etapa6d_itens.sql`, depois `schema_etapa7_quadro.sql`, depois `schema_etapa8_pedidos.sql`.
