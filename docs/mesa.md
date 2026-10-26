@@ -4,7 +4,8 @@ Mapa com cenas, tokens, fog/escuridão, paredes e luzes, biblioteca de arquivos,
 
 ## Módulos (carregados por `?v=N` injetado em `build.py`)
 - `mesa-fx.js` — canvas `#fx` por cima do mapa: `MesaFX.onda/burst`, anel de seleção, poeira, cortina ao trocar de cena, overlay do resultado de dado (lê o 1º segmento antes do `<br>` em `#log`). Desligado com `prefers-reduced-motion`.
-- `mesa-icones.js` — troca emojis por SVG (`.ie`) e injeta o CSS de tamanho.
+- `mesa-ficha.js` — ficha e inventário no tabletop: no menu do token ligado a ficha (campanha OP), dono e mestre rolam perícia, atacam/rolam dano, equipam e usam itens (grava `personagens.dados` lendo o mais recente antes). Usa `SIS` (mesmos números da ficha). `PERS` agora guarda o `dados` completo.
+- Sem emojis nos botões: texto puro em todas as telas (não reintroduzir). Roda do mouse com um token sendo arrastado gira o token em passos de 15 graus.
 - `mesa-musica.js` — mestre: botão `#mtx` (transmitir); jogadores: pílula `#mx-musica`; efeitos sonoros compartilhados (sobrescreve `fx`). Expõe `MusicaSync.conectou()`.
 - `mesa-dados.js` — `DadoHook/DadoRx`: rolagens compartilhadas no canal; checkbox `#dsec` = rolagem secreta (só o mestre vê).
 - `mesa-notas.js` — "Meu caderno" (para quem não é DONO), `upsert` em `notas_jogador` com `onConflict:'mesa_id,user_id'`.
@@ -32,6 +33,5 @@ Escuro/escuridão/névoa por cena; `lightsData` gera luz dos tokens; `cena_visiv
 - `camada()` (build.py): névoa e escuridão ficam em cache com margem de 25% em volta da tela; arrastar só move a imagem. Redesenha quando muda a névoa/luz (`WV`, `FK`/`DK`), sai da margem ou o zoom muda mais de 25% (e 200 ms depois de parar o zoom, para ficar nítido).
 - Só desenha mapa/token que está na tela.
 - `mesa-fx.js`: o laço só roda com efeito ativo; parado = 0% de CPU. Canvas de efeitos em 1x. No modo Leve (`S.q=='l'`): sem poeira e anel de seleção parado. É acordado pelo `render` (embrulhado no fim do arquivo).
-- `mesa-icones.js`: só examina os nós que mudaram.
 - Token enviado é reduzido para no máximo 512px (`reduzTok`). Mapas não (o tamanho do mapa define a grade).
 - Animações CSS infinitas: só `transform`/`opacity` (nunca `height`, que recalcula a página a cada quadro).

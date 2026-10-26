@@ -23,3 +23,6 @@
 - `completa()` garante os campos novos em fichas antigas (ex.: `docs`).
 - Dados em `personagens.dados` (jsonb). Ver docs/banco.md.
 - Mesma linguagem visual do `tema.css`.
+- **Quadro de investigação** (`quadro.html`, ligado no menu da campanha em `index.html`): quadro de cortiça com notas, documentos e fotos arrastáveis, fios entre papéis, tempo real; mestre/admin esconde papéis dos jogadores. Foto é reduzida no navegador (máx. 1000 px, JPEG) e vai no próprio banco.
+- **Sem emojis nos botões** de nenhuma tela (texto puro). Botões só com símbolo viraram palavras (Remover, Fechar, Rolar…). Não reintroduzir.
+- "＋ Do livro" tem a aba **Criadas** (última): lista as habilidades próprias do jogador (desta e de outras fichas dele) para copiar, e "Criar habilidade nova".

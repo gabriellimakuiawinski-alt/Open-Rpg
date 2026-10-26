@@ -22,3 +22,4 @@ Próximos passos possíveis: origens com efeitos prontos, munição gasta ao ata
 - Pacote de sistema **Ordem Paranormal** (escolher sistema muda a ficha; rituais em poderes; catálogo de itens/armas). Dados ficam no Supabase atrás de login, não no repositório. Precisa do PDF do usuário.
 - Loja de créditos, bot do Discord, quadro de investigação.
 - Tokens PNG: já funcionam (imagens da biblioteca).
+Quadro de investigação (PR do quadro): FEITO (`schema_etapa7_quadro.sql`; pendente do usuário rodar). Ideias: mover papéis de outros jogadores, anexar PDF, texto sobre os fios, revelar um papel a um jogador só.

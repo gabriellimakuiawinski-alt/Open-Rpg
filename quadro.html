@@ -1,0 +1,156 @@
+<!DOCTYPE html><html lang="pt-BR"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover"><title>Quadro de investigação · Open RPG</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="tema.css?v=9">
+<style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html{background:var(--tabua)}body{margin:0;color:var(--giz2);font:16px/1.45 var(--corpo);height:100vh;height:100dvh;display:flex;flex-direction:column;overflow:hidden}
+header{background:#151b1ae6;padding:calc(10px + env(safe-area-inset-top)) 14px 10px;display:flex;gap:10px;align-items:center;flex-wrap:wrap;border-bottom:2px dashed #ffffff22}
+header a{color:var(--giz2);font:400 14px var(--maq);text-decoration:underline dashed;text-underline-offset:5px}header h1{margin:0;font:400 20px var(--maq);color:var(--papel2);flex:1;min-width:160px}
+.bar{display:flex;gap:8px;flex-wrap:wrap;padding:8px 12px;background:#0003;border-bottom:1px solid #ffffff14}
+button{background:var(--papel3);color:var(--tinta);border:0;border-radius:4px;padding:9px 13px;font:400 14px var(--maq);cursor:pointer;box-shadow:0 3px 0 #8c8167}
+button:active{transform:translateY(2px);box-shadow:none}button.on{background:var(--carimbo);color:var(--papel2);box-shadow:0 3px 0 var(--carimbo-sombra)}button.perigo{background:#b3412e;color:#fff;box-shadow:0 3px 0 #6e2418}
+.dica{font:400 12px var(--maq);color:var(--giz2);padding:6px 12px;opacity:.85}
+#vp{flex:1;overflow:auto;position:relative;background:#6b4a2b;background-image:radial-gradient(#00000026 1px,transparent 1.5px),radial-gradient(#ffffff14 1px,transparent 1.5px);background-size:11px 11px,17px 17px;touch-action:pan-x pan-y}
+#qd{position:relative;width:2600px;height:1800px}
+#fios{position:absolute;inset:0;width:100%;height:100%;pointer-events:none;overflow:visible}
+#fios line{stroke:#b3261e;stroke-width:3;stroke-linecap:round;filter:drop-shadow(1px 2px 1px #0006)}
+#fios line.alvo{pointer-events:stroke;cursor:pointer;stroke-width:5}
+.c{position:absolute;width:190px;color:#2a2418;box-shadow:0 2px 0 #0003,0 14px 18px -10px #000;padding:14px 12px 12px;cursor:grab;user-select:none;touch-action:none;transform-origin:50% 8px}
+.c.arrasta{cursor:grabbing;z-index:50;box-shadow:0 20px 28px -12px #000}.c.lig{outline:3px dashed #fff}.c.escondido{opacity:.6;outline:2px dotted #f2df7c}
+.c::before{content:"";position:absolute;left:50%;top:-7px;width:16px;height:16px;margin-left:-8px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#ff8f85,#b3261e 60%,#6e100b);box-shadow:0 3px 3px #0006}
+.c h4{margin:0 0 4px;font:700 20px/1.1 var(--mao)}.c p{margin:0;font:400 13px/1.35 var(--maq);white-space:pre-wrap;word-break:break-word;max-height:190px;overflow:hidden}
+.c small{display:block;margin-top:8px;font:400 11px var(--maq);opacity:.65}
+.c.amarelo{background:#f2df7c}.c.rosa{background:#f4b6c2}.c.azul{background:#a9d3ee}.c.verde{background:#bfe0a8}.c.papel{background:#ece3cb}
+.c.documento{width:220px;background-color:#ece3cb;background-image:repeating-linear-gradient(transparent 0 19px,#00000010 19px 20px);border-radius:2px}.c.documento h4{font:400 16px var(--maq);text-transform:uppercase;letter-spacing:.06em;border-bottom:2px solid #2a2418;padding-bottom:4px;margin-bottom:8px}
+.c.foto{width:210px;background:#f6f1e2;padding:12px 12px 8px}.c.foto img{display:block;width:100%;max-height:230px;object-fit:cover;filter:sepia(.25) contrast(1.05);pointer-events:none}.c.foto h4{font:700 19px var(--mao);margin:8px 0 0;text-align:center}
+#md{position:fixed;inset:0;background:#000c;display:flex;align-items:center;justify-content:center;z-index:20;padding:12px}
+.mb{background-color:var(--papel2);color:var(--tinta);border-radius:3px;padding:20px;width:min(480px,100%);max-height:92vh;overflow:auto;display:flex;flex-direction:column;gap:10px}
+.mb h3{margin:0;font:400 22px var(--maq)}.mb label{display:flex;flex-direction:column;font:400 13px var(--maq);color:var(--tinta2);gap:2px}
+.mb input,.mb select,.mb textarea{background:transparent;color:var(--caneta);border:0;border-bottom:2px dashed var(--lapis);padding:7px 2px;font:500 16px var(--corpo);min-width:0}.mb textarea{min-height:150px;border:2px dashed var(--lapis);padding:8px;resize:vertical}
+.mb .row{display:flex;gap:8px;flex-wrap:wrap}.mb img{max-width:100%;max-height:200px;object-fit:contain}
+#toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translate(-50%,-260%) rotate(-2deg);background:#f2df7c;color:#3d3510;font:700 21px/1.1 var(--mao);padding:14px 20px;box-shadow:0 14px 22px -10px #000;z-index:30;transition:transform .3s;max-width:92vw}
+#toast.show{transform:translate(-50%,0) rotate(-2deg)}
+</style></head><body>
+<header><a href="index.html" id="vi">Início</a><h1>Quadro de investigação</h1><a id="vc" href="index.html">Campanha</a></header>
+<div class="bar" id="bar" hidden>
+ <button data-a="nota">Nova nota</button><button data-a="documento">Novo documento</button><button data-a="foto">Adicionar foto</button><button data-a="ligar" id="blig">Ligar com fio</button>
+ <input type="file" id="arq" accept="image/*" hidden>
+</div>
+<div class="dica" id="dica">Arraste os papéis para organizar. Toque num papel para abrir.</div>
+<div id="vp"><div id="qd"><svg id="fios"></svg></div></div><div id="toast"></div>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
+<script src="comum.js?v=2"></script>
+<script>
+if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px">Não consegui carregar o login. Confira a internet.</p>';throw new Error('Mesa indisponível')}
+const db=Mesa.db,$=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const CID=new URLSearchParams(location.search).get('camp');
+let ME=null,PAPEL=null,ITENS=[],LIG=[],NOMES={},ligar=false,de=null,drag=null,tt,rt;
+const gerir=()=>PAPEL=='mestre'||PAPEL=='admin',meu=i=>i.autor==ME.id,pode=i=>meu(i)||gerir();
+const CORES=[['amarelo','Amarelo'],['rosa','Rosa'],['azul','Azul'],['verde','Verde'],['papel','Papel']];
+function toast(h){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),4500)}
+const chk=r=>{if(r.error)throw r.error;return r.data};
+
+async function carregar(){
+  const[i,l]=await Promise.all([db.from('quadro_itens').select('*').eq('campanha_id',CID).order('criado_em'),db.from('quadro_ligacoes').select('*').eq('campanha_id',CID)]);
+  if(i.error||l.error){const m=(i.error||l.error).message||'';if(/relation|does not exist|quadro_/i.test(m)){$('#vp').innerHTML='<p style="padding:24px;max-width:520px">O quadro ainda não foi ativado. O dono do projeto precisa rodar o arquivo <b>schema_etapa7_quadro.sql</b> no Supabase (SQL Editor).</p>';return false}throw (i.error||l.error)}
+  ITENS=i.data;LIG=l.data;return true}
+function desenha(){
+  const qd=$('#qd');qd.querySelectorAll('.c').forEach(e=>e.remove());
+  ITENS.forEach(it=>{const d=document.createElement('div');d.className=`c ${it.tipo} ${it.cor}${it.so_mestre?' escondido':''}${de==it.id?' lig':''}`;d.dataset.id=it.id;
+    d.style.left=it.x+'px';d.style.top=it.y+'px';d.style.transform=`rotate(${it.rot}deg)`;
+    d.innerHTML=(it.tipo=='foto'&&it.imagem?`<img alt="" src="${esc(it.imagem)}">`:'')+(it.titulo?`<h4>${esc(it.titulo)}</h4>`:'')+(it.tipo!='foto'&&it.texto?`<p>${esc(it.texto)}</p>`:'')+(it.so_mestre?'<small>escondido dos jogadores</small>':`<small>${esc(NOMES[it.autor]||'')}</small>`);
+    qd.append(d)});
+  fios()}
+function fios(){
+  const sv=$('#fios');let h='';
+  LIG.forEach(l=>{const a=ITENS.find(x=>x.id==l.de),b=ITENS.find(x=>x.id==l.para);if(!a||!b)return;
+    const ea=$(`.c[data-id="${a.id}"]`),eb=$(`.c[data-id="${b.id}"]`);if(!ea||!eb)return;
+    const c=e=>[e.offsetLeft+e.offsetWidth/2,e.offsetTop+6];const[x1,y1]=c(ea),[x2,y2]=c(eb);
+    h+=`<line x1="${x1}" y1="${y1}" x2="${x2}" y2="${y2}" data-l="${l.id}" class="${ligar?'alvo':''}"/>`});
+  sv.innerHTML=h}
+
+/* ---------- arrastar ---------- */
+document.addEventListener('pointerdown',e=>{
+  const c=e.target.closest('.c');if(!c)return;const it=ITENS.find(x=>x.id==c.dataset.id);if(!it)return;
+  if(ligar)return;
+  if(!pode(it)){drag={it,c,ro:true,x0:e.clientX,y0:e.clientY,mov:false};return}
+  drag={it,c,x0:e.clientX,y0:e.clientY,ox:it.x,oy:it.y,mov:false};c.setPointerCapture&&c.setPointerCapture(e.pointerId)});
+document.addEventListener('pointermove',e=>{
+  if(!drag)return;const dx=e.clientX-drag.x0,dy=e.clientY-drag.y0;
+  if(!drag.mov&&Math.hypot(dx,dy)<6)return;drag.mov=true;if(drag.ro)return;
+  drag.c.classList.add('arrasta');drag.it.x=Math.max(0,Math.min(2400,Math.round(drag.ox+dx)));drag.it.y=Math.max(0,Math.min(1650,Math.round(drag.oy+dy)));
+  drag.c.style.left=drag.it.x+'px';drag.c.style.top=drag.it.y+'px';fios()});
+document.addEventListener('pointerup',async()=>{
+  if(!drag)return;const d=drag;drag=null;d.c.classList.remove('arrasta');
+  if(!d.mov){abrir(d.it);return}
+  if(d.ro)return;
+  try{chk(await db.from('quadro_itens').update({x:d.it.x,y:d.it.y}).eq('id',d.it.id).select('id'))}catch(err){toast('Não consegui salvar a posição: '+esc(err.message||err))}});
+
+/* ---------- editar / criar ---------- */
+function abrir(it){
+  const ed=pode(it),o=document.createElement('div');o.id='md';
+  o.innerHTML=`<div class="mb"><h3>${it.tipo=='foto'?'Foto':it.tipo=='documento'?'Documento':'Nota'}</h3>
+${it.imagem?`<img alt="" src="${esc(it.imagem)}">`:''}
+<label>Título<input id="qt" value="${esc(it.titulo)}" ${ed?'':'disabled'}></label>
+${it.tipo!='foto'||it.texto?`<label>Texto<textarea id="qx" ${ed?'':'disabled'}>${esc(it.texto)}</textarea></label>`:''}
+${ed?`<label>Cor<select id="qc">${CORES.map(([k,n])=>`<option value="${k}" ${it.cor==k?'selected':''}>${n}</option>`).join('')}</select></label>`:''}
+${gerir()?`<label style="flex-direction:row;align-items:center;gap:8px"><input type="checkbox" id="qm" ${it.so_mestre?'checked':''}> Esconder dos jogadores (só mestre e admin veem)</label>`:''}
+<p class="dica" style="padding:0;color:var(--tinta2)">Por ${esc(NOMES[it.autor]||'alguém')}${ed?'':' · só o autor ou o mestre edita'}</p>
+<div class="row">${ed?'<button data-s class="on">Salvar</button><button data-d class="perigo">Apagar</button>':''}<button data-x>Fechar</button></div></div>`;
+  document.body.append(o);
+  o.onclick=async e=>{
+    if(e.target===o||e.target.closest('[data-x]')){o.remove();return}
+    try{
+      if(e.target.closest('[data-s]')){
+        const v={titulo:$('#qt').value.trim().slice(0,120),cor:($('#qc')||{}).value||it.cor};if($('#qx'))v.texto=$('#qx').value;if($('#qm'))v.so_mestre=$('#qm').checked;
+        chk(await db.from('quadro_itens').update(v).eq('id',it.id).select('id'));Object.assign(it,v);o.remove();desenha();toast('Salvo.')}
+      else if(e.target.closest('[data-d]')){
+        if(!confirm('Apagar este papel e os fios ligados a ele?'))return;
+        chk(await db.from('quadro_itens').delete().eq('id',it.id).select('id'));ITENS=ITENS.filter(x=>x.id!=it.id);LIG=LIG.filter(l=>l.de!=it.id&&l.para!=it.id);o.remove();desenha()}
+    }catch(err){toast('Erro: '+esc(err.message||err))}}}
+async function novo(tipo,extra){
+  try{
+    const sc=$('#vp'),x=Math.round(sc.scrollLeft+40+Math.random()*120),y=Math.round(sc.scrollTop+40+Math.random()*120);
+    const r=chk(await db.from('quadro_itens').insert({campanha_id:CID,tipo,x,y,rot:Math.round((Math.random()*8-4)*10)/10,cor:tipo=='nota'?'amarelo':'papel',titulo:tipo=='documento'?'Documento':'',...(extra||{})}).select('*'));
+    ITENS.push(r[0]);desenha();abrir(r[0])}catch(err){toast('Não consegui criar: '+esc(err.message||err))}}
+/* foto: reduz para caber no banco (máx. 1000 px, JPEG) */
+function reduz(file){return new Promise((ok,no)=>{const im=new Image(),u=URL.createObjectURL(file);im.onload=()=>{
+  const k=Math.min(1,1000/Math.max(im.width,im.height)),c=document.createElement('canvas');c.width=Math.round(im.width*k);c.height=Math.round(im.height*k);c.getContext('2d').drawImage(im,0,0,c.width,c.height);URL.revokeObjectURL(u);
+  let q=.78,s=c.toDataURL('image/jpeg',q);while(s.length>700000&&q>.3){q-=.12;s=c.toDataURL('image/jpeg',q)}s.length>850000?no(new Error('Imagem grande demais')):ok(s)};im.onerror=()=>no(new Error('Não consegui ler a imagem'));im.src=u})}
+
+document.addEventListener('click',async e=>{
+  const b=e.target.closest('[data-a]');
+  if(b){const a=b.dataset.a;
+    if(a=='nota'||a=='documento')return novo(a);
+    if(a=='foto')return $('#arq').click();
+    if(a=='ligar'){ligar=!ligar;de=null;b.classList.toggle('on',ligar);$('#dica').textContent=ligar?'Toque num papel e depois em outro para ligar com um fio. Toque num fio para tirar.':'Arraste os papéis para organizar. Toque num papel para abrir.';desenha();return}}
+  const ln=e.target.closest('#fios line.alvo');
+  if(ln){const l=LIG.find(x=>x.id==ln.dataset.l);if(!l)return;if(!(l.autor==ME.id||gerir()))return toast('Só quem fez o fio (ou o mestre) tira.');
+    try{chk(await db.from('quadro_ligacoes').delete().eq('id',l.id).select('id'));LIG=LIG.filter(x=>x.id!=l.id);fios()}catch(err){toast('Erro: '+esc(err.message||err))}return}
+  const c=e.target.closest('.c');
+  if(ligar&&c){const id=c.dataset.id;
+    if(!de){de=id;desenha();return}
+    if(de==id){de=null;desenha();return}
+    if(LIG.some(l=>(l.de==de&&l.para==id)||(l.de==id&&l.para==de))){toast('Esses dois já estão ligados.');de=null;desenha();return}
+    try{const r=chk(await db.from('quadro_ligacoes').insert({campanha_id:CID,de,para:id}).select('*'));LIG.push(r[0])}catch(err){toast('Erro: '+esc(err.message||err))}
+    de=null;desenha()}});
+$('#arq').onchange=async e=>{const f=e.target.files[0];e.target.value='';if(!f)return;
+  try{const s=await reduz(f);await novo('foto',{imagem:s,titulo:f.name.replace(/\.[^.]+$/,'').slice(0,60)})}catch(err){toast('Erro: '+esc(err.message||err))}};
+
+(async()=>{
+  try{
+    if(!CID){$('#vp').innerHTML='<p style="padding:24px">Abra o quadro pela página da campanha.</p>';return}
+    const u=await Mesa.exigirLogin();ME={id:u.id};
+    const c=await db.from('campanhas').select('id,nome').eq('id',CID).maybeSingle();
+    if(!c.data){$('#vp').innerHTML='<p style="padding:24px">Campanha não encontrada ou você não participa dela.</p>';return}
+    const cm=await db.from('campanha_membros').select('user_id,papel').eq('campanha_id',CID);PAPEL=((cm.data||[]).find(x=>x.user_id==ME.id)||{}).papel||null;
+    const p=await db.from('profiles').select('id,nome');(p.data||[]).forEach(x=>NOMES[x.id]=x.nome);
+    $('#vc').href='index.html#/c/'+CID;$('#vc').textContent=c.data.nome;document.title='Quadro · '+c.data.nome;
+    if(!await carregar())return;
+    $('#bar').hidden=false;desenha();
+    const de_=()=>{clearTimeout(rt);rt=setTimeout(async()=>{if(drag)return de_();try{if(await carregar())desenha()}catch(e){}},500)};
+    db.channel('quadro:'+CID).on('postgres_changes',{event:'*',schema:'public',table:'quadro_itens',filter:'campanha_id=eq.'+CID},de_).on('postgres_changes',{event:'*',schema:'public',table:'quadro_ligacoes',filter:'campanha_id=eq.'+CID},de_).subscribe();
+  }catch(e){$('#vp').innerHTML=`<p style="padding:24px">Não consegui abrir o quadro: ${esc(e.message||e)}</p>`}
+})();
+</script></body></html>

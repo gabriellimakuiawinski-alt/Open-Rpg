@@ -83,9 +83,9 @@ function snapLast(){LAST.s.clear();LAST.m.clear();LAST.t.clear();LAST.f.clear();
 /* ---------- carregar dados da mesa ---------- */
 async function carregarTudo(keep){
  if(MESA.campanha_id&&SISM===undefined){try{const q=await sb.from('campanhas').select('*').eq('id',MESA.campanha_id);SISM=(q.data&&q.data[0]&&q.data[0].sistema)||null}catch(e){SISM=null}}
- const[c,pa,pe]=await Promise.all([sb.from('cenas').select('*').eq('mesa_id',MESA.id).order('ordem').order('criado_em'),sb.from('pastas').select('*').eq('mesa_id',MESA.id),(MESA.campanha_id?sb.from('personagens').select('id,user_id,nome,npc,privada,inv:dados->inv').eq('campanha_id',MESA.campanha_id):Promise.resolve({data:[]}))]);
+ const[c,pa,pe]=await Promise.all([sb.from('cenas').select('*').eq('mesa_id',MESA.id).order('ordem').order('criado_em'),sb.from('pastas').select('*').eq('mesa_id',MESA.id),(MESA.campanha_id?sb.from('personagens').select('id,user_id,nome,npc,privada,dados').eq('campanha_id',MESA.campanha_id):Promise.resolve({data:[]}))]);
  if(c.error)throw c.error;
- PERS=new Map((pe.data||[]).map(p=>[p.id,p]));
+ PERS=new Map((pe.data||[]).map(p=>[p.id,{...p,inv:(p.dados||{}).inv}]));
  const ids=c.data.map(x=>x.id);let mp={data:[]},tk={data:[]};
  if(ids.length){[mp,tk]=await Promise.all([sb.from('mapas_cena').select('*').in('cena_id',ids).order('ordem'),sb.from('tokens').select('*').in('cena_id',ids).order('criado_em')]);if(mp.error)throw mp.error;if(tk.error)throw tk.error}
  const sc=c.data.map(sceneFrom);
@@ -138,7 +138,7 @@ async function runDiff(o){const E=[],ck=(r,l)=>{if(r&&r.error){const e=r.error;E
  if(o.nt!==null)ck(await sb.from('notas').upsert({mesa_id:MESA.id,texto:o.nt}),'notas');
  return E}
 function cloudSave(){if(!CLOUD||VIEW||!MESA)return Promise.resolve();if(cBusy){cAgain=1;return cBusy}
- cBusy=(async()=>{let falhou=0,o=null;try{do{cAgain=0;o=diffs();if(!hasWork(o))continue;cs('☁ salvando…');const E=o.bad?[{m:'sem permissão',net:false}]:await runDiff(o);if(E.length){falhou=1;cAgain=0;if(E.every(e=>e.net)){o.rb.reverse().forEach(f=>f());cs('⚠ sem conexão',1);toast('Sem conexão com a nuvem. Tentarei de novo.');setTimeout(cloudQ,5000);break}toast('Não consegui salvar: '+E[0].m);cs('⚠ não salvo',1);await resync();break}}while(cAgain);if(!falhou)cs('☁ salvo');await garanteAtiva()}catch(e){if(o&&o.rb)o.rb.reverse().forEach(f=>f());cs('⚠ sem conexão',1);toast('Sem conexão com a nuvem. Tentarei de novo.');setTimeout(cloudQ,5000)}finally{cBusy=null}})();return cBusy}
+ cBusy=(async()=>{let falhou=0,o=null;try{do{cAgain=0;o=diffs();if(!hasWork(o))continue;cs('salvando…');const E=o.bad?[{m:'sem permissão',net:false}]:await runDiff(o);if(E.length){falhou=1;cAgain=0;if(E.every(e=>e.net)){o.rb.reverse().forEach(f=>f());cs('sem conexão',1);toast('Sem conexão com a nuvem. Tentarei de novo.');setTimeout(cloudQ,5000);break}toast('Não consegui salvar: '+E[0].m);cs('não salvo',1);await resync();break}}while(cAgain);if(!falhou)cs('salvo');await garanteAtiva()}catch(e){if(o&&o.rb)o.rb.reverse().forEach(f=>f());cs('sem conexão',1);toast('Sem conexão com a nuvem. Tentarei de novo.');setTimeout(cloudQ,5000)}finally{cBusy=null}})();return cBusy}
 const cloudQ=()=>{if(!CLOUD)return;clearTimeout(cTimer);cTimer=setTimeout(cloudSave,350)},cloudFlush=()=>{clearTimeout(cTimer);return cloudSave()};
 document.addEventListener('visibilitychange',()=>{if(document.hidden&&CLOUD)cloudFlush()});
 
@@ -150,7 +150,7 @@ function esperaJogador(on){let e=document.getElementById('espera');if(!e){e=docu
 async function carregarAtiva(){await carregarTudo();await loadLib();const s=scene(MESA.cena_ativa);sel=selM=null;tmOpen=false;
  if(s){esperaJogador(0);applyScene(s);HS=[snapJ()];RD=[];FK=DK=null;autoFit=true;fit();pedeFit();ui();draw();dock();sync()}
  else{S.scenes=[];S.tok=[];S.fg=[];S.maps=[];S.walls=[];WV++;esperaJogador(1);ui();draw()}}
-async function resync(){try{const keep=S.cur;await carregarTudo();await loadLib();const s=scene(keep)||scene(MESA.cena_ativa)||S.scenes[0];sel=selM=null;if(s){applyScene(s);HS=[snapJ()];RD=[];ui();dock();draw();sync()}else if(!GER)esperaJogador(1)}catch(e){cs('⚠ sem conexão',1)}}
+async function resync(){try{const keep=S.cur;await carregarTudo();await loadLib();const s=scene(keep)||scene(MESA.cena_ativa)||S.scenes[0];sel=selM=null;if(s){applyScene(s);HS=[snapJ()];RD=[];ui();dock();draw();sync()}else if(!GER)esperaJogador(1)}catch(e){cs('sem conexão',1)}}
 
 /* ---------- tempo real ---------- */
 const semFoco=()=>!(document.activeElement&&document.activeElement.closest&&document.activeElement.closest('#tm'));
@@ -181,7 +181,7 @@ function rtMesa(p){const n=p.new,antes=MESA.cena_ativa,mov=MESA.jogadores_movem,
  if(!GER&&n.jogadores_adicionam!==add)toast(n.jogadores_adicionam?'Agora você pode enviar imagens.':'O mestre bloqueou o envio de imagens.');
  nuvemPanel();dockQ();ui()}
 /* ficha mudou (inventário): atualiza a luz disponível no menu do token */
-function rtPers(p){const r=p.new;if(!r||!r.id)return;const o=PERS.get(r.id);if(!o)return;if(r.dados&&r.dados.inv)o.inv=r.dados.inv;if(r.nome!==undefined)o.nome=r.nome;if(sel&&sel.pj==r.id&&semFoco())ui()}
+function rtPers(p){const r=p.new;if(!r||!r.id)return;const o=PERS.get(r.id);if(!o)return;if(r.dados){o.dados=r.dados;if(r.dados.inv)o.inv=r.dados.inv}if(r.nome!==undefined)o.nome=r.nome;if(sel&&sel.pj==r.id&&semFoco())ui()}
 function rtMemb(p){const r=p.new||p.old;if(!r||r.user_id!==ME.id)return;
  if(p.eventType=='DELETE'){alert('Você não faz mais parte desta mesa.');localStorage.removeItem('mesa_atual');location.href='ficha.html';return}
  if(p.new&&p.new.papel!==ROLE){toast('Seu papel mudou para '+p.new.papel+'. Recarregando…');setTimeout(()=>location.reload(),900)}}
@@ -191,23 +191,23 @@ async function rtArq(p){if(p.eventType=='DELETE'){LIB.delete(p.old.id);dockQ();d
 function ouvir(){if(!sb.channel)return;const T=(table,extra)=>({event:'*',schema:'public',table,...(extra||{})});
  (window.CHM=sb.channel('mesa:'+MESA.id)).on('broadcast',{event:'musica'},p=>{try{window.MusicaSync&&MusicaSync.rx(p.payload)}catch(e){}}).on('broadcast',{event:'dado'},p=>{try{window.DadoRx&&DadoRx(p.payload)}catch(e){}}).on('postgres_changes',T('tokens'),rtTok).on('postgres_changes',T('cenas',{filter:'mesa_id=eq.'+MESA.id}),rtCena).on('postgres_changes',T('mapas_cena'),rtMapa)
  .on('postgres_changes',{event:'UPDATE',schema:'public',table:'mesas',filter:'id=eq.'+MESA.id},rtMesa).on('postgres_changes',T('membros',{filter:'mesa_id=eq.'+MESA.id}),rtMemb)
- .on('postgres_changes',T('arquivos',{filter:'mesa_id=eq.'+MESA.id}),rtArq);if(MESA.campanha_id)window.CHM.on('postgres_changes',{event:'UPDATE',schema:'public',table:'personagens',filter:'campanha_id=eq.'+MESA.campanha_id},rtPers);window.CHM.subscribe(st=>{if(st=='SUBSCRIBED'){try{window.MusicaSync&&MusicaSync.conectou()}catch(e){}if(ouvir.ok)resync();ouvir.ok=1}else if(st=='CHANNEL_ERROR'||st=='TIMED_OUT')cs('⚠ tempo real caiu',1)})}
+ .on('postgres_changes',T('arquivos',{filter:'mesa_id=eq.'+MESA.id}),rtArq);if(MESA.campanha_id)window.CHM.on('postgres_changes',{event:'UPDATE',schema:'public',table:'personagens',filter:'campanha_id=eq.'+MESA.campanha_id},rtPers);window.CHM.subscribe(st=>{if(st=='SUBSCRIBED'){try{window.MusicaSync&&MusicaSync.conectou()}catch(e){}if(ouvir.ok)resync();ouvir.ok=1}else if(st=='CHANNEL_ERROR'||st=='TIMED_OUT')cs('tempo real caiu',1)})}
 
 /* ---------- painel da sala e escolha da mesa ---------- */
 function nuvemPanel(){const el=document.getElementById('pl');if(!el||!MESA)return;const a=scene(MESA.cena_ativa),pap={mestre:'GM',admin:'ADM',jogador:'JOG'}[ROLE];
  const r=[`<div class="pr"><span class="dot"></span><span>${esc(MESA.nome)}</span><span class="sp"></span><b class="gm">${pap}</b></div>`];
- if(GER){r.push(`<div class="pr"><span class="m">Jogadores veem:</span><b>${esc(a?a.n:'—')}</b></div><div class="pr"><button data-a="ativar">📢 Mostrar esta cena aos jogadores</button></div>`)}
+ if(GER){r.push(`<div class="pr"><span class="m">Jogadores veem:</span><b>${esc(a?a.n:'—')}</b></div><div class="pr"><button data-a="ativar">Mostrar esta cena aos jogadores</button></div>`)}
  if(DONO){r.push(`<label class="pr"><input type="checkbox" data-cfg="jogadores_movem" ${MESA.jogadores_movem?'checked':''}> Jogadores movem tokens</label><label class="pr"><input type="checkbox" data-cfg="jogadores_adicionam" ${MESA.jogadores_adicionam?'checked':''}> Jogadores enviam imagens</label><div class="pr"><span>Espectador</span><span class="sp"></span><button data-a="m_vw">Abrir</button></div>`)}
  if(DONO&&!MESA.campanha_id)r.push(`<div class="pr"><span class="m">Código da mesa</span><span class="sp"></span><b style="letter-spacing:.12em;color:#bb99ff">${esc(MESA.codigo)}</b></div>`);
- r.push(`<div class="pr"><a href="index.html" style="color:#bb99ff;text-decoration:none">🏠 Início</a></div>${MESA.campanha_id?`<div class="pr"><a href="ficha.html" style="color:#bb99ff;text-decoration:none">📜 Fichas</a></div>`:''}<div class="pr"><button data-a="sair">Sair da conta</button></div>`);el.innerHTML=r.join('')}
+ r.push(`<div class="pr"><a href="index.html" style="color:#bb99ff;text-decoration:none">Início</a></div>${MESA.campanha_id?`<div class="pr"><a href="ficha.html" style="color:#bb99ff;text-decoration:none">Fichas</a></div>`:''}<div class="pr"><button data-a="sair">Sair da conta</button></div>`);el.innerHTML=r.join('')}
 document.addEventListener('change',async e=>{const c=e.target&&e.target.dataset&&e.target.dataset.cfg;if(!c||!DONO)return;const v=e.target.checked,{data,error}=await sb.from('mesas').update({[c]:v}).eq('id',MESA.id).select('id');
  if(error||!data||!data.length){e.target.checked=!v;return nerr(error||'sem permissão','Não consegui mudar')}MESA[c]=v;toast('Opção salva.')});
 function escolherMesa(ms,mb){return new Promise(ok=>{const o=document.createElement('div');o.id='mx-pick';
- o.innerHTML=`<div class="box"><h2>Escolha a mesa</h2>${ms.length?ms.map(m=>`<button data-m="${m.id}"><b>${esc(m.nome)}</b><small>${({mestre:'Mestre',admin:'Admin',jogador:'Jogador'})[(mb.find(x=>x.mesa_id==m.id)||{}).papel]||''}</small></button>`).join(''):'<p class="m">Você ainda não está em nenhuma mesa.</p>'}<p class="m" style="margin:10px 0 0"><a href="index.html" style="color:#bb99ff">🏠 Ir para o início</a> (lá você cria uma mesa ou entra com um código).</p><p class="m"><button data-x="1">Sair da conta</button></p></div>`;
+ o.innerHTML=`<div class="box"><h2>Escolha a mesa</h2>${ms.length?ms.map(m=>`<button data-m="${m.id}"><b>${esc(m.nome)}</b><small>${({mestre:'Mestre',admin:'Admin',jogador:'Jogador'})[(mb.find(x=>x.mesa_id==m.id)||{}).papel]||''}</small></button>`).join(''):'<p class="m">Você ainda não está em nenhuma mesa.</p>'}<p class="m" style="margin:10px 0 0"><a href="index.html" style="color:#bb99ff">Ir para o início</a> (lá você cria uma mesa ou entra com um código).</p><p class="m"><button data-x="1">Sair da conta</button></p></div>`;
  o.onclick=e=>{const b=e.target.closest('[data-m]');if(b){o.remove();ok(ms.find(m=>m.id==b.dataset.m)||null)}else if(e.target.closest('[data-x]'))MX.sair()};document.body.append(o)})}
 function nuvemRole(){document.body.classList.add(ROLE=='mestre'?'mst':ROLE=='admin'?'adm':'jog');
  if(!GER){C.splice(0,2);dk=mk='chr';pv=true}
- const rm=document.getElementById('rm');if(rm&&!document.getElementById('cs')){const s=document.createElement('div');s.id='cs';s.className='m';s.style.cssText='font-size:11px;padding:0 10px 4px';rm.insertBefore(s,document.getElementById('pl'))}cs('☁ carregando…')}
+ const rm=document.getElementById('rm');if(rm&&!document.getElementById('cs')){const s=document.createElement('div');s.id='cs';s.className='m';s.style.cssText='font-size:11px;padding:0 10px 4px';rm.insertBefore(s,document.getElementById('pl'))}cs('carregando…')}
 const fichaSel=t=>!MESA.campanha_id?`<p class="m" style="margin:6px 0">Mesa sem campanha: não tem fichas.</p>`:`<label class="m" style="display:block;margin:6px 0">Ficha vinculada <select data-f="pj" style="max-width:100%"><option value="">(nenhuma)</option>${[...PERS.values()].map(p=>`<option value="${p.id}" ${t.pj==p.id?'selected':''}>${esc(p.nome||'Sem nome')}${p.npc?' (NPC)':''}</option>`).join('')}</select></label>`;
 
 /* ---------- início ---------- */
@@ -228,5 +228,5 @@ async function nuvemMain(){
   if(GER&&!S.scenes.length){const s={id:uid(),n:'Cena 1',maps:[],tok:[],fg:[],walls:[],nt:0,dl:.92,gs:50,gm:1.5,grid:true,fcol:'#000000',fa:.6};S.scenes.push(s);CLOUD=true;await cloudFlush();CLOUD=false}
   const alvo=scene(GER?(localStorage['mesa_cena_'+m.id]||MESA.cena_ativa):MESA.cena_ativa)||(GER?S.scenes[0]:null);
   if(alvo){applyScene(alvo);HS=[snapJ()];if(!S.maps.length&&GER)dkx=true;if(S.maps.length){fit();pedeFit()}}else{esperaJogador(1)}
-  CLOUD=true;ouvir();nuvemPanel();if(DONO)obRestore();opts();ui();dock();upd();draw();mpr();cs('☁ salvo');await garanteAtiva();
+  CLOUD=true;ouvir();nuvemPanel();if(DONO)obRestore();opts();ui();dock();upd();draw();mpr();cs('salvo');await garanteAtiva();
  }catch(e){console.error(e);falta('Erro ao abrir a mesa: '+esc((e&&e.message)||e)+'<br><button onclick="location.reload()">Tentar de novo</button>')}}
