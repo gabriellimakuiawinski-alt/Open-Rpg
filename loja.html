@@ -34,7 +34,7 @@ input:focus,select:focus{outline:0;border-bottom:2px solid var(--carimbo)}select
 #toast.show{transform:translate(-50%,0) rotate(-2deg)}
 .hb{border-left:5px solid var(--fita);padding-left:10px}
 </style></head><body class="quadro">
-<header><a href="index.html">🏠 Início</a><h1 id="tit">Loja</h1><a id="vf" href="ficha.html">📜 Ficha</a></header>
+<header><a href="index.html">Início</a><h1 id="tit">Loja</h1><a id="vf" href="ficha.html">Ficha</a></header>
 <main id="app"><p>Carregando…</p></main><div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>
@@ -91,7 +91,7 @@ ${l.descricao?`<p class="m" style="margin:4px 0">${esc(l.descricao)}</p>`:''}
 ${ITENS.filter(i=>i.loja_id==l.id).map(i=>`<div class="it"><div class="nm"><b>${esc(i.item.n||'Item')}</b><small>${esc(desc(i.item))}</small></div>
 <label class="m" style="font-size:12px">Preço <input type="number" data-preco="${i.id}" value="${n0(i.preco)}" min="0" step="0.01" style="width:90px"></label>
 <label class="m" style="font-size:12px">Estoque <input type="number" data-est="${i.id}" value="${i.estoque===null?'':i.estoque}" min="0" placeholder="∞" style="width:64px"></label>
-<button class="fino" data-a="editItem" data-i="${i.id}">Editar</button><button class="fino" data-a="delItem" data-i="${i.id}">✕</button></div>`).join('')||'<p class="m">Loja vazia.</p>'}</div>`).join('')}
+<button class="fino" data-a="editItem" data-i="${i.id}">Editar</button><button class="fino" data-a="delItem" data-i="${i.id}">Remover</button></div>`).join('')||'<p class="m">Loja vazia.</p>'}</div>`).join('')}
 <button class="prim" data-a="novaLoja">＋ Nova loja</button></section>
 <section class="card"><h2>Homebrews e itens da campanha</h2>${pend.length?`<p><b>Esperando sua aprovação:</b></p>${pend.map(x=>`<div class="it hb"><div class="nm"><b>${esc(x.nome)}</b><small>${esc(x.tipo)} · de ${esc(nomeDe(x.criado_por))}${(x.dados.ef||[]).length?' · efeitos: '+x.dados.ef.map(e=>(SIS.ALVOS.find(a=>a[0]==e.a)||[0,e.a])[1]+' '+(e.v>0?'+':'')+e.v+(e.nv?'×nível':'')).join(', '):''}</small>${x.dados.desc?`<small>${esc(x.dados.desc)}</small>`:''}</div><button class="prim" data-a="aprovar" data-c="${x.id}">Aprovar</button><button class="fino" data-a="delCat" data-c="${x.id}">Recusar</button></div>`).join('')}`:'<p class="m">Nada esperando aprovação.</p>'}
 ${CAT.filter(x=>x.aprovado).map(x=>`<div class="it"><div class="nm"><b>${esc(x.nome)}</b><small>${esc(x.tipo)}${x.tipo=='item'?' · '+esc(desc(x.dados)):''}</small></div><button class="fino" data-a="delCat" data-c="${x.id}">Remover</button></div>`).join('')}

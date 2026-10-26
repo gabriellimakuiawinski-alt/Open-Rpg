@@ -15,7 +15,7 @@ async function salva(){
 function abre(){
   if(!ov){
     ov=document.createElement('div');ov.id='mx-notas';ov.className='hid';
-    ov.innerHTML='<div class="folha-n" role="dialog" aria-label="Meu caderno"><div class="cab-n"><b>Meu caderno</b><small>só você lê isto</small><span class="sp"></span><button class="fx" title="Fechar" data-fecha>✕</button></div><textarea placeholder="Pistas, nomes, suspeitas, o que o mestre disse…" spellcheck="false"></textarea><div class="rod-n"><span class="st"></span></div></div>';
+    ov.innerHTML='<div class="folha-n" role="dialog" aria-label="Meu caderno"><div class="cab-n"><b>Meu caderno</b><small>só você lê isto</small><span class="sp"></span><button class="fx" title="Fechar" data-fecha>Remover</button></div><textarea placeholder="Pistas, nomes, suspeitas, o que o mestre disse…" spellcheck="false"></textarea><div class="rod-n"><span class="st"></span></div></div>';
     document.body.append(ov);ta=ov.querySelector('textarea');st=ov.querySelector('.st');
     ov.addEventListener('click',e=>{if(e.target===ov||e.target.closest('[data-fecha]'))fecha()});
     ta.addEventListener('input',()=>{sujo=true;st.textContent='…';clearTimeout(tm);tm=setTimeout(salva,900)});

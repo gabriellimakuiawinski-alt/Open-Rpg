@@ -9,7 +9,7 @@ Páginas estáticas, sem framework, sem build para o resto (só `mesa.html` é g
 - `comum.js` — define `window.LEVE` e a classe `html.leve` (celular/aparelho fraco/economia de dados/menos movimento: as páginas desligam enfeites pesados); `window.Mesa = {db, exigirLogin, sair}`; cria o cliente Supabase e a tela de login (papel com carimbo).
 - `tema.css` — tokens e classes do visual "dossiê" (`--tabua --papel --pasta --tinta --carimbo --fita`, fontes Special Elite / Caveat / Hanken Grotesk). `tema-mesa.css` — tema do tabletop.
 - `som.js` — ver docs/som.md.
-- Módulos do tabletop: `mesa-fx.js mesa-icones.js mesa-musica.js mesa-dados.js mesa-notas.js mesa-exportar.js` (ver docs/mesa.md).
+- Módulos do tabletop: `mesa-fx.js mesa-musica.js mesa-dados.js mesa-ficha.js mesa-notas.js mesa-exportar.js` (ver docs/mesa.md).
 - `sistemas.js` — `window.SIS`: sistemas (op/modular), regras de Ordem Paranormal (`derivar`, `aplicar`, `luz`, `marcos`), catálogo base (só números), dados. Usado por ficha, loja e mesa.
 - `ficha-op.js` — telas e ações da ficha de Ordem Paranormal (`window.OP`). `ficha-sis.css` — peças novas e decoração por sistema (`body.sis-op` / `body.sis-modular`).
 - `loja.html` — lojas e dinheiro (`?camp=<id>&ficha=<id>`): mestre gerencia, jogador compra via RPC `comprar`.

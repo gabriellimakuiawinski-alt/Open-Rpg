@@ -1,0 +1,35 @@
+# Etapa 7: quadro de investigação + rotação do token com a roda do mouse
+from lib2 import *
+d=seed()
+CID=ids(9,1)
+with sync_playwright() as p:
+    b=p.chromium.launch()
+    pj=abre_pg(b,'J','quadro.html?camp='+CID,w=1100,h=800);pj.wait_for_timeout(1800)
+    chk("barra de ferramentas aparece para o jogador",pj.locator('#bar').is_visible())
+    pj.click('[data-a="nota"]');pj.wait_for_timeout(500)
+    pj.fill('#qt','Pista da biblioteca');pj.fill('#qx','Livro faltando na estante 3');pj.click('#md [data-s]');pj.wait_for_timeout(600)
+    chk("nota criada e salva no banco",q("select to_jsonb(count(*)) from public.quadro_itens where titulo='Pista da biblioteca' and autor='%s'"%U['J'])==1)
+    pj.click('[data-a="documento"]');pj.wait_for_timeout(500);pj.click('#md [data-x]')
+    chk("duas cartas no quadro",pj.locator('.c').count()==2)
+    # arrastar a primeira
+    box=pj.locator('.c').first.bounding_box()
+    pj.mouse.move(box['x']+40,box['y']+30);pj.mouse.down();pj.mouse.move(box['x']+240,box['y']+130,steps=6);pj.mouse.up();pj.wait_for_timeout(600)
+    x1=q("select to_jsonb(x) from public.quadro_itens order by criado_em limit 1")
+    chk("arrastar grava a nova posição",x1>60+150,x1)
+    # ligar com fio
+    pj.click('#blig');pj.locator('.c').nth(0).click();pj.locator('.c').nth(1).click();pj.wait_for_timeout(600)
+    chk("fio criado entre as duas",q("select to_jsonb(count(*)) from public.quadro_ligacoes")==1 and pj.locator('#fios line').count()==1)
+    # outro jogador vê; mestre esconde
+    pk=abre_pg(b,'K','quadro.html?camp='+CID,w=1100,h=800);pk.wait_for_timeout(1800)
+    chk("outro jogador vê as cartas",pk.locator('.c').count()==2)
+    pm=abre_pg(b,'M','quadro.html?camp='+CID,w=1100,h=800);pm.wait_for_timeout(1800)
+    pm.locator('.c:has-text("Pista da biblioteca")').click();pm.wait_for_timeout(300)
+    pm.check('#qm');pm.click('#md [data-s]');pm.wait_for_timeout(600)
+    pk.reload();pk.wait_for_timeout(1800)
+    chk("carta escondida some para o outro jogador",pk.locator('.c').count()==1,pk.locator('.c').count())
+    chk("jogador K não consegue apagar carta alheia",q("select to_jsonb(count(*)) from public.quadro_itens")==2)
+    pk.locator('.c').first.click();pk.wait_for_timeout(300)
+    chk("carta alheia abre só para leitura",pk.locator('#qt').is_disabled())
+    for pg in (pj,pk,pm): chk("sem erros ("+pg.user+")",not pg.errs,pg.errs)
+    b.close()
+report()

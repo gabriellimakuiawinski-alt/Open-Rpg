@@ -96,14 +96,14 @@ ${D.pesadaSemProf ? '<p class="alerta">Proteção pesada sem a habilidade Prote�
 <p class="m" style="font-size:13px;margin:8px 0 0">Equipe proteções no <b>Inventário</b>: a Defesa muda sozinha.</p></section>
 <section class="card"><h2>Ataques</h2>${armas.map(([it, i]) => { const a = it.arma || {}, per = a.per || 'Luta', sk = f.skills.find(s => s.n == per);
       return `<div class="arma"><div class="ar-n"><b>${esc(it.n || 'Arma')}</b><small>${esc([a.dano, a.crit && 'crít. ' + a.crit, a.alc, a.td].filter(Boolean).join(' · '))}</small></div>
-<button class="roll" data-act="op-atk" data-i="${i}" title="Atacar (${esc(per)})">🎲</button><button class="mini" data-act="op-dano" data-i="${i}">Dano</button></div>` }).join('') || '<p class="m">Nenhuma arma no inventário.</p>'}</section>
+<button class="roll" data-act="op-atk" data-i="${i}" title="Atacar (${esc(per)})">Atacar</button><button class="mini" data-act="op-dano" data-i="${i}">Dano</button></div>` }).join('') || '<p class="m">Nenhuma arma no inventário.</p>'}</section>
 <section class="card"><h2>Resistências</h2><div class="res">${res.map(([n]) => { const i = f.skills.findIndex(s => s.n == n); return i < 0 ? '' : `<button class="btn-res" data-act="roll" data-i="${i}"><b>${n}</b><small id="rs${i}"></small></button>` }).join('')}</div>
 ${D.res ? `<p class="m" style="font-size:13px">Habilidades: ${sinal(D.res)} em testes de resistência (já somado).</p>` : ''}</section>`;
   }
 
   function vPericias(f) {
     return `<section class="card"><h2>Perícias</h2><p class="m" style="margin:0 0 8px;font-size:12px">Rola d20 igual ao atributo e fica com o maior (atributo 0: dois dados, fica o menor). O bônus automático vem de itens e habilidades.</p>
-${f.skills.map((s, i) => `<div class="sk"><button class="roll" data-act="roll" data-i="${i}" title="Rolar">🎲</button><span class="sn">${esc(s.n)}</span><select data-p="skills.${i}.a">${attrOpts(f, s.a)}</select><select data-p="skills.${i}.t" data-n>${S.TREINO.map(([v, l]) => `<option value=${v} ${s.t == v ? 'selected' : ''}>${l}</option>`).join('')}</select>${num(`skills.${i}.o`, s.o, 'title="Outros bônus"')}<b id="sk${i}"></b></div>`).join('')}
+${f.skills.map((s, i) => `<div class="sk"><button class="roll" data-act="roll" data-i="${i}" title="Rolar">Rolar</button><span class="sn">${esc(s.n)}</span><select data-p="skills.${i}.a">${attrOpts(f, s.a)}</select><select data-p="skills.${i}.t" data-n>${S.TREINO.map(([v, l]) => `<option value=${v} ${s.t == v ? 'selected' : ''}>${l}</option>`).join('')}</select>${num(`skills.${i}.o`, s.o, 'title="Outros bônus"')}<b id="sk${i}"></b></div>`).join('')}
 </section>`;
   }
 
@@ -111,7 +111,7 @@ ${f.skills.map((s, i) => `<div class="sk"><button class="roll" data-act="roll" d
     const M = podeMec(f), tipo = it.tipo || 'geral', luzT = it.luz ? (it.luz.t == 'c' ? 'Lanterna (cone)' : 'Lampião (raio)') + ' ' + n0(it.luz.m) + ' m' : '';
     const eqv = tipo == 'protecao' || tipo == 'arma';
     const tag = [tipo == 'protecao' ? 'Defesa ' + sinal(n0(it.def)) : '', luzT].filter(Boolean);
-    return `<div class="it op-it ${it.eq ? 'eq' : ''}"><div class="itr">${inp(`inv.items.${i}.n`, it.n, 'placeholder="Nome do item" class=in')}${eqv ? `<button class="eqb ${it.eq ? 'on' : ''}" data-act="op-eq" data-i="${i}">${it.eq ? '✓ Equipado' : 'Equipar'}</button>` : ''}<button class=x data-act=del data-l=items data-i=${i}>✕</button></div>
+    return `<div class="it op-it ${it.eq ? 'eq' : ''}"><div class="itr">${inp(`inv.items.${i}.n`, it.n, 'placeholder="Nome do item" class=in')}${eqv ? `<button class="eqb ${it.eq ? 'on' : ''}" data-act="op-eq" data-i="${i}">${it.eq ? 'Equipado' : 'Equipar'}</button>` : ''}<button class=x data-act=del data-l=items data-i=${i}>Remover</button></div>
 <div class="itr"><label class=sm>Tipo ${sel(`inv.items.${i}.tipo`, S.TIPOS_ITEM, tipo, 'data-rr' + (M ? '' : ' disabled'))}</label><label class=sm>Cat. ${sel(`inv.items.${i}.catg`, [0, 1, 2, 3, 4].map(x => [x, S.ROMANO[x]]), Math.round(n0(it.catg)), 'data-n data-rr' + (M ? '' : ' disabled'))}</label><label class=sm>Esp.${num(`inv.items.${i}.esp`, it.esp, 'min=0 step=.5' + (M ? '' : ' disabled'))}</label><label class=sm>Qtd${num(`inv.items.${i}.qtd`, it.qtd === undefined ? 1 : it.qtd, 'min=0 data-rr')}</label></div>
 ${tag.length ? `<div class="tags">${tag.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
 ${M ? `<details class="mec"><summary>Regras do item ${f._camp ? '(só o mestre)' : ''}</summary>
@@ -121,7 +121,7 @@ ${tipo == 'arma' ? `<div class="itr"><label class=sm>Dano ${inp(`inv.items.${i}.
 <div class="efs">${(it.ef || []).map((e, j) => efLinha(`inv.items.${i}.ef.${j}`, e, 'items', i, j, false)).join('')}<button class="mini" data-act="op-ef+" data-l="items" data-i="${i}">＋ Bônus do item</button></div></details>` : ''}
 ${inp(`inv.items.${i}.desc`, it.desc || '', 'placeholder="Descrição e notas"')}</div>`;
   }
-  const efLinha = (p, e, l, i, j, nv) => `<div class="ef">${sel(p + '.a', S.ALVOS, e.a || 'pv')}${num(p + '.v', e.v || 0, 'data-rr')}${nv ? `<label class=sm><input type=checkbox data-chk="${p}.nv" ${e.nv ? 'checked' : ''}> × nível</label>` : ''}<button class="x" data-act="op-ef-" data-l="${l}" data-i="${i}" data-j="${j}">✕</button></div>`;
+  const efLinha = (p, e, l, i, j, nv) => `<div class="ef">${sel(p + '.a', S.ALVOS, e.a || 'pv')}${num(p + '.v', e.v || 0, 'data-rr')}${nv ? `<label class=sm><input type=checkbox data-chk="${p}.nv" ${e.nv ? 'checked' : ''}> × nível</label>` : ''}<button class="x" data-act="op-ef-" data-l="${l}" data-i="${i}" data-j="${j}">Remover</button></div>`;
 
   function vInv(f) {
     const D = ULT, pat = D.patente, pct = D.cap > 0 ? Math.min(100, D.usado / D.cap * 100) : 100;
@@ -129,10 +129,10 @@ ${inp(`inv.items.${i}.desc`, it.desc || '', 'placeholder="Descrição e notas"')
     return `<section class="card"><h2>Carga e dinheiro</h2><div class="bar"><i style="width:${pct}%;background:${D.sobre ? '#e44' : 'var(--a)'}"></i></div>
 <div class="${D.sobre ? 'over' : 'm'}" id="ct">${S.n0(D.usado)} / ${D.cap} espaços${D.sobre ? ' — sobrecarregado (−5 Defesa, −3 m)' : ''}${D.usado > D.maxCarga ? ' — acima do máximo!' : ''}</div>
 <div class="carteira">${din === undefined ? '<span class="m">Dinheiro: peça ao mestre para rodar o SQL da etapa 5.</span>' : eM ? `<label class=sm>Dinheiro (${esc(moeda(f))}) <input type=number data-din value="${n0(din)}" min=0 step="0.01" style="width:110px"></label>` : `<b>${esc(dinheiroTxt(f, din))}</b>`}
-${f._camp ? `<a class="tl loja-l" href="loja.html?camp=${f._camp}&ficha=${f.id}">🛒 Loja</a>` : ''}</div>
+${f._camp ? `<a class="tl loja-l" href="loja.html?camp=${f._camp}&ficha=${f.id}">Loja</a>` : ''}</div>
 <p class="m" style="font-size:13px;margin:6px 0 0">Patente <b>${esc(pat[1])}</b>: até ${[1, 2, 3, 4].filter(c => pat[3][c - 1]).map(c => pat[3][c - 1] + '× cat. ' + S.ROMANO[c]).join(', ') || 'só categoria 0'}.</p>
 ${D.excesso.length ? `<p class="alerta">Acima do limite da patente: ${esc(D.excesso.join('; '))}.</p>` : ''}
-<p class="m" style="font-size:13px;margin:6px 0 0">Luz para a mesa: ${D.luz.c ? `🔦 ${esc(D.luz.cn)} (${D.luz.c} m)` : '🔦 sem lanterna'} · ${D.luz.l ? `🏮 ${esc(D.luz.ln)} (${D.luz.l} m)` : '🏮 sem lampião'}</p></section>
+<p class="m" style="font-size:13px;margin:6px 0 0">Luz para a mesa: ${D.luz.c ? `Lanterna: ${esc(D.luz.cn)} (${D.luz.c} m)` : 'sem lanterna'} · ${D.luz.l ? `Lampião: ${esc(D.luz.ln)} (${D.luz.l} m)` : 'sem lampião'}</p></section>
 <section class="card"><h2>Itens</h2>${f.inv.items.map((it, i) => itemCard(f, it, i)).join('') || '<p class=m>Inventário vazio.</p>'}
 <div class="g2b"><button class=add data-act=add data-l=items>＋ Item próprio</button>${podeMec(f) || cfgDe(f).catalogoLivre !== false ? '<button class=add data-act="op-cat">＋ Do catálogo</button>' : ''}</div></section>`;
   }
@@ -142,7 +142,7 @@ ${D.excesso.length ? `<p class="alerta">Acima do limite da patente: ${esc(D.exce
     return `<section class="card"><h2>Habilidades, poderes e rituais</h2>
 <p class="m" style="font-size:13px;margin:0 0 8px">PE: <b data-d="pecur">${n0(pe && pe.cur)}</b> · limite por turno <b>${D.limPE}</b> · DT de rituais <b>${D.dtRitual}</b></p>
 ${f.poderes.map((p, i) => { const t = p.tipo || 'poder', rit = t == 'ritual';
-      return `<div class="po op-po t-${t} ${p.off ? 'off' : ''}"><div class="itr">${inp(`poderes.${i}.n`, p.n, 'placeholder=Nome class=in')}<button class=x data-act=del data-l=poderes data-i=${i}>✕</button></div>
+      return `<div class="po op-po t-${t} ${p.off ? 'off' : ''}"><div class="itr">${inp(`poderes.${i}.n`, p.n, 'placeholder=Nome class=in')}<button class=x data-act=del data-l=poderes data-i=${i}>Remover</button></div>
 <div class="itr"><label class=sm>Tipo ${sel(`poderes.${i}.tipo`, TIPOS_HAB, t, 'data-rr')}</label>${rit ? `<label class=sm>Círculo ${sel(`poderes.${i}.circ`, [1, 2, 3, 4].map(x => [x, x + 'º']), p.circ || 1, 'data-n data-rr')}</label><label class=sm>Elemento ${sel(`poderes.${i}.el`, ELEM.map(e => [e, e || '—']), p.el || '')}</label>` : ''}
 <label class=sm>Custo ${num(`poderes.${i}.pe`, p.pe === undefined ? (rit ? S.CIRCULO_PE[p.circ || 1] : 0) : p.pe, 'min=0 style="width:54px"')} PE</label>
 ${n0(p.pe === undefined ? (rit ? S.CIRCULO_PE[p.circ || 1] : 0) : p.pe) > 0 ? `<button class="usar" data-act="op-usar" data-i="${i}">${rit ? 'Conjurar' : 'Usar'}</button>` : ''}</div>
@@ -328,9 +328,18 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     const ELS = ['Conhecimento', 'Energia', 'Morte', 'Sangue', 'Medo'];
     const circMax = f.op.classe == 'ocultista' ? (nexDe(f) >= 85 ? 4 : nexDe(f) >= 55 ? 3 : nexDe(f) >= 25 ? 2 : 1) : 0;
     const dica = f.op.classe == 'ocultista' ? `Seu NEX libera rituais até o ${circMax}º círculo; a cada avanço de NEX você aprende um novo.` : 'Rituais vêm do poder paranormal Aprender Ritual (até seu Intelecto).';
-    const ABAS = [['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe'], ['ritual', 'Rituais'], ['origem', 'Origens'], ['paranormal', 'Paranormal']];
+    const ABAS = [['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe'], ['ritual', 'Rituais'], ['origem', 'Origens'], ['paranormal', 'Paranormal'], ['criadas', 'Criadas']];
     const abas = () => `<div class="g2b">${ABAS.map(g => mk('gr', g[0], g[1], g[0] == gr)).join('')}</div>`;
+    const criada = p => p && p.n && !/^(livro|cat):/.test(String(p.ref || '')) && p.tipo != 'origem';
+    const CR = new Map((f.poderes || []).filter(criada).map(p => [p.n, p]));       // minhas habilidades criadas (esta ficha + as outras)
+    try { const r = await db.from('personagens').select('dados').eq('user_id', ME.id); (r.data || []).forEach(row => ((row.dados || {}).poderes || []).forEach(p => { if (criada(p) && !CR.has(p.n)) CR.set(p.n, p) })) } catch (e) { }
+    const CRL = [...CR.values()];
     janela('Habilidades do livro', () => {
+      if (gr == 'criadas') {
+        return [abas() + '<p class="m" style="margin:4px 0 0;font-size:12px">Habilidades que você já criou (nesta ou em outras fichas). Toque para copiar para esta ficha, ou crie uma nova.</p>',
+          '<button class="cat-i" data-c="novo"><b>Criar habilidade nova</b><small>Abre uma habilidade em branco na aba Habilidades</small></button>' +
+          CRL.map((p, k) => `<button class="cat-i" data-c="${k}"><b>${esc(p.n)}</b><small>${esc([p.tipo || 'poder', n0(p.pe) ? p.pe + ' PE' : '', (p.ef || []).length ? 'efeito automático' : '', f.poderes.some(x => x.n == p.n) ? 'já na ficha' : ''].filter(Boolean).join(' · '))}</small><small style="white-space:normal">${esc(p.desc || '')}</small></button>`).join('')];
+      }
       if (gr == 'origem') {
         const L = LIVRO.filter(x => x.grupo == 'origem');
         return [abas() + `<p class="m" style="margin:4px 0 0;font-size:12px">Toque na origem: você recebe as 2 perícias treinadas e o poder da origem. Origem atual: <b>${esc(f.op.origem || 'nenhuma')}</b>.</p>`, L.map(x => resumo(f, x)).join('')];
@@ -356,6 +365,11 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
       });
       return [`<div class="g2b">${CLS3.map(c => mk('cl', c[0], c[1], c[0] == cl)).join('')}</div>${abas()}`, h];
     }, (b, fecha) => {
+      if (b.dataset.c !== undefined) {
+        if (b.dataset.c == 'novo') { fecha(); f.poderes.push({ id: S.uid(), n: '', tipo: 'poder', desc: '', ef: [] }); touch(f); setTab('h'); render(); setTimeout(() => { const l = document.querySelectorAll('.op-po'), x = l[l.length - 1]; if (x) { x.scrollIntoView({ behavior: 'smooth', block: 'center' }); const i = x.querySelector('input'); i && i.focus() } }, 60); return }
+        const p = CRL[+b.dataset.c]; if (!p) return;
+        if (f.poderes.some(x => x.n == p.n)) { toast(esc(p.n) + ' já está na ficha.'); return }
+        f.poderes.push({ ...JSON.parse(JSON.stringify(p)), id: S.uid() }); calc(f); touch(f); fecha(); render(); toast(esc(p.n) + ' adicionada.'); return }
       const x = achar(b); if (!x) return;
       if (x.grupo == 'origem') return escolherOrigem(f, x, fecha);
       if (jaTem(f, x)) { toast(esc(x.nome) + ' já está na ficha.'); return }

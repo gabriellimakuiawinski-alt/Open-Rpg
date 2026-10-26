@@ -72,13 +72,13 @@ h2::after{content:"";flex:1;border-bottom:2px dashed #00000026}
 #docver .dv{max-width:min(640px,100%);max-height:92vh;overflow:auto;background:var(--papel2);color:var(--tinta);padding:18px;display:flex;flex-direction:column;gap:12px;border-radius:3px;box-shadow:0 30px 60px -20px #000}
 #docver b{font:400 22px var(--maq)}#docver img{max-width:100%;border:6px solid #f8f4e8;box-shadow:0 6px 14px -8px #000}#docver p{margin:0;white-space:pre-wrap;font:700 21px/1.25 var(--mao);color:var(--caneta)}#docver button{align-self:flex-end;color:var(--tinta)}
 </style></head><body class="quadro">
-<header><select id="sel"></select><button data-act="new">＋ Nova</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><button data-act="delf" class="x">Excluir</button><span class="sp"></span><span id="st"></span><a href="index.html" class="tl" title="Voltar ao início">🏠 Início</a><a href="mesa.html" class="tl" title="Abrir o tabletop">🎲 Tabletop</a><button data-act="sair" id="who" title="Sair da conta"></button></header>
+<header><select id="sel"></select><button data-act="new">＋ Nova</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><button data-act="delf" class="x">Excluir</button><span class="sp"></span><span id="st"></span><a href="index.html" class="tl" title="Voltar ao início">Início</a><a href="mesa.html" class="tl" title="Abrir o tabletop">Tabletop</a><button data-act="sair" id="who" title="Sair da conta"></button></header>
 <nav id="tabs"></nav><main id="app"></main><div id="toast"></div>
 <input type="file" id="fi" accept=".json,application/json" hidden>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>
 <script src="sistemas.js?v=1"></script>
-<script src="ficha-op.js?v=6"></script>
+<script src="ficha-op.js?v=7"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px;font-size:16px">Não consegui carregar o login. Confira a internet e se o arquivo <b>comum.js</b> está na mesma pasta deste arquivo.</p>';throw new Error('Mesa indisponível')}
 const db=Mesa.db;
@@ -201,36 +201,36 @@ ${meu?`<label class=fld>Campanha<select data-camp><option value="">— nenhuma (
 ${sisCampo(f)}
 ${meu||pp=='mestre'?`<label class=sm style="font-size:14px;margin:0 0 6px"><input type=checkbox data-flag=_priv ${f._priv?'checked':''}> Ficha privada (só o dono e o mestre veem)</label>`:''}
 ${pp=='mestre'?`<label class=sm style="font-size:14px;margin:0 0 10px"><input type=checkbox data-flag=_npc ${f._npc?'checked':''}> NPC (só o mestre vê)</label>`:''}
-<div class=g2>${f.info.map((x,i)=>`<div class=kv>${inp(`info.${i}.n`,x.n,'class=k')}${inp(`info.${i}.v`,x.v)}<button class=x data-act=del data-l=info data-i=${i}>✕</button></div>`).join('')}</div>
+<div class=g2>${f.info.map((x,i)=>`<div class=kv>${inp(`info.${i}.n`,x.n,'class=k')}${inp(`info.${i}.v`,x.v)}<button class=x data-act=del data-l=info data-i=${i}>Remover</button></div>`).join('')}</div>
 <button class=add data-act=add data-l=info>＋ Campo</button></section>
-<section class=card><h2>Condição</h2>${f.stats.map((s,i)=>`<div class=st><div class=sth>${inp(`stats.${i}.n`,s.n,'class=k')}<input type=color data-p="stats.${i}.c" value="${esc(s.c)}"><span class=sp></span><button class=x data-act=del data-l=stats data-i=${i}>✕</button></div>
+<section class=card><h2>Condição</h2>${f.stats.map((s,i)=>`<div class=st><div class=sth>${inp(`stats.${i}.n`,s.n,'class=k')}<input type=color data-p="stats.${i}.c" value="${esc(s.c)}"><span class=sp></span><button class=x data-act=del data-l=stats data-i=${i}>Remover</button></div>
 <div class=bar><i id="sb${i}"></i></div>
 <div class=ctl><button data-act=sd data-i=${i} data-d=-1>−</button>${num(`stats.${i}.cur`,s.cur)}<span class=m>/</span>${num(`stats.${i}.max`,s.max)}<button data-act=sd data-i=${i} data-d=1>＋</button></div></div>`).join('')}
 <button class=add data-act=add data-l=stats>＋ Barra</button></section>
-<section class=card><h2>Atributos</h2><div class=ats>${f.attrs.map((a,i)=>`<div class=at>${inp(`attrs.${i}.n`,a.n,'class=k')}${num(`attrs.${i}.v`,a.v,'min=0 class=big')}<button class=x data-act=del data-l=attrs data-i=${i}>✕</button></div>`).join('')}</div>
+<section class=card><h2>Atributos</h2><div class=ats>${f.attrs.map((a,i)=>`<div class=at>${inp(`attrs.${i}.n`,a.n,'class=k')}${num(`attrs.${i}.v`,a.v,'min=0 class=big')}<button class=x data-act=del data-l=attrs data-i=${i}>Remover</button></div>`).join('')}</div>
 <button class=add data-act=add data-l=attrs>＋ Atributo</button></section>`}
 function vPericias(f){return `<section class=card><h2>Perícias</h2><p class=m style="margin:0 0 8px;font-size:12px">Role o número do atributo em d20 e fique com o maior (atributo 0: dois dados, fica o menor), mais treino e bônus.</p>
-${f.skills.map((s,i)=>`<div class=sk><button class=roll data-act=roll data-i=${i} title=Rolar>🎲</button>${inp(`skills.${i}.n`,s.n,'class=sn')}<select data-p="skills.${i}.a">${attrOpts(f,s.a)}</select><select data-p="skills.${i}.t" data-n>${TREINO.map(([v,l])=>`<option value=${v} ${s.t==v?'selected':''}>${l}</option>`).join('')}</select>${num(`skills.${i}.o`,s.o,'title="Outros bônus"')}<b id="sk${i}"></b><button class=x data-act=del data-l=skills data-i=${i}>✕</button></div>`).join('')}
+${f.skills.map((s,i)=>`<div class=sk><button class=roll data-act=roll data-i=${i} title=Rolar>Rolar</button>${inp(`skills.${i}.n`,s.n,'class=sn')}<select data-p="skills.${i}.a">${attrOpts(f,s.a)}</select><select data-p="skills.${i}.t" data-n>${TREINO.map(([v,l])=>`<option value=${v} ${s.t==v?'selected':''}>${l}</option>`).join('')}</select>${num(`skills.${i}.o`,s.o,'title="Outros bônus"')}<b id="sk${i}"></b><button class=x data-act=del data-l=skills data-i=${i}>Remover</button></div>`).join('')}
 <button class=add data-act=add data-l=skills>＋ Perícia</button></section>`}
 function vInv(f){const v=f.inv;return `<section class=card><h2>Carga</h2><div class=bar><i id=cb></i></div><div id=ct></div>
 <div class=ctl><span class=m>Capacidade =</span><select data-p="inv.capAttr" style="width:auto">${attrOpts(f,v.capAttr)}</select><span class=m>×</span>${num('inv.capMult',v.capMult)}<span class=m>+</span>${num('inv.capExtra',v.capExtra)}</div>
-${f._din!==undefined?`<div class="carteira">${meuPapel(f._camp)=='mestre'?`<label class=sm>Dinheiro <input type=number data-din value="${+f._din||0}" min=0 step="0.01" style="width:110px"></label>`:`<b>Dinheiro: ${esc(((CAMPS.find(c=>c.id==f._camp)||{}).config||{}).moeda||'R$')} ${(+f._din||0).toLocaleString('pt-BR')}</b>`}${f._camp?`<a class="tl loja-l" href="loja.html?camp=${f._camp}&ficha=${f.id}">🛒 Loja</a>`:''}</div>`:''}</section>
+${f._din!==undefined?`<div class="carteira">${meuPapel(f._camp)=='mestre'?`<label class=sm>Dinheiro <input type=number data-din value="${+f._din||0}" min=0 step="0.01" style="width:110px"></label>`:`<b>Dinheiro: ${esc(((CAMPS.find(c=>c.id==f._camp)||{}).config||{}).moeda||'R$')} ${(+f._din||0).toLocaleString('pt-BR')}</b>`}${f._camp?`<a class="tl loja-l" href="loja.html?camp=${f._camp}&ficha=${f.id}">Loja</a>`:''}</div>`:''}</section>
 <section class=card><h2>Itens</h2><datalist id=cats>${['Arma','Proteção','Munição','Consumível','Equipamento','Paranormal','Geral'].map(c=>`<option value="${c}">`).join('')}</datalist>
-${v.items.map((it,i)=>`<div class=it><div class=itr>${inp(`inv.items.${i}.n`,it.n,'placeholder="Nome do item" class=in')}<button class=x data-act=del data-l=items data-i=${i}>✕</button></div>
+${v.items.map((it,i)=>`<div class=it><div class=itr>${inp(`inv.items.${i}.n`,it.n,'placeholder="Nome do item" class=in')}<button class=x data-act=del data-l=items data-i=${i}>Remover</button></div>
 <div class=itr>${inp(`inv.items.${i}.cat`,it.cat,'list=cats placeholder=Categoria')}<label class=sm>Esp.${num(`inv.items.${i}.esp`,it.esp,'min=0 step=.5')}</label><label class=sm>Qtd${num(`inv.items.${i}.qtd`,it.qtd,'min=0')}</label></div>
 ${inp(`inv.items.${i}.desc`,it.desc,'placeholder="Descrição e notas"')}</div>`).join('')||'<p class=m>Inventário vazio.</p>'}
 <button class=add data-act=add data-l=items>＋ Item</button></section>`+vDocsSec(f)}
 function vDocsSec(f){return `<section class=card><h2>Documentos</h2><p class=m style="margin:0 0 10px;font-size:14px">Cartas, recortes, fotos e pistas que seu personagem guarda. <b>Não ocupam espaço</b> na carga.</p>
-${(f.docs||[]).map((dc,i)=>`<div class="it doc"><div class=itr>${inp(`docs.${i}.t`,dc.t,'placeholder="Título do documento" class=in')}<button class=x data-act=del data-l=docs data-i=${i}>✕</button></div>
+${(f.docs||[]).map((dc,i)=>`<div class="it doc"><div class=itr>${inp(`docs.${i}.t`,dc.t,'placeholder="Título do documento" class=in')}<button class=x data-act=del data-l=docs data-i=${i}>Remover</button></div>
 ${dc.img?`<div class=docimg><img src="${esc(dc.img)}" alt="${esc(dc.t||'Documento')}" data-act=docver data-i=${i}><button class=x data-act=docx data-i=${i} title="Remover imagem">remover imagem</button></div>`:`<button class=add data-act=docimg data-i=${i} style="margin-top:0">＋ Anexar imagem</button>`}
 <textarea data-p="docs.${i}.txt" placeholder="Texto do documento" style="min-height:90px">${esc(dc.txt)}</textarea></div>`).join('')||'<p class=m>Nenhum documento guardado.</p>'}
 <button class=add data-act=add data-l=docs>＋ Documento</button><input type=file id=docfile accept="image/*" hidden></section>`}
 function vNotasSec(f){return `<section class=card><h2>Notas</h2><textarea data-p=notas style="min-height:160px">${esc(f.notas)}</textarea></section>`}
 /* seções livres da ficha modular: título + linhas nome/valor */
-function vSecoes(f){return (f.secoes||[]).map((x,i)=>`<section class="card secao"><div class=itr>${inp(`secoes.${i}.t`,x.t,'placeholder="Título da seção" class=in')}<button class=x data-act=del data-l=secoes data-i=${i}>✕</button></div>
-${(x.l||[]).map((r,j)=>`<div class=kv>${inp(`secoes.${i}.l.${j}.n`,r.n,'class=k placeholder=Nome')}${inp(`secoes.${i}.l.${j}.v`,r.v,'placeholder=Valor')}<button class=x data-act=secr- data-i=${i} data-j=${j}>✕</button></div>`).join('')}
+function vSecoes(f){return (f.secoes||[]).map((x,i)=>`<section class="card secao"><div class=itr>${inp(`secoes.${i}.t`,x.t,'placeholder="Título da seção" class=in')}<button class=x data-act=del data-l=secoes data-i=${i}>Remover</button></div>
+${(x.l||[]).map((r,j)=>`<div class=kv>${inp(`secoes.${i}.l.${j}.n`,r.n,'class=k placeholder=Nome')}${inp(`secoes.${i}.l.${j}.v`,r.v,'placeholder=Valor')}<button class=x data-act=secr- data-i=${i} data-j=${j}>Remover</button></div>`).join('')}
 <button class=add data-act=secr+ data-i=${i}>＋ Linha</button></section>`).join('')+`<button class=add data-act=add data-l=secoes style="margin-bottom:14px">＋ Seção nova (lista, tabela, o que quiser)</button>`}
-function vNotas(f){return `<section class=card><h2>Poderes, rituais e habilidades</h2>${f.poderes.map((p,i)=>`<div class=po><div class=itr>${inp(`poderes.${i}.n`,p.n,'placeholder=Nome class=in')}<button class=x data-act=del data-l=poderes data-i=${i}>✕</button></div><textarea data-p="poderes.${i}.desc" placeholder="Descrição">${esc(p.desc)}</textarea></div>`).join('')}<button class=add data-act=add data-l=poderes>＋ Poder</button></section>
+function vNotas(f){return `<section class=card><h2>Poderes, rituais e habilidades</h2>${f.poderes.map((p,i)=>`<div class=po><div class=itr>${inp(`poderes.${i}.n`,p.n,'placeholder=Nome class=in')}<button class=x data-act=del data-l=poderes data-i=${i}>Remover</button></div><textarea data-p="poderes.${i}.desc" placeholder="Descrição">${esc(p.desc)}</textarea></div>`).join('')}<button class=add data-act=add data-l=poderes>＋ Poder</button></section>
 ${vSecoes(f)}${vNotasSec(f)}`}
 
 function derive(){const f=curF();if(!f)return;

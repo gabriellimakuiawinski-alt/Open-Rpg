@@ -456,7 +456,7 @@ function renderCamp(id){
   const corpo=aba=='mesas'?abaMesas(c,pp):aba=='grupo'?abaGrupo(c,pp):abaFichas(c,pp);
   return`${topo()}<a class="volta" href="#/">${IC.volta}Início</a>
 <div class="cab"><span class="etq">${esc(PAPEL[pp])}</span><h1>${esc(c.nome)}</h1><p>Você é ${esc(PAPEL[pp].toLowerCase())} · ${plural(ng,'pessoa','pessoas')} · sistema <b>${esc(nomeSis(c))}</b></p>
-<div class="acoes" style="margin-top:10px"><a class="btn papel-b" href="loja.html?camp=${c.id}">🛒 ${pp=='mestre'?'Lojas e dinheiro':'Loja'}</a>${pp=='mestre'?`<button class="btn papel-b" data-a="sistema">Sistema e regras</button>`:''}</div></div>
+<div class="acoes" style="margin-top:10px"><a class="btn papel-b" href="loja.html?camp=${c.id}">${pp=='mestre'?'Lojas e dinheiro':'Loja'}</a><a class="btn papel-b" href="quadro.html?camp=${c.id}">Quadro de investigação</a>${pp=='mestre'?`<button class="btn papel-b" data-a="sistema">Sistema e regras</button>`:''}</div></div>
 <div class="divisorias abas" role="tablist">${A.map(([k,n,q])=>`<button role="tab" class="${aba==k?'on':''}" aria-selected="${aba==k}" data-a="aba" data-t="${k}">${n}<small>${q}</small></button>`).join('')}</div>
 <div class="folha papel" id="corpo">${corpo}</div>`}
 
