@@ -146,7 +146,7 @@ ${n0(p.pe === undefined ? (rit ? S.CIRCULO_PE[p.circ || 1] : 0) : p.pe) > 0 ? `<
 <label class=sm><input type=checkbox data-chk="poderes.${i}.off" ${p.off ? 'checked' : ''}> Desligado (não soma)</label>
 ${(p.ef || []).map((e, j) => efLinha(`poderes.${i}.ef.${j}`, e, 'poderes', i, j, true)).join('')}<button class="mini" data-act="op-ef+" data-l="poderes" data-i="${i}">＋ Efeito</button>
 ${f._camp && (t == 'homebrew' || p.ef && p.ef.length) ? `<button class="mini" data-act="op-share" data-i="${i}">Enviar para a campanha${mestre(f) ? '' : ' (o mestre aprova)'}</button>` : ''}</details></div>` }).join('') || '<p class="m">Nenhuma habilidade ainda.</p>'}
-<div class="g2b"><button class=add data-act="op-nova" data-t="poder">＋ Habilidade</button><button class=add data-act="op-nova" data-t="ritual">＋ Ritual</button><button class=add data-act="op-nova" data-t="homebrew">＋ Homebrew</button>${f._camp ? '<button class=add data-act="op-camp">＋ Da campanha</button>' : ''}</div></section>`;
+<div class="g2b"><button class=add data-act="op-nova" data-t="poder">＋ Habilidade</button><button class=add data-act="op-nova" data-t="ritual">＋ Ritual</button><button class=add data-act="op-nova" data-t="homebrew">＋ Homebrew</button><button class=add data-act="op-livro">＋ Do livro</button>${f._camp ? '<button class=add data-act="op-camp">＋ Da campanha</button>' : ''}</div></section>`;
   }
 
   function vDocs(f) { return vDocsSec(f) + vNotasSec(f) }
@@ -199,6 +199,7 @@ ${f._camp && (t == 'homebrew' || p.ef && p.ef.length) ? `<button class="mini" da
     if (a == 'op-dano') { const it = f.inv.items[+d.i], r = S.rolar((it.arma || {}).dano); toast(r ? `${esc(it.n)} · dano ${esc(it.arma.dano)}: ${r.txt} = <b>${r.total}</b>` : 'Preencha o dano da arma (ex.: 1d8).'); return true }
     if (a == 'op-cat') { catalogo(f); return true }
     if (a == 'op-camp') { await daCampanha(f); return true }
+    if (a == 'op-livro') { await doLivro(f); return true }
     if (a == 'op-share') { await compartilhar(f, f.poderes[+d.i]); return true }
     return false;
   }
@@ -228,6 +229,46 @@ ${f._camp && (t == 'homebrew' || p.ef && p.ef.length) ? `<button class="mini" da
     o.onclick = e => { if (e.target === o || e.target.closest('[data-x]')) { o.remove(); return }
       const b = e.target.closest('.cat-i'); if (!b) return; const x = L[+b.dataset.k];
       f.poderes.push({ ...JSON.parse(JSON.stringify(x.dados)), id: S.uid(), n: x.nome, ref: 'cat:' + x.id }); calc(f); touch(f); o.remove(); render(); toast(esc(x.nome) + ' adicionada.') };
+  }
+  /* habilidades do livro (classe, poderes, trilhas) — tabela global livro_habilidades */
+  let LIVRO = null;
+  const CLS3 = [['combatente', 'Combatente'], ['especialista', 'Especialista'], ['ocultista', 'Ocultista']];
+  async function doLivro(f) {
+    if (!LIVRO) {
+      const r = await db.from('livro_habilidades').select('ref,classe,grupo,trilha,nex,ordem,nome,dados').eq('sistema', 'op').order('ordem');
+      if (r.error || !r.data.length) { toast('Habilidades do livro indisponíveis (rode o SQL schema_etapa6_livro.sql no Supabase).'); return }
+      LIVRO = r.data;
+    }
+    let cl = CLS3.some(c => c[0] == f.op.classe) ? f.op.classe : 'combatente', gr = 'trilha';
+    const o = document.createElement('div'); o.id = 'md';
+    const lista = () => {
+      const L = LIVRO.filter(x => x.classe == cl && x.grupo == gr), tem = new Set(f.poderes.map(p => p.ref));
+      let h = '', ult = null;
+      L.forEach(x => {
+        if (gr == 'trilha' && x.trilha != ult) { ult = x.trilha; h += `<p class="m" style="margin:10px 0 2px"><b>${esc(x.trilha)}</b>${f.op.trilha == x.trilha ? ' · sua trilha' : ''}</p>` }
+        const d = x.dados || {}, sub = [x.nex ? 'NEX ' + x.nex + '%' : '', d.pe ? d.pe + ' PE' : '', (d.ef || []).length ? 'efeito automático' : '', tem.has('livro:' + x.ref) ? 'já na ficha' : ''].filter(Boolean).join(' · ');
+        h += `<button class="cat-i" data-r="${esc(x.ref)}"><b>${esc(x.nome)}</b><small>${esc(sub)}</small><small style="white-space:normal">${esc(d.desc || '')}</small></button>`;
+      });
+      return h;
+    };
+    const tela = () => {
+      o.innerHTML = `<div class="mb"><h3>Habilidades do livro</h3>
+<div class="g2b">${CLS3.map(c => `<button class="mini" data-cl="${c[0]}" ${c[0] == cl ? 'style="outline:2px solid currentColor"' : ''}>${c[1]}</button>`).join('')}</div>
+<div class="g2b">${[['trilha', 'Trilhas'], ['poder', 'Poderes'], ['classe', 'Classe']].map(g => `<button class="mini" data-gr="${g[0]}" ${g[0] == gr ? 'style="outline:2px solid currentColor"' : ''}>${g[1]}</button>`).join('')}</div>
+<div class="catl">${lista()}</div><button data-x style="align-self:flex-end">Fechar</button></div>`;
+    };
+    tela(); document.body.append(o);
+    o.onclick = e => {
+      if (e.target === o || e.target.closest('[data-x]')) { o.remove(); return }
+      const c = e.target.closest('[data-cl]'); if (c) { cl = c.dataset.cl; tela(); return }
+      const g = e.target.closest('[data-gr]'); if (g) { gr = g.dataset.gr; tela(); return }
+      const b = e.target.closest('.cat-i'); if (!b) return;
+      const x = LIVRO.find(y => y.ref == b.dataset.r); if (!x) return;
+      if (f.poderes.some(p => p.ref == 'livro:' + x.ref)) { toast(esc(x.nome) + ' já está na ficha.'); return }
+      f.poderes.push({ ...JSON.parse(JSON.stringify(x.dados)), id: S.uid(), n: x.nome, ref: 'livro:' + x.ref });
+      if (x.grupo == 'trilha' && !f.op.trilha) f.op.trilha = x.trilha;
+      calc(f); touch(f); o.remove(); render(); toast(esc(x.nome) + ' adicionada.');
+    };
   }
   async function compartilhar(f, p) {
     if (!p.n) { toast('Dê um nome à habilidade antes.'); return }

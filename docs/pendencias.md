@@ -9,7 +9,11 @@ Visual dossiê, animações do mapa, ícones SVG, música e efeitos compartilhad
 
 ## Etapa 5 (publicada)
 Sistema por campanha (Ordem Paranormal automática / Modular), loja e dinheiro, homebrews com efeito automático, luz do token pelo inventário.
-Próximos passos possíveis: rituais e poderes do livro no catálogo (no Supabase, não no repositório), origens/trilhas com efeitos prontos, munição gasta ao atacar, rolagens da ficha no log da mesa.
+## Etapa 6 (em andamento)
+Feito: habilidades de classe, poderes de classe e trilhas do livro básico (130 linhas) + botão "Do livro". **Pendente do usuário:** rodar `schema_etapa6_livro.sql` (depois do etapa5).
+Falta: rituais do livro básico, rituais do Sobrevivendo ao Horror, origens e poderes paranormais; trilhas/poderes dos outros livros.
+
+Próximos passos possíveis: origens com efeitos prontos, munição gasta ao atacar, rolagens da ficha no log da mesa.
 
 ## Ideias (não feitas)
 - Rolagens da ficha no log da mesa; imagem do personagem compartilhada ficha↔token; abrir a ficha pelo token.

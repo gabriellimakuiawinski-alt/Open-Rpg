@@ -16,7 +16,7 @@ bash tools/tests/t/mkdb.sh        # recria o banco e2e com os schemas reais
 - `lib.py` = harness do tabletop; `lib2.py` = harness de index/ficha.
 
 ## Quando rodar
-Antes de publicar: `python3 tools/build/build.py` (mesa.html), e as suítes da área mexida (mesa → t1–t6, t9–t12, t15, fx, fog; início/ficha/loja → t7, t8, t13, t14, t15; banco → m/*, inclusive `perm6.sql` da etapa 5).
+Antes de publicar: `python3 tools/build/build.py` (mesa.html), e as suítes da área mexida (mesa → t1–t6, t9–t12, t15, fx, fog; início/ficha/loja → t7, t8, t13, t14, t15, t16 (habilidades do livro); banco → m/*, inclusive `perm6.sql` da etapa 5).
 Teste novo: copie um `tN.py`, use `chk()` e termine com `report()`.
 
 Falhas `ERR_TUNNEL_CONNECTION_FAILED` são as fontes do Google bloqueadas no ambiente, não erro do código.

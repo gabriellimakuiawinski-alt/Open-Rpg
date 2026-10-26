@@ -3,8 +3,8 @@
 Projeto "Open Rpg" (`riltokltdqpccckpqmal`). Postgres + RLS + Realtime + Storage. **Quem protege é o RLS**; o cliente usa só a chave publishable.
 
 ## Ordem dos SQL (rodar no SQL Editor; todos re-executáveis)
-1. `schema.sql` 2. `schema_etapa2.sql` 3. `schema_etapa2b.sql` 4. `schema_etapa3.sql` 5. `schema_etapa3b_musica.sql` 6. `schema_etapa4.sql` 7. `schema_etapa5.sql`
-**Pendente no projeto do usuário:** 5, 6 e 7. Confirmar com ele se já rodou. As páginas funcionam sem o 7 (sem loja/dinheiro/sistema; mostram aviso).
+1. `schema.sql` 2. `schema_etapa2.sql` 3. `schema_etapa2b.sql` 4. `schema_etapa3.sql` 5. `schema_etapa3b_musica.sql` 6. `schema_etapa4.sql` 7. `schema_etapa5.sql` 8. `schema_etapa6_livro.sql`
+**Pendente no projeto do usuário:** 5, 6, 7 e 8. Confirmar com ele se já rodou. As páginas funcionam sem o 7 (sem loja/dinheiro/sistema; mostram aviso).
 
 ## Tabelas
 `profiles, campanhas, campanha_membros, mesas (campanha_id opcional, musica_id), membros, cenas, mapas_cena, tokens, personagens, pastas, arquivos, playlists, notas (do mestre), notas_jogador (PK mesa_id+user_id, só o dono lê/escreve)`.
@@ -18,6 +18,11 @@ Projeto "Open Rpg" (`riltokltdqpccckpqmal`). Postgres + RLS + Realtime + Storage
 - `lojas` (aberta = jogadores veem), `loja_itens` (item jsonb como vai para o inventário, preço, estoque null = ∞), `loja_compras` (histórico; só `comprar()` grava).
 - `catalogo` (homebrews/itens da campanha): jogador cria pendente; só o mestre aprova.
 - Luz: `luz_da_ficha(dados)` → melhor `{c,l}` em metros dos itens com `luz:{t:'c'|'l',m}`. Trigger `token_luz_auto` (tokens ligados a ficha em campanha 'op') força `lz = m / grade_m` e apaga se não houver fonte. `ficha_luz_tokens` recalcula ao mudar o inventário.
+
+## Etapa 6 (habilidades do livro)
+- `livro_habilidades` (ref PK, sistema, fonte, classe, grupo `classe|poder|trilha`, trilha, nex, ordem, nome, `dados` jsonb já no formato de poder da ficha: tipo, desc, pe, ef[]). **Global e só leitura** para `authenticated` (sem policy de escrita; quem altera é o dono rodando SQL). Rituais e outros livros entram na mesma tabela (coluna `fonte`).
+- O SQL é GERADO por `python3 tools/livro/gerar_op_basico.py` (edite os dados lá, não o `.sql`). Textos são resumos da mecânica (livro v1.2), não cópia.
+- Efeito automático (`ef`) só onde a regra é exata: Reflexos Defensivos, Casca Grossa (PV × nível), Iniciativa Aprimorada, Gatuno. O resto fica na descrição.
 
 ## Funções-chave (security definer)
 Permissão: `eh_membro, eh_mestre, pode_gerir, c_membro, c_mestre, c_gerir, c_usuario, usuario_na_mesa, cena_visivel, arquivo_em_uso, musica_em_uso`.

@@ -12,6 +12,7 @@ Site: https://gabriellimakuiawinski-alt.github.io/Open-Rpg/ (GitHub Pages, branc
 | tela inicial, ficha, sistemas e loja | docs/inicio-ficha.md |
 | sons e trilha | docs/som.md |
 | testes | docs/testes.md |
+| dados do livro (habilidades, rituais) | tools/livro/ + docs/banco.md |
 | o que falta / ideias | docs/pendencias.md |
 
 ## Regras que não mudam
@@ -35,4 +36,4 @@ Não dá para conferir o deploy do Pages daqui; avise o usuário para abrir em a
 Antes de publicar: `python3 tools/build/build.py` e rode os testes (docs/testes.md).
 
 ## Estado atual
-Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase `schema_etapa3b_musica.sql`, depois `schema_etapa4.sql`, depois `schema_etapa5.sql`.
+Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase `schema_etapa3b_musica.sql`, depois `schema_etapa4.sql`, depois `schema_etapa5.sql`, depois `schema_etapa6_livro.sql`.
