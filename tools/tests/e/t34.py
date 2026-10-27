@@ -1,0 +1,31 @@
+# Treinamento de perícias: lista todas, mostra quais podem subir (aviso de grau e poder Treinamento em Perícia)
+from lib2 import *
+d=seed()
+with sync_playwright() as p:
+    b=p.chromium.launch()
+    pg=abre_pg(b,'J','ficha.html?id='+d['fJ']);pg.wait_for_timeout(2000);ev=pg.evaluate
+    ev("curF().skills.forEach(s=>s.t=0);curF().skills[0].t=5;curF().skills[1].t=5;curF().skills[2].t=10;curF().skills[3].t=15;render()");pg.wait_for_timeout(300)
+    pg.select_option('select[data-p="op.nex"]','35');pg.wait_for_timeout(600)
+    chk("NEX 35%: aviso de grau com botão Escolher perícias",pg.locator('[data-act="op-grau"]:has-text("Escolher perícias")').count()==1)
+    pg.click('[data-act="op-grau"]');pg.wait_for_timeout(400)
+    n=ev("curF().skills.length")
+    chk("lista TODAS as perícias",pg.locator('#md .cat-i').count()==n,pg.locator('#md .cat-i').count())
+    chk("só as treinadas (2) podem subir a Veterano",pg.locator('#md .cat-i:not(.off)').count()==2,pg.locator('#md .cat-i:not(.off)').count())
+    chk("Expert mostra que já é Expert",'Já é Expert' in pg.locator('#md .cat-i').nth(3).inner_text())
+    chk("destreinada explica o motivo",'Precisa ser Treinado' in pg.locator('#md .cat-i').nth(5).inner_text())
+    pg.locator('#md .cat-i:not(.off)').first.click();pg.click('#md [data-ok]');pg.wait_for_timeout(500)
+    chk("perícia sobe para Veterano e aviso some",ev("curF().skills[0].t")==10 and pg.locator('[data-act="op-grau"]').count()==0,ev("curF().skills[0].t"))
+    # poder Treinamento em Perícia
+    ev("curF().op.nex=20;render()");pg.wait_for_timeout(300)
+    pg.close()
+    pg=abre_pg(b,'J','ficha.html?id='+d['fJ']);pg.wait_for_timeout(2000);ev=pg.evaluate
+    ev("curF().skills.forEach(s=>s.t=0);curF().skills[0].t=5;curF().skills[1].t=10;curF().op.nex=20;render()");pg.wait_for_timeout(300)
+    ev("OP.treinar(curF(),{modo:'poder'})");pg.wait_for_timeout(400)
+    chk("poder em NEX 20%: Veterano e Treinado não sobem, destreinada sobe",pg.locator('#md .cat-i:not(.off)').count()==ev("curF().skills.length")-2,pg.locator('#md .cat-i:not(.off)').count())
+    chk("motivo do Treinado em NEX 20%",'NEX 35%' in pg.locator('#md .cat-i').nth(0).inner_text())
+    pg.locator('#md .cat-i:not(.off)').nth(0).click();pg.locator('#md .cat-i:not(.off)').nth(1).click();pg.locator('#md .cat-i:not(.off)').nth(2).click()
+    chk("limite de 2 escolhas",pg.locator('#md .cat-i.on').count()==2)
+    pg.click('#md [data-ok]');pg.wait_for_timeout(400)
+    chk("duas perícias viraram Treinado",ev("curF().skills.filter(s=>s.t==5).length")==3,ev("curF().skills.filter(s=>s.t==5).length"))
+    chk("sem erros",not pg.errs,pg.errs);pg.ctx.close()
+    report()

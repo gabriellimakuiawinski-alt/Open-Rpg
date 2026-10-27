@@ -16,7 +16,7 @@ bash tools/tests/t/mkdb.sh        # recria o banco e2e com os schemas reais
 - `lib.py` = harness do tabletop; `lib2.py` = harness de index/ficha.
 
 ## Quando rodar
-Antes de publicar: `python3 tools/build/build.py` (mesa.html), e as suítes da área mexida (mesa → t1–t6, t9–t12, t15, fx, fog; início/ficha/loja → t7, t8, t13, t14, t15, t16, t17, t18, t19 e t20 (habilidades, avisos de NEX, rituais, origens, poderes paranormais e itens do livro), t21 (quadro de investigação), t23 (aba Criadas), t24 (modificações na arma), t25 (pedido ao mestre), t26 (botão Modificar), t27 (mestre livre em NPC), t28 (excluir), t29 (inimigos), t30 (bestiário do livro), t31 (ficha de monstro), t32 (calculador de VD), t33 (aba Combate) e t22 (giro do token com a roda + ficha no menu do token); banco → m/*, inclusive `perm6.sql` da etapa 5).
+Antes de publicar: `python3 tools/build/build.py` (mesa.html), e as suítes da área mexida (mesa → t1–t6, t9–t12, t15, fx, fog; início/ficha/loja → t7, t8, t13, t14, t15, t16, t17, t18, t19 e t20 (habilidades, avisos de NEX, rituais, origens, poderes paranormais e itens do livro), t21 (quadro de investigação), t23 (aba Criadas), t24 (modificações na arma), t25 (pedido ao mestre), t26 (botão Modificar), t27 (mestre livre em NPC), t28 (excluir), t29 (inimigos), t30 (bestiário do livro), t31 (ficha de monstro), t32 (calculador de VD), t33 (aba Combate), t34 (treino de perícias) e t22 (giro do token com a roda + ficha no menu do token); banco → m/*, inclusive `perm6.sql` da etapa 5).
 Teste novo: copie um `tN.py`, use `chk()` e termine com `report()`.
 
 Falhas `ERR_TUNNEL_CONNECTION_FAILED` são as fontes do Google bloqueadas no ambiente, não erro do código.
