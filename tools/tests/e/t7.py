@@ -26,7 +26,7 @@ with sync_playwright() as p:
     chk("hero mostra campanha e papel",'campanha teste' in pg.locator('a.hero').inner_text().lower() and 'jogador' in pg.locator('a.hero').inner_text().lower())
     chk("hero diz quando abriu",'há 3 h' in pg.locator('a.hero').inner_text())
     chk("hero leva para a mesa",pg.locator('a.hero').get_attribute('href')=='mesa.html?mesa='+d['m'])
-    chk("5 atalhos",pg.locator('.tile').count()==5 and all(x in t for x in['Inimigos','Criar mesa','Criar ficha','Criar campanha','Entrar com código']))
+    chk("6 atalhos",pg.locator('.tile').count()==6 and all(x in t for x in['Regras','Inimigos','Criar mesa','Criar ficha','Criar campanha','Entrar com código']))
     chk("campanha listada",pg.locator('a.camp').count()==1 and 'Campanha Teste' in pg.locator('a.camp').inner_text())
     chk("mesas listadas (so a da campanha, J nao esta na avulsa)",pg.locator('.lin').count()==1)
     chk("sem erros no console (J)",not pg.errs,pg.errs)
@@ -44,7 +44,7 @@ with sync_playwright() as p:
     chk("jogador nao cria mesa na campanha",pg.locator('button:has-text("Criar mesa nesta campanha")').count()==0)
     pg.screenshot(path=shots+'i_camp_J_mesas.png')
     pg.go_back(); pg.wait_for_selector('.tile'); 
-    chk("voltar vai ao inicio",pg.locator('.tile').count()==5)
+    chk("voltar vai ao inicio",pg.locator('.tile').count()==6)
     chk("sem erros no console (J, campanha)",not pg.errs,pg.errs)
     pg.context.close()
     # ---- mestre M

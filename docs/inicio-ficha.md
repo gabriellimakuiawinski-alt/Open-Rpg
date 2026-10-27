@@ -40,3 +40,4 @@
 - Itens amaldiçoados (`ficha-op.js`): abas Maldições e Amaldiçoados no catálogo. Maldição é modificação (`maldicao:true`): a primeira sobe a categoria do item em II, as seguintes em I (`mods[].mal`). Lancinante e Erosiva somam +1d8 no ataque (`SIS.MODEF`).
 - Ocultista: a cada NEX (a partir de 10%) nasce o aviso `ritual` (aprender 1 ritual de círculo até o permitido: 1º, 2º em 25%, 3º em 55%, 4º em 85%; livro p.33). Marcos em `SIS.marcos`.
 - Condições: cartão no Combate da ficha OP (`f.op.cond`, texto vindo de `livro_regras`). Página `regras.html` (link na tela inicial): Condições, Perigos e Cálculos do livro.
+- Topo da ficha (27/10): cabeçalho compacto 'Início | seletor | Menu'; Nova/Duplicar/Exportar/Importar/Tabletop/Excluir/sair ficam no menu (#mn). Testes que clicam em data-act do topo precisam abrir '#mn summary' antes; use '#app details summary' para blocos da ficha.
