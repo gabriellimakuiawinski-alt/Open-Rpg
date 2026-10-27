@@ -8,7 +8,7 @@ with sync_playwright() as p:
     # ---------- ficha OP ----------
     pg=abre_pg(b,'J','ficha.html?id='+d['fJ']);pg.wait_for_timeout(2000);ev=pg.evaluate
     chk("ficha da campanha abre como Ordem Paranormal",ev("document.body.classList.contains('sis-op')"))
-    chk("abas da ficha OP",ev("[...document.querySelectorAll('#tabs button')].map(b=>b.textContent).join()")=='Agente,Combate,Perícias,Inventário,Habilidades,Documentos')
+    chk("abas da ficha OP",ev("[...document.querySelectorAll('#tabs button')].map(b=>b.textContent).join()")=='Ficha,Combate,Perícias,Inventário,Poderes,Notas')
     vig=pg.locator('.pn input').nth(4);vig.fill('3');vig.blur();pg.wait_for_timeout(300)
     chk("VIG 3 → PV 23 (combatente NEX 5%)",ev("curF().stats[0].max")==23,ev("curF().stats[0].max"))
     pg.select_option('select[data-p="op.nex"]','20');pg.wait_for_timeout(400)
@@ -23,7 +23,7 @@ with sync_playwright() as p:
     chk("aviso da Defesa na tela",'17' in pg.locator('#toast').inner_text())
     pg.locator('[data-act="op-eq"]').first.click();pg.wait_for_timeout(200)
     chk("desequipar volta a Defesa",ev("OP.calc(curF()).D.def")==12)
-    chk("jogador não edita regras do item (só o mestre)",pg.locator('details.mec').count()==0)
+    chk("jogador não edita regras do item (só o mestre)",pg.locator('details.mec [data-p*=".luz.t"]').count()==0 and pg.locator('details.mec [data-p*=".arma.dano"]').count()==0)
     pg.click('[data-tab=h]');pg.click('details summary');pg.click('[data-act="op-nova"][data-t="homebrew"]');pg.wait_for_timeout(200)
     pg.locator('.op-po input.in').last.fill('Pele Grossa');pg.locator('[data-act="op-ef+"]').last.click();pg.wait_for_timeout(200)
     pg.locator('.op-po .ef select').last.select_option('def');pg.locator('.op-po .ef input[type=number]').last.fill('2');pg.locator('.op-po .ef input[type=number]').last.blur();pg.wait_for_timeout(300)
@@ -40,14 +40,15 @@ with sync_playwright() as p:
     # ---------- loja: mestre ----------
     pgx.admin(f"update public.campanhas set config='{{\"moeda\":\"$\"}}' where id='{ids(9,1)}'")
     pg=abre_pg(b,'M','loja.html?camp='+ids(9,1));pg.wait_for_timeout(1800);ev=pg.evaluate
-    chk("mestre vê painel de dinheiro",pg.locator('[data-din]').count()>=1)
+    pg.click('[data-a=aba][data-k=din]');chk("mestre vê painel de dinheiro",pg.locator('[data-din]').count()>=1);pg.click('[data-a=aba][data-k=lojas]')
     pg.click('[data-a=novaLoja]');pg.fill('#md [name=n]','Arsenal');pg.click('#md [data-ok]');pg.wait_for_timeout(700)
     pg.click('[data-a=itemCat]');pg.fill('#catq','Lanterna tática');pg.locator('#md .cat-i:visible').first.click();pg.wait_for_timeout(700)
     pg.locator('[data-preco]').first.fill('30');pg.locator('[data-preco]').first.blur();pg.wait_for_timeout(700)
     pg.click('[data-a=abrir]');pg.wait_for_timeout(700)
-    pg.locator(f'[data-din="{d["fJ"]}"]').fill('100');pg.locator(f'[data-din="{d["fJ"]}"]').blur();pg.wait_for_timeout(700)
+    pg.click('[data-a=aba][data-k=din]');pg.locator(f'[data-din="{d["fJ"]}"]').fill('100');pg.locator(f'[data-din="{d["fJ"]}"]').blur();pg.wait_for_timeout(700)
     chk("mestre deu dinheiro",q(f"select dinheiro::int from public.personagens where id='{d['fJ']}'")==100)
     chk("loja criada e aberta com item de 30",q("select coalesce((select jsonb_build_object('a',l.aberta,'p',i.preco::int) from public.lojas l join public.loja_itens i on i.loja_id=l.id limit 1),'{}'::jsonb)")=={'a':True,'p':30},q("select jsonb_build_object('l',(select jsonb_agg(to_jsonb(l)) from public.lojas l),'i',(select jsonb_agg(to_jsonb(i)) from public.loja_itens i))"))
+    pg.click('[data-a=aba][data-k=apr]');pg.wait_for_timeout(200)
     chk("homebrew pendente aparece para aprovar",pg.locator('[data-a=aprovar]').count()==1)
     pg.click('[data-a=aprovar]');pg.wait_for_timeout(600)
     chk("mestre aprovou o homebrew",q("select to_jsonb(bool_and(aprovado)) from public.catalogo")==True)

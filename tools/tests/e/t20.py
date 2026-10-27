@@ -4,7 +4,7 @@ d=seed()
 with sync_playwright() as p:
     b=p.chromium.launch()
     pg=abre_pg(b,'J','ficha.html?id='+d['fJ']);pg.wait_for_timeout(2000);ev=pg.evaluate
-    pg.click('[data-tab=g]');pg.fill('[data-p="op.pp"]','50');pg.press('[data-p="op.pp"]','Tab');pg.wait_for_timeout(400);pg.wait_for_timeout(300)
+    pg.click('[data-tab=g]');pg.evaluate("document.querySelectorAll('details.mais').forEach(d=>d.open=true)");pg.fill('[data-p="op.pp"]','50');pg.press('[data-p="op.pp"]','Tab');pg.wait_for_timeout(400);pg.wait_for_timeout(300)
     pg.click('[data-tab=i]');pg.wait_for_timeout(200)
     pg.click('[data-act="op-cat"]');pg.wait_for_timeout(500)
     n=pg.locator('#md .cat-i').count()

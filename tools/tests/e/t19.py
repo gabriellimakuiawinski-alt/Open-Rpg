@@ -4,7 +4,7 @@ d=seed()
 with sync_playwright() as p:
     b=p.chromium.launch()
     pg=abre_pg(b,'J','ficha.html?id='+d['fJ']);pg.wait_for_timeout(2000);ev=pg.evaluate
-    pg.click('[data-act="op-livro"][data-g="origem"]');pg.wait_for_timeout(500)
+    pg.evaluate("document.querySelectorAll('details.mais').forEach(d=>d.open=true)");pg.click('[data-act="op-livro"][data-g="origem"]');pg.wait_for_timeout(500)
     chk("botão da origem abre a aba Origens",pg.locator('#md .cat-i').count()==26,pg.locator('#md .cat-i').count())
     pv0=ev("curF().calc?curF().calc.pv:0") if False else None
     pg.locator('#md .cat-i:has-text("Desgarrado")').click();pg.wait_for_timeout(400)

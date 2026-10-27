@@ -87,3 +87,13 @@ body.carimbo-mod,.carimbo-mod{display:none}body.sis-modular .carimbo-mod{display
 #app>.add{color:var(--papel2);border-color:#f3ecd866;background:#ffffff0d}#app>.add:hover{background:#ffffff1a}
 
 .mods{display:flex;flex-wrap:wrap;gap:6px;margin:6px 0}.modt{border:1px dashed var(--giz);padding:3px 6px;font-size:13px;border-radius:3px}.modt small{opacity:.7}
+
+/* ---- interface simples: o essencial à mostra, o resto recolhido ---- */
+.mais{margin-top:12px;border-top:1px dashed #00000033;padding-top:8px}
+.mais>summary{cursor:pointer;font-weight:700;padding:8px 0;min-height:40px}
+.per-sec .sk-adv{display:none;flex:100%;gap:4px}
+.per-sec.adv .sk-adv{display:flex}
+.per-sec .sk .sn{flex:1}
+.per-sec .sk select[data-n]{flex:0 0 auto;min-width:96px}
+.it-res{font-size:13px;align-self:center}
+.mec>summary{cursor:pointer;min-height:36px;padding:6px 0}

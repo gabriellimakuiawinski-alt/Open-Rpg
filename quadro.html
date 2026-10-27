@@ -34,10 +34,10 @@ button:active{transform:translateY(2px);box-shadow:none}button.on{background:var
 </style><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone-192.png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><script src="pwa.js" defer></script></head><body>
 <header><a href="index.html" id="vi">Início</a><h1>Quadro de investigação</h1><a id="vc" href="index.html">Campanha</a></header>
 <div class="bar" id="bar" hidden>
- <button data-a="nota">Nova nota</button><button data-a="documento">Novo documento</button><button data-a="foto">Adicionar foto</button><button data-a="ligar" id="blig">Ligar com fio</button>
+ <button data-a="nota" title="Um papelzinho com um texto curto">Nova nota</button><button data-a="documento" title="Um papel maior, com título e texto">Novo documento</button><button data-a="foto" title="Uma imagem do seu celular">Adicionar foto</button><button data-a="ligar" id="blig" title="Toque em dois papéis para ligar com um fio vermelho">Ligar com fio</button>
  <input type="file" id="arq" accept="image/*" hidden>
 </div>
-<div class="dica" id="dica">Arraste os papéis para organizar. Toque num papel para abrir.</div>
+<div class="dica" id="dica">Como usar: toque em <b>Nova nota</b> para escrever. Arraste os papéis para organizar. Toque num papel para abrir ou editar. Para ligar dois papéis, toque em <b>Ligar com fio</b> e depois nos dois.</div>
 <div id="vp"><div id="qd"><svg id="fios"></svg></div></div><div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>

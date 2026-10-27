@@ -496,7 +496,7 @@ function abaPedidos(c){
   const L=S.pedidos.filter(x=>x.campanha_id==c.id),pend=L.filter(x=>x.estado=='pendente'),ant=L.filter(x=>x.estado!='pendente').slice(0,30);
   const nomeP=x=>{const f=S.fichas.find(f=>f.id==x.personagem_id);return(f&&f.nome||'Personagem')+' · '+(S.nomes[x.autor]||'Jogador')};
   const ET={aprovado:'Aprovado',recusado:'Recusado',aplicado:'Aprovado e aplicado'};
-  return`<p class="m" style="margin:0 0 10px">Pedidos dos jogadores (por exemplo, modificação que a patente não permite). Aprovado: a ficha do jogador aplica sozinha.</p>
+  return`<p class="m" style="margin:0 0 10px">Aqui chegam os pedidos dos jogadores. Toque em <b>Aprovar</b> ou <b>Recusar</b>; se aprovar, a ficha do jogador se ajusta sozinha.</p>
 ${pend.map(x=>`<div class="vazia" style="text-align:left;color:var(--tinta);border-color:#0003;margin-bottom:10px"><b>${esc(x.titulo)}</b><small style="display:block">${esc(nomeP(x))}</small><p style="margin:6px 0">${esc(x.detalhe)}</p>
 <input id="pr-${x.id}" placeholder="Resposta para o jogador (opcional)" style="width:100%;margin-bottom:8px" maxlength="500">
 <div class="acoes"><button class="btn" data-a="pedido" data-v="aprovado" data-id="${x.id}">Aprovar</button><button class="btn papel-b" data-a="pedido" data-v="recusado" data-id="${x.id}">Recusar</button></div></div>`).join('')||`<div class="vazia" style="color:var(--tinta2);border-color:#0003"><b style="color:var(--tinta)">Nenhum pedido esperando</b>Quando um jogador pedir algo, aparece aqui.</div>`}
