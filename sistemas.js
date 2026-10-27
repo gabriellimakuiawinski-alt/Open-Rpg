@@ -68,13 +68,15 @@
     const E = {}, per = {}, soma = (a, v) => { if (a.startsWith('per:')) per[a.slice(4)] = (per[a.slice(4)] || 0) + v; else E[a] = (E[a] || 0) + v };
     (f.poderes || []).forEach(p => { if (p.off) return; (p.ef || []).forEach(e => { if (e && e.a) soma(e.a, n0(e.v) * (e.nv ? n : 1)) }) });
     /* bônus de itens em perícia não se acumulam: vale o maior */
-    const itPer = {};
+    /* aliados (ex.: Cão Adestrado) são fonte própria: somam com os itens, mas aliados não somam entre si (vale o maior) */
+    const itPer = {}, alPer = {};
     ((f.inv && f.inv.items) || []).forEach(it => {
       if (!temQtd(it) || (it.precisaEq && !it.eq)) return;
-      (it.ef || []).forEach(e => { if (!e || !e.a) return; const v = n0(e.v);
-        if (e.a.startsWith('per:')) { const k = e.a.slice(4); itPer[k] = Math.max(itPer[k] || 0, v) } else E[e.a] = (E[e.a] || 0) + v });
+      (it.ef || []).forEach(e => { if (!e || !e.a) return; const v = n0(e.v), M = it.aliado ? alPer : itPer;
+        if (e.a.startsWith('per:')) { const k = e.a.slice(4); M[k] = Math.max(M[k] || 0, v) } else E[e.a] = (E[e.a] || 0) + v });
     });
     Object.entries(itPer).forEach(([k, v]) => per[k] = (per[k] || 0) + v);
+    Object.entries(alPer).forEach(([k, v]) => per[k] = (per[k] || 0) + v);
     return { E, per };
   }
 
@@ -246,7 +248,10 @@
     G('Cicatrizante', 1, 1, { tipo: 'consumivel' }), G('Corda', 0, 1), G('Equipamento de sobrevivência', 0, 2), G('Máscara de gás', 0, 1), G('Mochila militar', 1, 0, { ef: [{ a: 'carga', v: 2 }] }),
     G('Pé de cabra', 0, 1), G('Spray de pimenta', 1, 1), G('Taser', 1, 1), G('Granada de fumaça', 0, 1, { tipo: 'consumivel' }), G('Granada de atordoamento', 0, 1, { tipo: 'consumivel' })
   ], modular: [] };
-  const TIPOS_ITEM = [['geral', 'Geral'], ['arma', 'Arma'], ['protecao', 'Proteção'], ['municao', 'Munição'], ['consumivel', 'Consumível'], ['paranormal', 'Paranormal']];
+  /* complementos (livros extras) do Ordem Paranormal. Cada item/habilidade deles leva comp = id e a etiqueta (sigla) */
+const COMPLEMENTOS = [{ id: 'sah', sigla: 'SaH', nome: 'Sobrevivendo ao Horror', sistema: 'op' }];
+const compDe = id => COMPLEMENTOS.find(c => c.id == id) || null;
+const TIPOS_ITEM = [['geral', 'Geral'], ['arma', 'Arma'], ['protecao', 'Proteção'], ['municao', 'Munição'], ['consumivel', 'Consumível'], ['paranormal', 'Paranormal']];
 
   /* Calculador de VD (Valor de Desafio) de criaturas.
      Não existe regra publicada: a fórmula foi ajustada nas 48 criaturas do bestiário do livro (o Anfitrião, VD 413, ficou de fora).
@@ -296,7 +301,7 @@
     return { nex, vd, razao: r, nivel, texto, alvos };
   }
 
-  window.SIS = { SISTEMAS, ATR, PERICIAS, TREINO, CLASSES, NEX, PATENTES, CIRCULO_PE, ROMANO, ALVOS, CATALOGO, TIPOS_ITEM,
+  window.SIS = { SISTEMAS, ATR, PERICIAS, TREINO, CLASSES, NEX, PATENTES, CIRCULO_PE, ROMANO, ALVOS, CATALOGO, TIPOS_ITEM, COMPLEMENTOS, compDe,
     nivel, marcos, derivar, aplicar, prepararOP, luz, rolar, teste, uid, n0, armaEf, modNome, MODEF, calcVD, parecidos, nexDaFicha, dificuldade,
     sistemaDe: (camp, f) => (camp && SISTEMAS[camp.sistema] ? camp.sistema : camp ? 'op' : (f && SISTEMAS[f.sistema] ? f.sistema : 'op')),
     cfgDe: camp => (camp && camp.config && typeof camp.config == 'object' ? camp.config : {}) };

@@ -1,0 +1,21 @@
+# complementos na campanha: escolha ao criar (com "Usar todos") e em Sistema e regras
+from lib2 import *
+d=seed()
+with sync_playwright() as p:
+    b=p.chromium.launch()
+    pg=abre_pg(b,'M','index.html',sess=True);pg.wait_for_timeout(2800)
+    pg.evaluate("setTimeout(novaCamp,0)");pg.wait_for_timeout(500)
+    chk("campo de complementos visível com Ordem",pg.locator('#jan fieldset.comps').is_visible())
+    chk("lista SaH",'Sobrevivendo ao Horror' in pg.inner_text('#jan fieldset.comps'))
+    pg.select_option('#jan select[name=sistema]','modular');pg.wait_for_timeout(200)
+    chk("some no sistema modular",not pg.locator('#jan fieldset.comps').is_visible())
+    pg.select_option('#jan select[name=sistema]','op');pg.wait_for_timeout(200)
+    pg.fill('#jan input[name=nome]','Camp SaH')
+    pg.click('#jan [data-todos]');pg.wait_for_timeout(200)
+    chk("Usar todos marca tudo",pg.locator('#jan fieldset.comps input:checked').count()==1)
+    pg.click('#jan [type=submit]');pg.wait_for_timeout(1800)
+    cf=pgx.aj("select config from public.campanhas where nome='Camp SaH'")
+    chk("config.complementos = [sah]",cf and cf.get('complementos')==['sah'],cf)
+    chk("sem erros",not pg.errs,pg.errs)
+    b.close()
+report()

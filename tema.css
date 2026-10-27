@@ -69,3 +69,9 @@
 
 /* respeita quem prefere menos movimento */
 @media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-delay:0s!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+/* escolha de complementos (livros extras) na campanha */
+#jan fieldset.comps{border:2px dashed var(--giz,#9a8f78);padding:10px;margin:10px 0;display:flex;flex-direction:column;gap:8px}
+#jan fieldset.comps[hidden]{display:none}
+#jan fieldset.comps legend{font-weight:700;padding:0 6px}
+#jan fieldset.comps label.chk{display:flex;align-items:center;gap:8px;flex-direction:row}
+#jan fieldset.comps input[type=checkbox]{width:22px;height:22px;flex:none}
