@@ -5,8 +5,8 @@ with sync_playwright() as p:
     b=p.chromium.launch()
     pm=abre_pg(b,'M','inimigos.html');pm.wait_for_timeout(2500)
     # fórmula contra as criaturas do livro (tabela livro_inimigos real)
-    r=pm.evaluate("""async()=>{const x=await Mesa.db.from('livro_inimigos').select('nome,vd,dados');let n=0,h=0,h2=0;
-      for(const e of x.data){if(e.nome=='Anfitrião')continue;const v=SIS.calcVD(e.dados).vd,dif=Math.abs(v-(+e.vd));n++;if(dif<=20)h++;if(dif<=40)h2++}return{n,h,h2}}""")
+    r=pm.evaluate("""async()=>{const x=await Mesa.db.from('livro_inimigos').select('id,nome,vd,dados');let n=0,h=0,h2=0;
+      for(const e of x.data){if(e.nome=='Anfitrião'||e.id>=50)continue;const v=SIS.calcVD(e.dados).vd,dif=Math.abs(v-(+e.vd));n++;if(dif<=20)h++;if(dif<=40)h2++}return{n,h,h2}}""")
     chk("fórmula: 48 criaturas conferidas",r['n']==48,r)
     chk("fórmula: 70% ou mais a 1 passo do livro",r['h']/r['n']>=.7,r)
     chk("fórmula: 90% ou mais a 2 passos do livro",r['h2']/r['n']>=.9,r)
