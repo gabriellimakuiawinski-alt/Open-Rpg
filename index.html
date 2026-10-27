@@ -188,6 +188,12 @@ section{margin-top:38px}
 .codigo{display:inline-flex;align-items:center;gap:12px;font:400 14px var(--maq);color:var(--tinta2)}
 .codigo b{font:400 24px var(--maq);letter-spacing:.2em;color:var(--carimbo);border:2px dashed var(--carimbo);padding:3px 10px 1px}
 .zona{margin-top:26px;padding-top:18px;border-top:2px dashed #00000030;display:flex;flex-direction:column;align-items:flex-start;gap:12px}
+.cmb .nex{display:flex;align-items:center;gap:10px;padding:7px 4px;border-bottom:1px dashed #0003;font:400 15px var(--maq)}.cmb .nex span{flex:1;min-width:0;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.cmb .nex b{font:400 17px var(--maq)}.cmb .nex input{width:20px;height:20px;flex:none}
+.cmb h3{margin:16px 0 6px;font:400 17px var(--maq)}.cmb .seg{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:6px 0}.cmb select,.cmb input[type=number],.cmb input[type=text]{font:400 15px var(--maq);min-width:0}
+.cmb .res{border:2px dashed var(--lapis);border-radius:4px;padding:12px 14px;margin-top:14px;background:#fffdf3aa;color:var(--tinta)}.cmb .res .gr{font:400 26px var(--maq)}.cmb .res .nv{font:700 24px var(--mao)}
+.cmb .barra{position:relative;height:12px;border-radius:6px;background:#0002;margin:10px 0 4px;overflow:visible}.cmb .barra i{position:absolute;left:0;top:0;bottom:0;border-radius:6px;background:var(--lapis)}.cmb .barra u{position:absolute;top:-4px;bottom:-4px;width:2px;background:var(--tinta2);text-decoration:none}
+.cmb .res.n-facil-demais,.cmb .res.n-dificil-demais{border-color:#b3412e}.cmb .res.n-equilibrado{border-color:#3a7d44}.cmb .res.n-dificil{border-color:#c47a12}
+.cmb .seg input[type=checkbox]{width:20px;height:20px;flex:none}.cmb .q{display:flex;align-items:center;gap:6px}.cmb .q button{padding:2px 10px;font-size:16px}.cmb .m{font:400 13px var(--maq);color:var(--tinta2)}
 .dica{margin:10px 0 0;font:700 20px/1.1 var(--mao);color:var(--tinta2)}
 .entra-pg{animation:pagina .5s var(--ease)}
 @keyframes pagina{from{opacity:0;transform:translateY(34px) rotate(.8deg)}to{opacity:1;transform:none}}
@@ -308,6 +314,7 @@ section{margin-top:38px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>
 <script src="som.js?v=9"></script>
+<script src="sistemas.js?v=5"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px;font-size:16px">Não consegui carregar o login. Confira a internet e se o arquivo <b>comum.js</b> está na mesma pasta deste arquivo.</p>';throw new Error('Mesa indisponível')}
 const db=Mesa.db;
@@ -350,7 +357,7 @@ async function carregar(){
     db.from('campanha_membros').select('campanha_id,user_id,papel'),
     db.from('mesas').select('id,nome,campanha_id,mestre_id,codigo,cena_ativa,criado_em').order('criado_em'),
     db.from('membros').select('mesa_id,user_id,papel,ultimo_acesso').eq('user_id',ME.id),
-    db.from('personagens').select('id,user_id,campanha_id,nome,privada,npc,atualizado_em,stats:dados->stats,info:dados->info').order('criado_em'),
+    db.from('personagens').select('id,user_id,campanha_id,nome,privada,npc,atualizado_em,stats:dados->stats,info:dados->info,op:dados->op').order('criado_em'),
     db.from('profiles').select('id,nome'),
     db.from('pedidos').select('*').order('criado_em',{ascending:false})]);
   for(const r of[c,cm,m,mb,f,p])if(r.error)throw r.error;
@@ -439,6 +446,52 @@ function abaFichas(c,pp){
   return`<div class="acoes"><button class="btn" data-a="novaFicha" data-c="${c.id}">Criar ficha nesta campanha</button></div>`+
   (corpo||`<div class="vazia" style="margin-top:14px;color:var(--tinta2);border-color:#0003"><b style="color:var(--tinta)">Nenhuma ficha aqui ainda</b>As fichas dos jogadores desta campanha aparecem juntas nesta tela.</div>`)}
 
+
+/* ============ combate: VD dos inimigos x NEX do grupo (regra do livro) ============ */
+const COMB={};let INIM=null;
+const cmb=id=>COMB[id]||(COMB[id]={vet:false,fora:{},itens:[]});
+const nIni=v=>{v=parseFloat(String(v||'').replace(',','.'));return isFinite(v)&&v>0?v:0};
+async function carregaInim(){if(INIM)return;INIM={meus:[],livro:[],ok:false};
+  const[m,l]=await Promise.all([db.from('inimigos').select('id,nome,elemento,vd').order('nome'),db.from('livro_inimigos').select('id,nome,elemento,vd').order('nome')]);
+  if(!m.error)INIM.meus=m.data;if(!l.error)INIM.livro=l.data;INIM.ok=true;if(aba=='combate')desenhar()}
+function resumoCombate(c){const st=cmb(c.id),P=S.fichas.filter(f=>f.campanha_id==c.id&&!f.npc);
+  const conta=P.map(f=>({f,nex:SIS.nexDaFicha(f.op,f.info)})),usa=conta.filter(x=>x.nex!==null&&!st.fora[x.f.id]);
+  const nex=usa.reduce((a,x)=>a+x.nex,0),vd=st.itens.reduce((a,i)=>a+i.vd*i.q,0);
+  return{st,conta,nex,vd,r:SIS.dificuldade(nex,vd,st.vet),n:usa.length}}
+function blocoResultado(c){const{st,nex,vd,r,n}=resumoCombate(c),A=r.alvos,teto=Math.max(A.dificil*1.3,vd,1);
+  const pos=x=>Math.min(100,x/teto*100).toFixed(1);
+  return`<div class="res n-${r.nivel}"><div class="gr">VD ${vd} <small class="m">dos inimigos</small> · NEX ${nex} <small class="m">do grupo (${plural(n,'personagem','personagens')})</small></div>
+<div class="nv">${esc(r.texto)}</div>
+<div class="barra" aria-hidden="true"><i style="width:${pos(vd)}%"></i><u style="left:${pos(A.facil)}%"></u><u style="left:${pos(A.equilibrado)}%"></u><u style="left:${pos(A.dificil)}%"></u></div>
+<div class="m">Marcas: fácil ${A.facil} · equilibrado ${A.equilibrado} · difícil ${A.dificil}${st.vet?' (jogadores veteranos)':''}. Evite VD abaixo de ${A.facil} ou acima de ${A.dificil}.</div></div>`}
+function abaCombate(c){carregaInim();const{st,conta}=resumoCombate(c);
+  const o=(L,rot)=>L.length?`<optgroup label="${rot}">${L.map(e=>`<option value="${rot[0]}:${e.id}">${esc(e.nome)}${e.vd?' (VD '+esc(e.vd)+')':''}</option>`).join('')}</optgroup>`:'';
+  const lin=conta.map(x=>`<label class="nex"><input type="checkbox" data-cmb="fora" data-id="${x.f.id}" ${x.nex===null||st.fora[x.f.id]?'':'checked'} ${x.nex===null?'disabled':''}><span>${esc(x.f.nome||'Sem nome')} <small class="m">${esc(S.nomes[x.f.user_id]||'')}</small></span><b>${x.nex===null?'sem NEX':'NEX '+x.nex}</b></label>`).join('');
+  return`<div class="cmb"><p class="m" style="margin:0 0 6px">Regra do livro: some o VD de todas as ameaças e compare com a soma do NEX de todos os personagens do grupo. Igual ao NEX do grupo é um combate equilibrado; perto da metade, fácil; perto de uma vez e meia, difícil.</p>
+<h3>Grupo (fichas de jogadores)</h3>${lin||'<div class="m">Nenhuma ficha de jogador nesta campanha ainda.</div>'}
+<p class="m">Desmarque quem não vai estar no combate. NPCs não entram. Fichas que não usam NEX (como Sobrevivente) ficam de fora.</p>
+<label class="seg"><input type="checkbox" data-cmb="vet" ${st.vet?'checked':''}> Jogadores veteranos (enfrentam uma categoria abaixo; difícil passa a ser 2 vezes o NEX)</label>
+<h3>Inimigos do combate</h3>
+${st.itens.map((i,k)=>`<div class="seg"><b style="flex:1;min-width:120px;font:400 16px var(--maq)">${esc(i.nome)} <small class="m">VD ${i.vd}</small></b><span class="q"><button class="btn papel-b" data-a="cmbq" data-k="${k}" data-d="-1" aria-label="Menos um">−</button><b>${i.q}</b><button class="btn papel-b" data-a="cmbq" data-k="${k}" data-d="1" aria-label="Mais um">+</button></span><button class="mini" data-a="cmbdel" data-k="${k}">Remover</button></div>`).join('')||'<div class="m">Nenhum inimigo ainda. Escolha abaixo.</div>'}
+<div class="seg"><select id="cmb-sel" style="flex:1;min-width:160px"><option value="">${INIM&&INIM.ok?'Escolher inimigo…':'Carregando inimigos…'}</option>${INIM?o(INIM.meus,'Meus inimigos')+o(INIM.livro,'Livro'):''}</select><button class="btn" data-a="cmbadd">Adicionar</button></div>
+<div class="seg"><input type="text" id="cmb-nome" placeholder="Outro: nome" style="flex:1;min-width:100px"><input type="number" id="cmb-vd" min="1" placeholder="VD" style="width:80px"><button class="btn papel-b" data-a="cmbmao">Adicionar à mão</button></div>
+<div id="cmb-res">${blocoResultado(c)}</div>
+<p class="m" style="margin-top:10px">Além do VD, pese ambiente, circunstâncias e a experiência dos jogadores. Um grupo aguenta um ou dois combates do seu VD antes de precisar descansar.</p></div>`}
+function acaoCombate(a,d){const c=campDe(cid()),st=cmb(c.id);
+  if(a=='cmbq'){const i=st.itens[+d.k];if(i){i.q=Math.max(1,Math.min(99,i.q+ +d.d))}}
+  else if(a=='cmbdel')st.itens.splice(+d.k,1);
+  else if(a=='cmbadd'){const v=($('#cmb-sel')||{}).value||'';if(!v){aviso('Escolha um inimigo na lista.');return}
+    const e=(v[0]=='M'?INIM.meus:INIM.livro).find(x=>String(x.id)==v.slice(2));if(!e)return;
+    if(!nIni(e.vd)){aviso('Esse inimigo está sem VD. Use "Adicionar à mão" com o valor.');return}
+    const j=st.itens.find(i=>i.k==v);if(j)j.q++;else st.itens.push({k:v,nome:e.nome,vd:nIni(e.vd),q:1})}
+  else if(a=='cmbmao'){const vd=nIni(($('#cmb-vd')||{}).value);if(!vd){aviso('Digite o VD.');return}
+    st.itens.push({k:'x'+Date.now(),nome:($('#cmb-nome')||{}).value.trim()||'Inimigo',vd,q:1})}
+  desenhar()}
+document.addEventListener('change',e=>{const t=e.target;if(!t.matches||!t.matches('[data-cmb]'))return;
+  const c=campDe(cid()),st=cmb(c.id);
+  if(t.dataset.cmb=='vet')st.vet=t.checked;else if(t.checked)delete st.fora[t.dataset.id];else st.fora[t.dataset.id]=true;
+  const r=$('#cmb-res');if(r)r.innerHTML=blocoResultado(c)});
+
 function abaPedidos(c){
   const L=S.pedidos.filter(x=>x.campanha_id==c.id),pend=L.filter(x=>x.estado=='pendente'),ant=L.filter(x=>x.estado!='pendente').slice(0,30);
   const nomeP=x=>{const f=S.fichas.find(f=>f.id==x.personagem_id);return(f&&f.nome||'Personagem')+' · '+(S.nomes[x.autor]||'Jogador')};
@@ -469,8 +522,8 @@ function renderCamp(id){
   if(!c||!pp)return`${topo()}<a class="volta" href="#/">${IC.volta}Início</a><div class="vazia"><b>Campanha não encontrada</b>Ela pode ter sido excluída, ou você saiu dela.</div>`;
   const nf=S.fichas.filter(f=>f.campanha_id==id).length,nm=S.mesas.filter(m=>m.campanha_id==id).length,ng=S.cm.filter(m=>m.campanha_id==id).length;
   const gere=pp=='mestre'||pp=='admin',np=S.pedidos.filter(x=>x.campanha_id==id&&x.estado=='pendente').length;
-  const A=[['fichas','Fichas',nf],['mesas','Mesas',nm],['grupo','Grupo',ng]];if(gere)A.push(['pedidos','Pedidos',np]);if(aba=='pedidos'&&!gere)aba='fichas';
-  const corpo=aba=='mesas'?abaMesas(c,pp):aba=='grupo'?abaGrupo(c,pp):aba=='pedidos'?abaPedidos(c):abaFichas(c,pp);
+  const A=[['fichas','Fichas',nf],['mesas','Mesas',nm],['grupo','Grupo',ng]];if(gere)A.push(['pedidos','Pedidos',np]);if(pp=='mestre')A.push(['combate','Combate','']);if(aba=='pedidos'&&!gere)aba='fichas';if(aba=='combate'&&pp!='mestre')aba='fichas';
+  const corpo=aba=='mesas'?abaMesas(c,pp):aba=='grupo'?abaGrupo(c,pp):aba=='pedidos'?abaPedidos(c):aba=='combate'?abaCombate(c):abaFichas(c,pp);
   return`${topo()}<a class="volta" href="#/">${IC.volta}Início</a>
 <div class="cab"><span class="etq">${esc(PAPEL[pp])}</span><h1>${esc(c.nome)}</h1><p>Você é ${esc(PAPEL[pp].toLowerCase())} · ${plural(ng,'pessoa','pessoas')} · sistema <b>${esc(nomeSis(c))}</b></p>
 <div class="acoes" style="margin-top:10px"><a class="btn papel-b" href="loja.html?camp=${c.id}">${pp=='mestre'?'Lojas e dinheiro':'Loja'}</a><a class="btn papel-b" href="quadro.html?camp=${c.id}">Quadro de investigação</a>${pp=='mestre'?`<a class="btn papel-b" href="inimigos.html">Inimigos</a>`:''}${pp=='mestre'?`<button class="btn papel-b" data-a="sistema">Sistema e regras</button>`:''}</div></div>
@@ -606,6 +659,7 @@ async function exportarCamp(c){
   aviso('Campanha exportada.')}
 async function acao(a,d){
   if(a=='aba'){aba=d.t;desenhar();return}
+  if(a.slice(0,3)=='cmb')return acaoCombate(a,d);
   if(a=='pedido'){const r=await db.from('pedidos').update({estado:d.v,resposta:(document.getElementById('pr-'+d.id)||{}).value||''}).eq('id',d.id);
     if(r.error){aviso('Não consegui responder o pedido.');return}await carregar();desenhar();aviso(d.v=='aprovado'?'Pedido aprovado. A ficha do jogador aplica sozinha.':'Pedido recusado.');return}
   if(a=='rolar')return rolar();
