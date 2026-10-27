@@ -102,3 +102,6 @@ body.carimbo-mod,.carimbo-mod{display:none}body.sis-modular .carimbo-mod{display
 #md .cat-i .gr-t{white-space:normal}
 .fx{display:flex;flex-wrap:wrap;gap:4px;margin:4px 0;width:100%}.fx span{font:400 12px var(--maq);background:var(--papel3);color:var(--tinta);padding:3px 7px;border-radius:3px;text-align:left}.fx i{font-style:normal;font-weight:700;margin-right:5px;opacity:.6;text-transform:uppercase;font-size:10px}.fx .d{background:#b3261e22;color:#8a1a14}
 .fxbig{display:block;width:100%;box-sizing:border-box;border-left:4px solid var(--el,#7a705d);background:#00000008;padding:6px 9px;margin:4px 0;font:400 14px/1.4 var(--maq);color:var(--tinta);text-align:left;white-space:normal}
+/* etiqueta de complemento (SaH etc.) */
+.compt{display:inline-block;margin-left:6px;padding:1px 6px;border:1.5px solid var(--a,#7a705d);border-radius:3px;font:700 10px var(--maq);letter-spacing:.06em;text-transform:uppercase;vertical-align:middle;opacity:.85;white-space:nowrap}
+.compt+.eqb{margin-left:6px}

@@ -182,10 +182,10 @@ rep("function isCone(t){",
 rep("else if(k=='lc'||k=='ll'){const m=k=='lc';if(sel.lo&&isCone(sel)==m)sel.lo=0;else{sel.lo=1;",
     "else if(k=='lc'||k=='ll'){const m=k=='lc';if(sel.lo&&isCone(sel)==m)sel.lo=0;else if(luzAuto(sel)){const z=luzInv(sel,m?'c':'l');if(!z){toast(m?'Sem lanterna no inventário da ficha.':'Sem lampião no inventário da ficha.');return}sel.lo=1;sel.lm=m?'c':'l';sel.lz=z;if(m&&!(sel.la>0&&sel.la<360))sel.la=60}else{sel.lo=1;")
 rep("if(!sel.lz)sel.lz=m?10:6}}else if(k=='rl'", "if(!sel.lz)sel.lz=m?10:6}}else if(k=='rl'")
-FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet"><link rel="stylesheet" href="tema.css?v=9"><link rel="stylesheet" href="tema-mesa.css?v=9">'
+FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet"><link rel="stylesheet" href="tema.css?v=10"><link rel="stylesheet" href="tema-mesa.css?v=9">'
 s=s.replace("</head>",FONTS+"</head>",1)
 PWA='<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone-192.png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><script src="pwa.js" defer></script>'
 s=s.replace("</head>",PWA+"</head>",1)
-s=s.replace("</body>",'<script src="sistemas.js?v=7"></script><script src="mesa-fx.js?v=9"></script><script src="mesa-musica.js?v=9"></script><script src="mesa-dados.js?v=9"></script><script src="mesa-ficha.js?v=3"></script><script src="mesa-notas.js?v=10"></script><script src="mesa-exportar.js?v=9"></script></body>',1)
+s=s.replace("</body>",'<script src="sistemas.js?v=8"></script><script src="mesa-fx.js?v=9"></script><script src="mesa-musica.js?v=9"></script><script src="mesa-dados.js?v=9"></script><script src="mesa-ficha.js?v=3"></script><script src="mesa-notas.js?v=10"></script><script src="mesa-exportar.js?v=9"></script></body>',1)
 open(OUT, "w", encoding="utf-8").write(s)
 print("mesa.html gerado:", len(s), "bytes")

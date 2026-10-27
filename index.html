@@ -8,7 +8,7 @@
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet">
-<link rel="stylesheet" href="tema.css?v=9">
+<link rel="stylesheet" href="tema.css?v=10">
 <style>
 *{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
 html{background:var(--tabua)}
@@ -314,7 +314,7 @@ section{margin-top:38px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>
 <script src="som.js?v=9"></script>
-<script src="sistemas.js?v=7"></script>
+<script src="sistemas.js?v=8"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px;font-size:16px">Não consegui carregar o login. Confira a internet e se o arquivo <b>comum.js</b> está na mesma pasta deste arquivo.</p>';throw new Error('Mesa indisponível')}
 const db=Mesa.db;
@@ -562,17 +562,19 @@ function carimbar(txt){return new Promise(ok=>{
 
 /* campos [{id,rot,tipo,val,ph,opcoes,ajuda(v)}] -> {p:promessa dos valores|null, f:form} */
 async function perguntar({titulo,texto,campos=[],ok='Confirmar',perigo=false,validar,carimbo}){
-  const campo=c=>(c.opcoes?
+  const campo=c=>(c.comps?
+    `<fieldset class="comps" data-comps="${c.id}" ${c.se?`data-se="${c.se[0]}=${c.se[1]}"`:''}><legend>${esc(c.rot)}</legend><button type="button" class="fino" data-todos>Usar todos</button>${c.comps.map(x=>`<label class="chk"><input type="checkbox" value="${esc(x.id)}" ${(c.val||[]).includes(x.id)?'checked':''}> <b>${esc(x.sigla)}</b> ${esc(x.nome)}</label>`).join('')}</fieldset>`:c.opcoes?
     `<label>${esc(c.rot)}<select name="${c.id}">${c.opcoes.map(o=>`<option value="${esc(o[0])}" ${o[0]==c.val?'selected':''}>${esc(o[1])}</option>`).join('')}</select></label>`:
     `<label>${esc(c.rot)}<input name="${c.id}" value="${esc(c.val||'')}" placeholder="${esc(c.ph||'')}" autocomplete="off" ${c.tipo=='codigo'?'autocapitalize="characters" spellcheck="false"':''}></label>`)+
     (c.ajuda?`<div class="aj" data-aj="${c.id}"></div>`:'');
   const h=`<form novalidate><h3>${esc(titulo)}</h3>${texto?`<p>${texto}</p>`:''}${campos.map(campo).join('')}
 <div class="err" id="jerr"></div><div class="bt"><button type="button" class="fino" data-x>Cancelar</button><button type="submit" class="btn ${perigo?'perigo':''}">${esc(ok)}</button></div></form>`;
   const p=janela(h),f=$('#jan form');
-  const aj=()=>campos.forEach(c=>{if(c.ajuda){const e=f.querySelector(`[data-aj="${c.id}"]`);if(e)e.textContent=c.ajuda(f.elements[c.id].value)}});
+  const aj=()=>{f.querySelectorAll('[data-se]').forEach(e=>{const[k,x]=e.dataset.se.split('=');e.hidden=!(f.elements[k]&&f.elements[k].value==x)});campos.forEach(c=>{if(c.ajuda&&!c.comps){const e=f.querySelector(`[data-aj="${c.id}"]`);if(e)e.textContent=c.ajuda(f.elements[c.id].value)}})};
   aj();f.addEventListener('input',aj);f.addEventListener('change',aj);
   f.querySelector('[data-x]').onclick=()=>fecha&&fecha(null);
-  f.onsubmit=async e=>{e.preventDefault();const v={};campos.forEach(c=>v[c.id]=f.elements[c.id].value.trim());
+  f.querySelectorAll('[data-todos]').forEach(b=>b.onclick=()=>{const bx=[...b.parentNode.querySelectorAll('input[type=checkbox]')],tudo=bx.every(x=>x.checked);bx.forEach(x=>x.checked=!tudo);b.textContent=tudo?'Usar todos':'Tirar todos'});
+  f.onsubmit=async e=>{e.preventDefault();const v={};campos.forEach(c=>v[c.id]=c.comps?[...f.querySelectorAll(`[data-comps="${c.id}"]:not([hidden]) input:checked`)].map(x=>x.value):f.elements[c.id].value.trim());
     const er=validar?validar(v):'';if(er){$('#jerr').textContent=er;return}
     const b=f.querySelector('[type=submit]');b.disabled=true;
     try{if(f.onenviar)await f.onenviar(v)}catch(x){$('#jerr').textContent=x.message||String(x);b.disabled=false;return}
@@ -586,10 +588,10 @@ const minhasCampsMestre=()=>S.camps.filter(c=>meuPapel(c.id)=='mestre'),minhasCa
 
 async function novaCamp(){
   let novo=null;
-  await pedir({titulo:'Nova campanha',texto:'A campanha reúne o grupo e as fichas de todos. Você será o mestre.',campos:[{id:'nome',rot:'Nome da campanha',ph:'Ex.: Sombras de Ravenna'},{id:'sistema',rot:'Sistema',val:'op',opcoes:[['op','Ordem Paranormal (ficha automática)'],['modular','Modular (ficha livre, tudo editável)']],ajuda:v=>v=='op'?'NEX, PV/PE/SAN, Defesa, carga e luz se calculam sozinhos.':'Você e os jogadores montam a ficha do jeito que quiserem.'}],ok:'Criar campanha',carimbo:'Arquivada',validar:v=>v.nome?'':'Dê um nome à campanha.'},
+  await pedir({titulo:'Nova campanha',texto:'A campanha reúne o grupo e as fichas de todos. Você será o mestre.',campos:[{id:'nome',rot:'Nome da campanha',ph:'Ex.: Sombras de Ravenna'},{id:'sistema',rot:'Sistema',val:'op',opcoes:[['op','Ordem Paranormal (ficha automática)'],['modular','Modular (ficha livre, tudo editável)']],ajuda:v=>v=='op'?'NEX, PV/PE/SAN, Defesa, carga e luz se calculam sozinhos.':'Você e os jogadores montam a ficha do jeito que quiserem.'},{id:'comps',rot:'Complementos que vai usar (livros extras)',comps:SIS.COMPLEMENTOS.filter(x=>x.sistema=='op'),val:[],se:['sistema','op']}],ok:'Criar campanha',carimbo:'Arquivada',validar:v=>v.nome?'':'Dê um nome à campanha.'},
     async v=>{const id=uuid();let{error}=await db.from('campanhas').insert({id,nome:v.nome,mestre_id:ME.id,sistema:v.sistema});
       if(error&&/sistema|column/i.test(error.message||'')){({error}=await db.from('campanhas').insert({id,nome:v.nome,mestre_id:ME.id}));if(!error)setTimeout(()=>aviso('Para escolher o sistema, rode o <b>schema_etapa5.sql</b> no Supabase.'),900)}
-      if(error)throw error;novo=id});
+      if(error)throw error;novo=id;if((v.comps||[]).length){const u=await db.from('campanhas').update({config:{complementos:v.comps}}).eq('id',id);if(u.error)setTimeout(()=>aviso('Não consegui guardar os complementos. Tente em <b>Sistema e regras</b>.'),900)}});
   if(novo){await carregar();location.hash='#/c/'+novo;aba='fichas';desenhar();aviso('Campanha criada. Convide o grupo pelo código, na aba <b>Grupo</b>.')}}
 
 async function novaMesa(pref){
@@ -679,8 +681,9 @@ async function acao(a,d){
       {id:'sistema',rot:'Sistema',val:c.sistema||'op',opcoes:[['op','Ordem Paranormal (ficha automática)'],['modular','Modular (ficha livre)']]},
       {id:'moeda',rot:'Símbolo do dinheiro',val:k.moeda||'R$',ph:'R$'},
       {id:'determinacao',rot:'Regra de Determinação (PD no lugar de PE e SAN)',val:k.determinacao?'1':'0',opcoes:sn},
+      {id:'comps',rot:'Complementos que vai usar (livros extras)',comps:SIS.COMPLEMENTOS.filter(x=>x.sistema=='op'),val:k.complementos||[],se:['sistema','op']},
       {id:'catalogoLivre',rot:'Jogadores pegam itens do catálogo sozinhos',val:k.catalogoLivre===false?'0':'1',opcoes:[['1','Sim'],['0','Não (só pela loja ou pelo mestre)']]}],ok:'Salvar',carimbo:'Atualizada'},
-      async v=>{const config={...k,moeda:v.moeda||'R$',determinacao:v.determinacao=='1',catalogoLivre:v.catalogoLivre=='1'};
+      async v=>{const config={...k,moeda:v.moeda||'R$',determinacao:v.determinacao=='1',catalogoLivre:v.catalogoLivre=='1',complementos:v.sistema=='op'?(v.comps||[]):(k.complementos||[])};
         const{data,error}=await db.from('campanhas').update({sistema:v.sistema,config}).eq('id',c.id).select('id');if(error)throw error;if(!data.length)throw new Error('Sem permissão.')});
     await carregar();desenhar();return}
   if(a=='renomear'){await pedir({titulo:'Renomear campanha',campos:[{id:'nome',rot:'Novo nome',val:c.nome}],ok:'Salvar',carimbo:'Atualizada',validar:v=>v.nome?'':'O nome não pode ficar vazio.'},

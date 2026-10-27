@@ -12,6 +12,9 @@
   const podeMec = f => f._camp ? mestre(f) : f._dono == ME.id;
   const idxAt = (f, id) => f.attrs.findIndex(a => a.id == id);
   const sinal = v => (v > 0 ? '+' : '') + v;
+  /* complementos: ficha de campanha só vê os que o mestre ligou; ficha avulsa vê todos */
+  const compOn = (f, id) => !f._camp || (Array.isArray(cfgDe(f).complementos) && cfgDe(f).complementos.includes(id));
+  const compTag = x => { const c = x && x.comp && S.compDe(x.comp); return c ? `<span class="compt" title="${esc(c.nome)}">${esc(c.sigla)}</span>` : '' };
   const moeda = f => (cfgDe(f).moeda || 'R$');
   const dinheiroTxt = (f, v) => moeda(f) + ' ' + (n0(v)).toLocaleString('pt-BR', { maximumFractionDigits: 2 });
   let ULT = null; // última derivação, para mostrar sem recalcular
@@ -138,9 +141,9 @@ ${f.skills.map((s, i) => `<div class="sk"><button class="roll" data-act="roll" d
   function itemCard(f, it, i) {
     if (!ITENS && !KICK_) { KICK_ = true; itensCarrega().then(() => render()) }
     const M = podeMec(f), tipo = it.tipo || 'geral', luzT = it.luz ? (it.luz.t == 'c' ? 'Lanterna (cone)' : 'Lampião (raio)') + ' ' + n0(it.luz.m) + ' m' : '';
-    const eqv = tipo == 'protecao' || tipo == 'arma';
+    const eqv = tipo == 'protecao' || tipo == 'arma' || !!it.precisaEq;
     const tag = [tipo == 'protecao' ? 'Defesa ' + sinal(n0(it.def)) : '', luzT].filter(Boolean);
-    return `<div class="it op-it ${it.eq ? 'eq' : ''}"><div class="itr">${inp(`inv.items.${i}.n`, it.n, 'placeholder="Nome do item" class=in')}${eqv ? `<button class="eqb ${it.eq ? 'on' : ''}" data-act="op-eq" data-i="${i}">${it.eq ? 'Equipado' : 'Equipar'}</button>` : ''}${podeMod(it) ? `<button class="mini" data-act="op-modif" data-i="${i}">Modificar</button>` : ''}<button class=x data-act=del data-l=items data-i=${i}>Remover</button></div>
+    return `<div class="it op-it ${it.eq ? 'eq' : ''}"><div class="itr">${inp(`inv.items.${i}.n`, it.n, 'placeholder="Nome do item" class=in')}${compTag(it)}${eqv ? `<button class="eqb ${it.eq ? 'on' : ''}" data-act="op-eq" data-i="${i}">${it.eq ? 'Equipado' : 'Equipar'}</button>` : ''}${podeMod(it) ? `<button class="mini" data-act="op-modif" data-i="${i}">Modificar</button>` : ''}<button class=x data-act=del data-l=items data-i=${i}>Remover</button></div>
 <div class="itr"><label class=sm>Quantidade${num(`inv.items.${i}.qtd`, it.qtd === undefined ? 1 : it.qtd, 'min=0 data-rr')}</label><span class="m it-res">${esc(S.ROMANO[Math.round(n0(it.catg))] ? 'Cat. ' + S.ROMANO[Math.round(n0(it.catg))] : '')} · ${n0(it.esp)} espaço${n0(it.esp) == 1 ? '' : 's'}</span></div>
 ${fxHtml(fxLista(itemFull(it)))}${fxGrande(it)}
 ${(it.mods || []).length ? `<div class="mods">${it.mods.map((m, k) => `<span class="modt">${esc(S.modNome(m))}${typeof m == 'object' && m.desc ? ` <small>${esc(m.desc)}</small>` : ''} <button class="mini" data-act="op-modx" data-i="${i}" data-k="${k}">Remover</button></span>`).join('')}</div>` : ''}
@@ -243,7 +246,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     if (a == 'op-ped-x') { db.from('pedidos').delete().eq('id', d.id).then(() => { PED = (PED || []).filter(x => x.id != d.id); render() }); return true }
     if (a == 'op-modif') { modificar(f, +d.i); return true }
     if (a == 'op-modx') { const it = f.inv.items[+d.i], m = (it.mods || [])[+d.k]; if (!m) return true;
-      if (typeof m == 'object') { it.catg = Math.max(0, Math.round(n0(it.catg)) - (m.catg || 0)); it.esp = Math.max(0, n0(it.esp) - (m.esp || 0)); if (m.def) it.def = n0(it.def) - m.def }
+      if (typeof m == 'object') { it.catg = Math.max(0, Math.round(n0(it.catg)) - (m.catg || 0)); it.esp = Math.max(0, n0(it.esp) - (m.esp || 0)); if (m.def) it.def = n0(it.def) - m.def; if (m.lz && it.luz) it.luz.m = n0(it.luz.m) / 2 }
       it.mods.splice(+d.k, 1); calc(f); touch(f); render(); toast(esc(S.modNome(m)) + ' removida de ' + esc(it.n) + '.'); return true }
     if (a == 'op-cat') { catalogo(f); return true }
     if (a == 'op-camp') { await daCampanha(f); return true }
@@ -256,13 +259,13 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   /* catálogo base + itens da campanha */
   /* catálogo de itens: livro_itens (global) + itens da campanha + extras locais (luz do token etc.) */
   let ITENS = null;
-  const ABAS_IT = [['arma', 'Armas'], ['protecao', 'Proteções'], ['municao', 'Munição'], ['acessorio', 'Acessórios'], ['explosivo', 'Explosivos'], ['operacional', 'Operacionais'], ['paranormal', 'Paranormais'], ['modificacao', 'Modificações'], ['maldicao', 'Maldições'], ['amaldicoado', 'Amaldiçoados'], ['campanha', 'Campanha'], ['outros', 'Outros']];
+  const ABAS_IT = [['arma', 'Armas'], ['protecao', 'Proteções'], ['municao', 'Munição'], ['acessorio', 'Acessórios'], ['explosivo', 'Explosivos'], ['operacional', 'Operacionais'], ['paranormal', 'Paranormais'], ['modificacao', 'Modificações'], ['medicamento', 'Medicamentos'], ['maldicao', 'Maldições'], ['amaldicoado', 'Amaldiçoados'], ['campanha', 'Campanha'], ['outros', 'Outros']];
   async function itensCarrega() {
     if (ITENS) return ITENS;
-    const r = await db.from('livro_itens').select('ref,grupo,subgrupo,nome,ordem,dados').eq('sistema', 'op').order('ordem');
-    ITENS = (r.error ? [] : r.data).map(x => ({ ...x.dados, n: x.nome, ref: 'livro:' + x.ref, _g: x.grupo, _sub: x.subgrupo || '' }));
-    const nomes = new Set(ITENS.map(x => x.n));
-    S.CATALOGO.op.filter(x => !nomes.has(x.n)).forEach(x => ITENS.push({ ...x, _g: 'outros', _sub: '' }));   // Celular, Lanterna, Vela, Lampião…
+    const r = await db.from('livro_itens').select('ref,grupo,subgrupo,nome,ordem,dados,fonte').eq('sistema', 'op').order('ordem');
+    ITENS = (r.error ? [] : r.data).map(x => ({ ...x.dados, n: x.nome, ref: 'livro:' + x.ref, _g: x.grupo, _sub: x.subgrupo || '', ...(x.fonte && x.fonte != 'livro-basico' && !(x.dados || {}).comp ? { comp: x.fonte } : {}) }));
+    const nomes = new Set(ITENS.filter(x => !x.comp).map(x => x.n));
+    S.CATALOGO.op.filter(x => !nomes.has(x.n)).forEach(x => ITENS.push({ ...x, _g: 'outros', _sub: '' }));   // se o complemento tem o mesmo nome, o catalogo() esconde o genérico   // Celular, Lanterna, Vela, Lampião…
     if (r.error || !r.data.length) toast('Itens do livro indisponíveis (rode o SQL schema_etapa6d_itens.sql no Supabase).');
     return ITENS;
   }
@@ -282,6 +285,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
       const emp = (it._sub || '').split(',').pop().trim(); if (/leve|mão|mãos/.test(emp)) L.push(['Empunhadura', emp]);
     }
     (it.fx || []).forEach(x => L.push(x));
+    if (it.comp && S.compDe(it.comp)) L.push(['Complemento', S.compDe(it.comp).nome + (it.pag ? ' · p.' + it.pag : '')]);
     if (it.tipo == 'modificacao') { if ((it.aplica || []).length) L.push(['Vale em', it.aplica.map(c => APL_[c] || c).join(', ')]); L.push(['Categoria', it.maldicao ? 'sobe I (a 1ª maldição sobe II)' : 'sobe I']) }
     if (it.elemento && (it.maldicao || it.amaldicoado)) L.unshift(['Elemento', it.elemento]);
     if (it.amaldicoado) { L.push(['Categoria', S.ROMANO[it.catg || 0]]); L.push(['Espaço', n0(it.esp)]) }
@@ -297,14 +301,15 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     const base = await itensCarrega();
     let extra = [];
     if (f._camp) try { const r = await db.from('catalogo').select('id,tipo,nome,dados,aprovado').eq('campanha_id', f._camp).eq('tipo', 'item'); if (!r.error) extra = r.data.filter(x => x.aprovado).map(x => ({ ...x.dados, n: x.nome, ref: 'cat:' + x.id, _g: 'campanha', _sub: '' })) } catch (e) { }
-    const L = extra.concat(base);
+    const vis = base.filter(x => x.comp ? compOn(f, x.comp) : true), nomC = new Set(vis.filter(x => x.comp).map(x => x.n));
+    const L = extra.concat(vis.filter(x => !(x._g == 'outros' && nomC.has(x.n))));
     let ab = 'arma', q = '';
     const tem = g => L.some(x => x._g == g);
     const o = document.createElement('div'); o.id = 'md';
     const lista = () => {
       const t = q.toLowerCase(), A = t ? L : L.filter(x => x._g == ab);
       let ult = null, h = '';
-      A.filter(x => !t || x.n.toLowerCase().includes(t)).forEach(x => { if (!t && x._sub != ult && x._g == 'arma') { ult = x._sub; h += titulo2(x._sub) } h += `<button class="cat-i" data-k="${L.indexOf(x)}"><b>${esc(x.n)}</b><small>${infoIt(x)}</small>${fxHtml(fxLista(x))}${fxGrande(x) || (x.fx || x.arma ? (x.arma && x.desc ? `<small style="white-space:normal">${esc(x.desc.replace(/^Arma [^.]*\.\s*/, ''))}</small>` : '') : (x.desc ? `<small style="white-space:normal">${esc(x.desc)}</small>` : ''))}</button>` });
+      A.filter(x => !t || x.n.toLowerCase().includes(t)).forEach(x => { if (!t && x._sub != ult && x._g == 'arma') { ult = x._sub; h += titulo2(x._sub) } h += `<button class="cat-i" data-k="${L.indexOf(x)}"><b>${esc(x.n)}${compTag(x)}</b><small>${infoIt(x)}</small>${fxHtml(fxLista(x))}${fxGrande(x) || (x.fx || x.arma ? (x.arma && x.desc ? `<small style="white-space:normal">${esc(x.desc.replace(/^Arma [^.]*\.\s*/, ''))}</small>` : '') : (x.desc ? `<small style="white-space:normal">${esc(x.desc)}</small>` : ''))}</button>` });
       return h || '<p class="m">Nada por aqui.</p>';
     };
     const tela = () => {
@@ -325,6 +330,7 @@ ${NOTAS_IT[ab] && !q ? `<p class="m" style="font-size:12px;margin:0">${NOTAS_IT[
   /* põe a modificação no item (sem checar patente) */
   function poeMod(f, it, m, e) {
     it.mods = (it.mods || []).concat([{ n: m.n, desc: m.desc, catg: e.catg, esp: e.esp, def: e.def, ...(m.maldicao ? { mal: 1 } : {}) }]);
+    if (m.n == 'Bateria Potente' && it.luz && it.luz.m) { it.luz.m = n0(it.luz.m) * 2; it.mods[it.mods.length - 1].lz = 1 }   // dobra o alcance da luz
     it.catg = Math.min(4, Math.round(n0(it.catg)) + e.catg); it.esp = Math.max(0, n0(it.esp) + e.esp); if (e.def) it.def = n0(it.def) + e.def;
     calc(f); touch(f);
   }
@@ -369,7 +375,7 @@ ${NOTAS_IT[ab] && !q ? `<p class="m" style="font-size:12px;margin:0">${NOTAS_IT[
     const ET = { pendente: 'esperando o mestre', aprovado: 'aprovado', recusado: 'recusado', aplicado: 'aplicado' };
     return `<section class="card"><h2>Pedidos ao mestre</h2>${L.map(x => `<div class="itr"><span class="m" style="flex:1"><b>${esc(x.titulo)}</b> — ${ET[x.estado]}${x.resposta ? '. Mestre: ' + esc(x.resposta) : ''}</span>${x.estado == 'pendente' || x.estado == 'recusado' ? `<button class="mini" data-act="op-ped-x" data-id="${x.id}">${x.estado == 'pendente' ? 'Cancelar' : 'Limpar'}</button>` : ''}</div>`).join('')}</section>` };
   /* classes de modificação que o item aceita: pelo catálogo (mc) ou, se for item próprio/antigo, pelo tipo */
-  const mcsDe = it => it.mc ? [it.mc] : it.tipo == 'arma' ? ((it.arma || {}).per == 'Pontaria' ? ['disparo', 'fogo'] : ['corpo']) : it.tipo == 'protecao' ? ['protecao'] : it.tipo == 'geral' ? ['acessorio'] : [];
+  const mcsDe = it => /^Câmera de aura/.test(it.n || '') ? ['camera'] : it.mc ? [it.mc] : it.tipo == 'arma' ? ((it.arma || {}).per == 'Pontaria' ? ['disparo', 'fogo'] : ['corpo']) : it.tipo == 'protecao' ? ['protecao'] : it.tipo == 'geral' ? ['acessorio'] : [];
   const podeMod = it => mcsDe(it).length > 0;
   const tem1 = (it, m) => (it.mods || []).map(S.modNome).includes(m.n);
   /* aplica a modificação neste item (checa a patente; se não couber, oferece pedido ao mestre) */
@@ -394,7 +400,7 @@ ${NOTAS_IT[ab] && !q ? `<p class="m" style="font-size:12px;margin:0">${NOTAS_IT[
   async function modificar(f, i) {
     const it = f.inv.items[i]; if (!it) return;
     const cl = mcsDe(it); if (!cl.length) { toast('Este item não pode ser modificado.'); return }
-    const base = await itensCarrega(), L = base.filter(x => x.tipo == 'modificacao' && (x.aplica || []).some(c => cl.includes(c)));
+    const base = await itensCarrega(), L = base.filter(x => x.tipo == 'modificacao' && (x.aplica || []).some(c => cl.includes(c)) && (!x.comp || compOn(f, x.comp)));
     if (!L.length) { toast('Nenhuma modificação do livro para este item (o mestre precisa rodar o SQL dos itens).'); return }
     const o = document.createElement('div'); o.id = 'md';
     o.innerHTML = `<div class="mb"><h3>Modificar ${esc(it.n)}</h3><p class="m" style="margin:0">Todas as modificações que este item aceita. Cada uma sobe a categoria em I; se a sua patente não permitir, você pode pedir ao mestre.</p><div class="catl">${L.map((m, k) => `<button class="cat-i" data-k="${k}" ${tem1(it, m) ? 'disabled' : ''}><b>${esc(m.n)}${tem1(it, m) ? ' (já aplicada)' : ''}</b><small style="white-space:normal">${esc(m.desc)}</small></button>`).join('')}</div><button data-x style="align-self:flex-end">Fechar</button></div>`;

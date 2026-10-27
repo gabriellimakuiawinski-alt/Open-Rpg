@@ -25,3 +25,4 @@ Falhas `ERR_TUNNEL_CONNECTION_FAILED` são as fontes do Google bloqueadas no amb
 O mock não prova o realtime real nem multi-dispositivo. Validar no site com 2 contas depois de rodar os SQL.
 - t35 (treino por grau: 2/5/3 + Int, NEX 70) e t36 (editar monstro na ficha + token ao usar inimigo) em `tools/tests/e`.
 - t37 (itens amaldiçoados), t38 (ritual por NEX do ocultista), t39 (condições e página de regras). Ao rodar vários testes, recrie o banco com `tools/tests/t/mkdb.sh` (t29 espera zero inimigos; o t30 cria um).
+- t41 (complementos SaH no catálogo, Equipar, aliado, Bateria Potente) e t42 (escolha de complementos na campanha). `mkdb.sh` agora roda também a etapa 13. Num `pg.evaluate` de função que abre janela (ex. `novaCamp`) use `setTimeout(fn,0)`, senão o teste trava esperando a janela fechar.
