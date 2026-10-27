@@ -27,3 +27,5 @@ button.mt{cursor:pointer}button.mt:active,.mon-atqb button:active{background:col
 .mon-habn{display:flex;gap:8px;align-items:center;justify-content:space-between}.mon-habn b{font:700 15px var(--titulo,Georgia,serif);text-transform:uppercase;letter-spacing:.02em}
 .mon-ac{font:600 10px var(--maq,monospace);letter-spacing:.1em;text-transform:uppercase;padding:2px 7px;border-radius:3px;background:color-mix(in srgb,var(--el) 35%,#222);color:#fff}
 .mon-aj{margin:0 0 14px;padding:8px 12px;border:1px dashed #00000050;border-radius:6px}
+.mon-eh{margin:14px 0 6px;font:700 12px var(--maq,monospace);letter-spacing:.14em;text-transform:uppercase}
+.mon-ed{padding:8px;margin:0 0 8px;border:1px solid #00000030;border-radius:6px;background:#00000008}.mon-ed input,.mon-ed select,.mon-ed textarea{width:100%;box-sizing:border-box;margin:3px 0}

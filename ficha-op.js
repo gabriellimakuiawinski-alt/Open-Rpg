@@ -405,11 +405,15 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   /* escolher perícias para treinar: lista TODAS, mostra o grau de cada uma e quais podem subir agora (e por que as outras não) */
   const GRAU = { 0: 'Destreinado', 5: 'Treinado', 10: 'Veterano', 15: 'Expert' };
   function treinar(f, o) {
-    const nx = nexDe(f), gm = o.modo == 'grau', de = gm ? (o.nex >= 70 ? 10 : 5) : null;
-    const total = gm ? 2 + Math.max(0, av(f, 'int')) : 2, sel = new Set();
+    const nx = nexDe(f), gm = o.modo == 'grau', n70 = o.nex >= 70;
+    /* livro (cap. 2): Grau de Treinamento escolhe perícias treinadas igual a 2 + Int (combatente), 5 + Int (especialista) ou 3 + Int (ocultista) */
+    const base = { combatente: 2, especialista: 5, ocultista: 3 }[f.op.classe] ?? 2;
+    const total = gm ? base + Math.max(0, av(f, 'int')) : 2, sel = new Set();
     const pode = s => { const t = n0(s.t);
       if (t >= 15) return [false, 'Já é Expert'];
-      if (gm) return t == de ? [true, GRAU[t] + ' → ' + GRAU[t + 5]] : [false, t < de ? 'Precisa ser ' + GRAU[de] + ' (hoje: ' + GRAU[t] + ')' : 'Já passou deste grau (' + GRAU[t] + ')'];
+      if (gm) { if (t < 5) return [false, 'Precisa ser Treinado antes (hoje: ' + GRAU[t] + ')'];
+        if (t == 10 && !n70) return [false, 'Veterano vira Expert só em NEX 70% (hoje: Veterano)'];
+        return [true, GRAU[t] + ' → ' + GRAU[t + 5]] }
       if (t == 10 && nx < 70) return [false, 'Expert só a partir de NEX 70% (hoje: Veterano)'];
       if (t == 5 && nx < 35) return [false, 'Veterano só a partir de NEX 35% (hoje: Treinado)'];
       return [true, GRAU[t] + ' → ' + GRAU[t + 5]] };
@@ -417,7 +421,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     const linhas = f.skills.map((s, i) => { const [ok, txt] = pode(s); return `<button class="cat-i ${ok ? '' : 'off'}" data-s="${i}" ${ok ? '' : 'disabled'}><b>${esc(s.n)}</b><small class="gr-t">${esc(txt)}</small></button>` }).join('');
     const quantas = f.skills.filter(s => pode(s)[0]).length;
     o2.innerHTML = `<div class="mb"><h3>${gm ? 'Grau de treinamento' : 'Treinamento em Perícia'}</h3>
-<p class="m" style="margin:0">${gm ? `NEX ${o.nex}%: escolha até <b>${total}</b> perícias ${de == 5 ? 'treinadas para subir a <b>Veterano</b>' : 'veteranas para subir a <b>Expert</b>'}.` : `Escolha <b>${total}</b> perícias para treinar. Destreinada vira Treinado; ${nx >= 35 ? 'Treinado vira Veterano' : 'Veterano só a partir de NEX 35%'}${nx >= 70 ? '; Veterano vira Expert' : ''}.`}</p>
+<p class="m" style="margin:0">${gm ? `NEX ${o.nex}%: escolha até <b>${total}</b> perícias já treinadas e suba o grau de cada uma em um (${n70 ? 'Treinado para Veterano ou Veterano para Expert' : 'Treinado para Veterano'}). Regra do livro: ${base} + Intelecto.` : `Escolha <b>${total}</b> perícias para treinar. Destreinada vira Treinado; ${nx >= 35 ? 'Treinado vira Veterano' : 'Veterano só a partir de NEX 35%'}${nx >= 70 ? '; Veterano vira Expert' : ''}.`}</p>
 <p class="m" style="margin:0"><b id="gr-c">0 / ${total}</b> escolhidas${quantas ? '' : ' · nenhuma perícia pode subir agora'}</p>
 <div class="catl">${linhas}</div>
 <div class="g2b"><button class="prim" data-ok>Confirmar</button><button data-x>Fechar</button></div></div>`;
