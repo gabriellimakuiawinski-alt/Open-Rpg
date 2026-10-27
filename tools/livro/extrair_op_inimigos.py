@@ -64,7 +64,10 @@ def extrai(pdf, p0, p1):
             if vd:
                 nums = [x for x in ws if x['size'] >= 24 and x['text'].isdigit() and abs(x['top'] - vd['top']) < 15 and x['x0'] > vd['x0']]
                 vdn = nums[0]['text'] if nums else ''
-                nw = [x for x in ws if 12.5 <= x['size'] <= 24 and x['text'] != 'VD' and not x['text'].isdigit()
+                if not vdn:     # ameaças da Realidade: o número do VD tem o mesmo tamanho do 'VD'
+                    n2 = [x for x in ws if x['text'].isdigit() and abs(x['top'] - vd['top']) < 6 and 0 < x['x0'] - vd['x1'] < 40]
+                    vdn = n2[0]['text'] if n2 else ''
+                nw = [x for x in ws if 12.5 <= x['size'] <= 28 and x['text'] != 'VD' and not x['text'].isdigit()
                       and vd['top'] - 40 <= x['top'] <= vd['top'] + 30 and x['x0'] < vd['x0'] and x['x0'] > vd['x0'] - 230]
                 nome = ' '.join(x['text'] for x in sorted(nw, key=lambda x: (round(x['top'] / 4), x['x0'])))
             if not vdn:

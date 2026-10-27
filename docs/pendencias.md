@@ -23,3 +23,4 @@ Próximos passos possíveis: origens com efeitos prontos, munição gasta ao ata
 - Loja de créditos, bot do Discord, quadro de investigação.
 - Tokens PNG: já funcionam (imagens da biblioteca).
 Quadro de investigação (PR do quadro): FEITO (`schema_etapa7_quadro.sql`; pendente do usuário rodar). Ideias: mover papéis de outros jogadores, anexar PDF, texto sobre os fios, revelar um papel a um jogador só.
+Feito em 27/10/2026: itens amaldiçoados, ritual por NEX, Ameaças da Realidade (18), condições, perigos e cálculos. Ainda não catalogado do livro: descrição das perícias (cap. 2), ações e manobras de combate (cap. 4), Aliados (p.170), regras opcionais (p.171), gerador de missões, sanidade/exposição, entidades do Outro Lado e o mundo de OP (lore). Rituais do Sobrevivendo ao Horror: fora de escopo por ora.

@@ -59,6 +59,7 @@
     const x = nexDoNivel(n);
     if (C.ex[x]) out.push({ k: 'classe', t: C.ex[x] });
     (MARCOS[x] || []).forEach(([k, t]) => out.push({ k, t: k == 'poder' ? C.poder : t }));
+    if (classe == 'ocultista' && x > 5) out.push({ k: 'ritual', t: 'Aprender um ritual (de qualquer círculo que você já lance; não conta no limite de rituais)' });   // livro p.33
     return out;
   }
 
@@ -185,7 +186,7 @@
 
   /* ---------- dados: "2d6+3", "1d12", "3d4-1" ---------- */
   /* efeito das modificações de arma (por nome). atk = bônus no ataque; dano = texto somado; dado = +dados do mesmo tipo; marg = margem de ameaça; mult = multiplicador */
-  const MODEF = { 'Certeira': { atk: 2 }, 'Alongada': { atk: 2 }, 'Cruel': { dano: '+2' }, 'Perigosa': { marg: 2 }, 'Mira Laser': { marg: 2 }, 'Dum Dum': { mult: 1 }, 'Explosiva': { dano: '+2d6' }, 'Calibre Grosso': { dado: 1 } };
+  const MODEF = { 'Certeira': { atk: 2 }, 'Alongada': { atk: 2 }, 'Cruel': { dano: '+2' }, 'Perigosa': { marg: 2 }, 'Mira Laser': { marg: 2 }, 'Dum Dum': { mult: 1 }, 'Explosiva': { dano: '+2d6' }, 'Calibre Grosso': { dado: 1 }, 'Lancinante': { dano: '+1d8' }, 'Erosiva': { dano: '+1d8' } };
   const modNome = m => typeof m == 'string' ? m : (m && m.n) || '';
   function armaEf(it) {
     const a = it.arma || {}, r = { dano: a.dano || '', crit: a.crit || '', atk: n0(a.atk), mods: [] };

@@ -314,7 +314,7 @@ section{margin-top:38px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>
 <script src="som.js?v=9"></script>
-<script src="sistemas.js?v=5"></script>
+<script src="sistemas.js?v=7"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px;font-size:16px">Não consegui carregar o login. Confira a internet e se o arquivo <b>comum.js</b> está na mesma pasta deste arquivo.</p>';throw new Error('Mesa indisponível')}
 const db=Mesa.db;
@@ -433,6 +433,7 @@ ${htmlHero()}
 <button class="tile papel2 fichario pin" data-a="novaCamp"><span class="ic">${IC.camp}</span><span><b>Criar campanha</b><small>grupo com fichas</small></span></button>
 <button class="tile papel2 fichario pin" data-a="entrar"><span class="ic">${IC.chave}</span><span><b>Entrar com código</b><small>convite de um mestre</small></span></button>
 <a class="tile papel2 fichario pin" href="inimigos.html" style="text-decoration:none;color:inherit"><span class="ic">${IC.camp}</span><span><b>Inimigos</b><small>seus monstros e os do livro</small></span></a>
+<a class="tile papel2 fichario pin" href="regras.html" style="text-decoration:none;color:inherit"><span class="ic">${IC.ficha}</span><span><b>Regras do livro</b><small>condições, perigos e cálculos</small></span></a>
 </div>
 <section><div class="titulo"><h2>Suas campanhas</h2><span class="chip">${nc}</span></div>${htmlCamps()}</section>
 <section><div class="titulo"><h2>Suas mesas</h2><span class="chip">${nm}</span></div>${htmlMesas()}</section>
