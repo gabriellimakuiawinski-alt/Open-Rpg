@@ -36,4 +36,4 @@ Não dá para conferir o deploy do Pages daqui; avise o usuário para abrir em a
 Antes de publicar: `python3 tools/build/build.py` e rode os testes (docs/testes.md).
 
 ## Estado atual
-Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase `schema_etapa9d_enigmas.sql` (Enigma de Medo, habilidades da Degolificada e correção de ataques do bestiário). Os anteriores, até a etapa 11, já estão rodados (conferido em 27/10/2026).
+Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase, nesta ordem, `schema_etapa9d_enigmas.sql` e `schema_etapa12_itens_fx.sql` (use as versões `_celular.sql` de uma linha, o editor do celular quebra colagem longa). Os anteriores, até a etapa 11, já estão rodados.

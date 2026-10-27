@@ -136,11 +136,13 @@ ${f.skills.map((s, i) => `<div class="sk"><button class="roll" data-act="roll" d
   }
 
   function itemCard(f, it, i) {
+    if (!ITENS && !KICK_) { KICK_ = true; itensCarrega().then(() => render()) }
     const M = podeMec(f), tipo = it.tipo || 'geral', luzT = it.luz ? (it.luz.t == 'c' ? 'Lanterna (cone)' : 'Lampião (raio)') + ' ' + n0(it.luz.m) + ' m' : '';
     const eqv = tipo == 'protecao' || tipo == 'arma';
     const tag = [tipo == 'protecao' ? 'Defesa ' + sinal(n0(it.def)) : '', luzT].filter(Boolean);
     return `<div class="it op-it ${it.eq ? 'eq' : ''}"><div class="itr">${inp(`inv.items.${i}.n`, it.n, 'placeholder="Nome do item" class=in')}${eqv ? `<button class="eqb ${it.eq ? 'on' : ''}" data-act="op-eq" data-i="${i}">${it.eq ? 'Equipado' : 'Equipar'}</button>` : ''}${podeMod(it) ? `<button class="mini" data-act="op-modif" data-i="${i}">Modificar</button>` : ''}<button class=x data-act=del data-l=items data-i=${i}>Remover</button></div>
 <div class="itr"><label class=sm>Quantidade${num(`inv.items.${i}.qtd`, it.qtd === undefined ? 1 : it.qtd, 'min=0 data-rr')}</label><span class="m it-res">${esc(S.ROMANO[Math.round(n0(it.catg))] ? 'Cat. ' + S.ROMANO[Math.round(n0(it.catg))] : '')} · ${n0(it.esp)} espaço${n0(it.esp) == 1 ? '' : 's'}</span></div>
+${fxHtml(fxLista(itemFull(it)))}${fxGrande(it)}
 ${(it.mods || []).length ? `<div class="mods">${it.mods.map((m, k) => `<span class="modt">${esc(S.modNome(m))}${typeof m == 'object' && m.desc ? ` <small>${esc(m.desc)}</small>` : ''} <button class="mini" data-act="op-modx" data-i="${i}" data-k="${k}">Remover</button></span>`).join('')}</div>` : ''}
 ${tag.length ? `<div class="tags">${tag.map(t => `<span>${esc(t)}</span>`).join('')}</div>` : ''}
 <details class="mec"><summary>Mais detalhes do item</summary>
@@ -264,6 +266,29 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     if (r.error || !r.data.length) toast('Itens do livro indisponíveis (rode o SQL schema_etapa6d_itens.sql no Supabase).');
     return ITENS;
   }
+  /* resumo do item em etiquetas (Dano, Alcance, Efeito…), para entender sem ler a descrição */
+  const TD_ = { I: 'impacto', C: 'corte', P: 'perfuração', B: 'balístico', Fogo: 'fogo' }, MC_ = { corpo: 'Corpo a corpo', disparo: 'Disparo', fogo: 'Arma de fogo', pesada: 'Arma pesada' };
+  const APL_ = { corpo: 'armas corpo a corpo', disparo: 'armas de disparo', fogo: 'armas de fogo', pesada: 'armas pesadas', municao: 'munição', protecao: 'proteções', acessorio: 'acessórios' };
+  const ELC_ = { Sangue: '#b3261e', Morte: '#555', Conhecimento: '#a07800', Energia: '#7b3fb0', Medo: '#222' };
+  let KICK_ = false;
+  function itemFull(it) { if (it.fx || !ITENS) return it; const o = ITENS.find(x => (it.ref && x.ref == it.ref) || x.n == it.n); return o && o.fx ? { ...it, fx: o.fx } : it }
+  function fxLista(it) {
+    const L = [], a = it.arma;
+    if (a) {
+      L.push(['Dano', (a.dano || '') + (TD_[a.td] ? ' ' + TD_[a.td] : '')]);
+      if (a.crit) L.push(['Crítico', String(a.crit).includes('x') ? a.crit : a.crit + '/x2']);
+      L.push(['Alcance', it.mc == 'corpo' ? 'Corpo a corpo' + (a.alc ? ' · arremesso ' + a.alc : '') : (a.alc || '—')]);
+      if (a.per) L.push(['Teste', a.per]);
+      const emp = (it._sub || '').split(',').pop().trim(); if (/leve|mão|mãos/.test(emp)) L.push(['Empunhadura', emp]);
+    }
+    (it.fx || []).forEach(x => L.push(x));
+    if (it.tipo == 'modificacao') { if ((it.aplica || []).length) L.push(['Vale em', it.aplica.map(c => APL_[c] || c).join(', ')]); L.push(['Categoria', it.maldicao ? 'sobe I (a 1ª maldição sobe II)' : 'sobe I']) }
+    if (it.elemento && (it.maldicao || it.amaldicoado)) L.unshift(['Elemento', it.elemento]);
+    if (it.amaldicoado) { L.push(['Categoria', S.ROMANO[it.catg || 0]]); L.push(['Espaço', n0(it.esp)]) }
+    return L;
+  }
+  const fxHtml = L => L.length ? `<span class="fx">${L.map(([k, v]) => `<span class="${/^(Dano|Cura)$/.test(k) ? 'd' : ''}"><i>${esc(k)}</i>${esc(v)}</span>`).join('')}</span>` : '';
+  const fxGrande = it => (it.maldicao || it.amaldicoado) && it.desc ? `<span class="fxbig" style="--el:${ELC_[it.elemento] || '#7a705d'}">${esc(it.desc)}</span>` : '';
   const infoIt = it => esc([S.TIPOS_ITEM.find(t => t[0] == it.tipo)?.[1], it.tipo == 'modificacao' ? '' : 'Cat. ' + S.ROMANO[it.catg || 0], it.tipo == 'modificacao' ? '' : n0(it.esp) + ' esp.', it._sub && it._g == 'arma' ? it._sub : '', it.def && 'Def +' + it.def, it.luz && (it.luz.t == 'c' ? 'cone ' : 'raio ') + it.luz.m + 'm', it.arma && [it.arma.dano, it.arma.crit && 'crít. ' + it.arma.crit, it.arma.alc].filter(Boolean).join(' '), (it.ef || []).length ? 'efeito automático' : ''].filter(Boolean).join(' · '));
   const NOTAS_IT = {
     maldicao: 'Maldição funciona como modificação: a primeira sobe a categoria do item em II, as seguintes em I. Um item pode ter várias, mas maldições iguais não acumulam. Só agentes especiais, oficiais de operações e agentes de elite recebem itens amaldiçoados. Cada maldição tem um preço em Sanidade (veja Amaldiçoados).',
@@ -279,7 +304,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     const lista = () => {
       const t = q.toLowerCase(), A = t ? L : L.filter(x => x._g == ab);
       let ult = null, h = '';
-      A.filter(x => !t || x.n.toLowerCase().includes(t)).forEach(x => { if (!t && x._sub != ult && x._g == 'arma') { ult = x._sub; h += titulo2(x._sub) } h += `<button class="cat-i" data-k="${L.indexOf(x)}"><b>${esc(x.n)}</b><small>${infoIt(x)}</small>${x.desc ? `<small style="white-space:normal">${esc(x.desc)}</small>` : ''}</button>` });
+      A.filter(x => !t || x.n.toLowerCase().includes(t)).forEach(x => { if (!t && x._sub != ult && x._g == 'arma') { ult = x._sub; h += titulo2(x._sub) } h += `<button class="cat-i" data-k="${L.indexOf(x)}"><b>${esc(x.n)}</b><small>${infoIt(x)}</small>${fxHtml(fxLista(x))}${fxGrande(x) || (x.fx || x.arma ? (x.arma && x.desc ? `<small style="white-space:normal">${esc(x.desc.replace(/^Arma [^.]*\.\s*/, ''))}</small>` : '') : (x.desc ? `<small style="white-space:normal">${esc(x.desc)}</small>` : ''))}</button>` });
       return h || '<p class="m">Nada por aqui.</p>';
     };
     const tela = () => {
