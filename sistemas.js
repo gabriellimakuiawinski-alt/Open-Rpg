@@ -269,8 +269,34 @@
     }).sort((a, b) => a.dist - b.dist).slice(0, n || 3).map(x => x.e);
   }
 
+  /* Dificuldade do combate - regra do Livro de Regras (cap. Ameaças, "Construindo combates", p. 177):
+     soma-se o VD de todas as ameaças e compara-se com a soma do NEX de todos os personagens do grupo.
+     Igual ao NEX do grupo = equilibrado; perto da metade = fácil; perto de 1,5 vez = difícil.
+     Evitar menos da metade ou mais de 1,5 vez. Jogadores veteranos enfrentam uma categoria abaixo (difícil = VD de 2 vezes o NEX).
+     Os cortes entre as categorias (0,75 e 1,25) são interpretação nossa: o livro só dá os pontos 0,5 / 1 / 1,5. */
+  function nexDaFicha(op, info) {
+    const C = op && CLASSES[op.classe];
+    if (C) { if (C.estagio || C.criatura) return null; return n0(op.nex) || 5 }
+    const i = (info || []).find(i => String(i.n || '').toLowerCase() == 'nex'), m = i && /(\d+)/.exec(String(i.v));
+    return m ? +m[1] : null;
+  }
+  function dificuldade(nex, vd, vet) {
+    nex = n0(nex); vd = n0(vd); const k = vet ? 0.75 : 1, r = nex > 0 ? vd / nex : 0, re = r * k;
+    const alvo = m => Math.round(nex * m / k);
+    const alvos = { facil: alvo(0.5), equilibrado: alvo(1), dificil: alvo(1.5), max: alvo(1.5) };
+    let nivel, texto;
+    if (nex <= 0) { nivel = 'sem-grupo'; texto = 'Sem NEX no grupo' }
+    else if (vd <= 0) { nivel = 'vazio'; texto = 'Sem inimigos' }
+    else if (re < 0.5) { nivel = 'facil-demais'; texto = 'Fácil demais (evite)' }
+    else if (re < 0.75) { nivel = 'facil'; texto = 'Fácil' }
+    else if (re <= 1.25) { nivel = 'equilibrado'; texto = 'Equilibrado' }
+    else if (re <= 1.5) { nivel = 'dificil'; texto = 'Difícil' }
+    else { nivel = 'dificil-demais'; texto = 'Difícil demais (evite)' }
+    return { nex, vd, razao: r, nivel, texto, alvos };
+  }
+
   window.SIS = { SISTEMAS, ATR, PERICIAS, TREINO, CLASSES, NEX, PATENTES, CIRCULO_PE, ROMANO, ALVOS, CATALOGO, TIPOS_ITEM,
-    nivel, marcos, derivar, aplicar, prepararOP, luz, rolar, teste, uid, n0, armaEf, modNome, MODEF, calcVD, parecidos,
+    nivel, marcos, derivar, aplicar, prepararOP, luz, rolar, teste, uid, n0, armaEf, modNome, MODEF, calcVD, parecidos, nexDaFicha, dificuldade,
     sistemaDe: (camp, f) => (camp && SISTEMAS[camp.sistema] ? camp.sistema : camp ? 'op' : (f && SISTEMAS[f.sistema] ? f.sistema : 'op')),
     cfgDe: camp => (camp && camp.config && typeof camp.config == 'object' ? camp.config : {}) };
 })();

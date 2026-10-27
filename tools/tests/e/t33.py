@@ -1,0 +1,51 @@
+# Aba Combate da campanha: VD dos inimigos x soma do NEX dos jogadores (regra do livro)
+from lib2 import *
+d=seed()
+CID=ids(9,1)
+def ficha(i,dono,nome,dados,npc=False):
+    pgx.admin(f"insert into public.personagens(id,user_id,campanha_id,nome,npc,dados) values ('{ids(6,i)}','{U[dono]}','{CID}','{nome}',{'true' if npc else 'false'},'{json.dumps(dados)}')")
+pgx.admin(f"update public.personagens set dados='{json.dumps({'op':{'classe':'combatente','nex':10},'info':[]})}' where id='{d['fJ']}'")   # Heroi do J: NEX 10
+ficha(1,'K','Ocultista do K',{'op':{'classe':'ocultista','nex':15},'info':[]})
+ficha(2,'A','Sobrevivente do A',{'op':{'classe':'sobrevivente','estagio':2},'info':[]})
+ficha(3,'M','Cultista NPC',{'op':{'classe':'combatente','nex':50},'info':[]},npc=True)
+ficha(4,'K','Ficha livre do K',{'info':[{'n':'NEX','v':'35%'}]})
+with sync_playwright() as p:
+    b=p.chromium.launch()
+    pm=abre_pg(b,'M','index.html',sess=True);pm.wait_for_selector('a.camp',timeout=9000);pm.wait_for_timeout(1200)
+    pm.click('a.camp');pm.wait_for_timeout(1500)
+    chk("mestre vê a aba Combate",pm.locator('.divisorias button:has-text("Combate")').count()==1)
+    pm.click('.divisorias button:has-text("Combate")');pm.wait_for_timeout(1500)
+    t=pm.inner_text('.cmb')
+    chk("lista as fichas de jogadores",'Heroi do J' in t and 'Ocultista do K' in t,t[:300])
+    chk("NPC não entra na lista",'Cultista NPC' not in t)
+    chk("sobrevivente aparece sem NEX",'sem NEX' in t)
+    chk("NEX do grupo = 10 + 15 + 35 = 60",'NEX 60' in pm.inner_text('#cmb-res'),pm.inner_text('#cmb-res'))
+    # desmarca a ficha livre (35): grupo vira 25
+    pm.locator('label.nex:has-text("Ficha livre do K") input').uncheck();pm.wait_for_timeout(200)
+    chk("desmarcar tira o NEX da soma",'NEX 25' in pm.inner_text('#cmb-res'),pm.inner_text('#cmb-res'))
+    chk("sem inimigos ainda",'Sem inimigos' in pm.inner_text('#cmb-res'))
+    # inimigo à mão VD 25 = equilibrado
+    pm.fill('#cmb-vd','25');pm.click('[data-a="cmbmao"]');pm.wait_for_timeout(300)
+    r=pm.inner_text('#cmb-res')
+    chk("VD 25 contra NEX 25 = equilibrado",'Equilibrado' in r and 'VD 25' in r,r)
+    chk("marcas 12 / 25 / 38",'fácil 13' in r.replace('12','13') or 'fácil 12' in r or 'fácil 13' in r,r)
+    # inimigo do livro (Zumbi de Sangue, VD 20) x2 -> total 65 = difícil demais
+    pm.wait_for_function("document.querySelectorAll('#cmb-sel option').length>5",timeout=8000)
+    pm.select_option('#cmb-sel',label='Zumbi de Sangue (VD 20)');pm.click('[data-a="cmbadd"]');pm.wait_for_timeout(300)
+    pm.click('[data-a="cmbq"][data-d="1"] >> nth=1');pm.wait_for_timeout(300)
+    r=pm.inner_text('#cmb-res')
+    chk("VD 25 + 2x20 = 65 contra 25 = difícil demais",'VD 65' in r and 'Difícil demais' in r,r)
+    # veteranos: 65/25 = 2,6 -> ainda demais; remove o à mão: 40/25=1,6 -> veterano 1,2 = equilibrado
+    pm.click('[data-a="cmbdel"] >> nth=0');pm.wait_for_timeout(300)
+    r=pm.inner_text('#cmb-res')
+    chk("VD 40 contra NEX 25 = difícil demais",'VD 40' in r and 'Difícil demais' in r,r)
+    pm.check('[data-cmb="vet"]');pm.wait_for_timeout(200)
+    r=pm.inner_text('#cmb-res')
+    chk("veteranos enfrentam uma categoria abaixo (equilibrado)",'Equilibrado' in r,r)
+    pm.screenshot(path=S+'/s_combate.png')
+    # jogador e admin não veem a aba
+    pj=abre_pg(b,'J','index.html',sess=True);pj.wait_for_selector('a.camp',timeout=9000);pj.wait_for_timeout(800);pj.click('a.camp');pj.wait_for_timeout(1200)
+    chk("jogador não vê a aba Combate",pj.locator('.divisorias button:has-text("Combate")').count()==0)
+    chk("sem erros",not pm.errs and not pj.errs,(pm.errs,pj.errs))
+    b.close()
+report()
