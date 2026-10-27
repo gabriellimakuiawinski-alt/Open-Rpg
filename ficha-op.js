@@ -39,7 +39,7 @@
     return `<section class="card aviso-nex"><h2>Novidades do personagem</h2>${faltaTrilha ? `<div class="av-l"><div class="av-t"><b>NEX ${nexDe(f)}%</b> — Você precisa escolher uma trilha de ${esc((S.CLASSES[f.op.classe] || {}).n || 'sua classe')}.</div>
 <div class="av-b"><button class="mini" data-act="op-trilha">Escolher trilha</button></div></div>` : ''}${L.map(a => `<div class="av-l" data-aviso="${a.id}">
 <div class="av-t"><b>${f.op.classe == 'sobrevivente' ? 'Estágio ' + a.nv : 'NEX ' + nexAviso(a) + '%'}</b> — ${esc(a.t)}</div>
-<div class="av-b">${a.k == 'atr' ? atr : a.k == 'grau' ? `<button class="mini" data-act="op-grau" data-av="${a.id}">Ir para perícias</button>` : `<button class="mini" data-act="op-hab" data-av="${a.id}">${rot(a)}</button>`}${obrig(a) ? '' : `<button class="mini fino" data-act="op-dispensa" data-av="${a.id}">Dispensar</button>`}</div></div>`).join('')}
+<div class="av-b">${a.k == 'atr' ? atr : a.k == 'grau' ? `<button class="mini" data-act="op-grau" data-av="${a.id}">Escolher perícias</button>` : `<button class="mini" data-act="op-hab" data-av="${a.id}">${rot(a)}</button>`}${obrig(a) ? '' : `<button class="mini fino" data-act="op-dispensa" data-av="${a.id}">Dispensar</button>`}</div></div>`).join('')}
 <p class="m" style="font-size:12px;margin:8px 0 0">Ao subir de NEX os PV, PE e SAN já aumentam sozinhos. Aqui ficam só as escolhas que são suas.</p></section>`;
   }
 
@@ -196,7 +196,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
       const av_ = d.av || (f.op.avisos.find(x => x.k == 'atr') || {}).id; f.attrs[i].v = v + 1; remAviso(f, av_); calc(f); touch(f); render(); toast(f.attrs[i].n + ' agora é ' + (v + 1) + '.'); return true }
     if (a == 'op-per-adv') { PER_ADV = !PER_ADV; render(); return true }
     if (a == 'op-dispensa') { remAviso(f, d.av); touch(f); render(); return true }
-    if (a == 'op-grau') { remAviso(f, d.av); touch(f); setTab('p'); toast('Suba o grau de 2 + INT perícias treinadas.'); return true }
+    if (a == 'op-grau') { const av_ = (f.op.avisos || []).find(x => x.id == d.av); treinar(f, { modo: 'grau', av: d.av, nex: av_ ? nexAviso(av_) : nexDe(f) }); return true }
     if (a == 'op-hab') { await doAviso(f, d.av); return true }
     if (a == 'op-trilha') { await escolherTrilha(f); return true }
     if (a == 'op-eq') { const it = f.inv.items[+d.i], antes = ULT.def; it.eq = !it.eq;
@@ -399,7 +399,42 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     f.poderes.push({ ...JSON.parse(JSON.stringify(x.dados)), id: S.uid(), n: x.nome, ref: 'livro:' + x.ref });
     if (x.grupo == 'trilha' && !f.op.trilha) f.op.trilha = x.trilha;
   }
-  function fim(f, fecha, x, av) { if (av) remAviso(f, av); calc(f); touch(f); fecha(); render(); toast(esc(x.nome) + ' adicionada.') }
+  function fim(f, fecha, x, av) { if (av) remAviso(f, av); calc(f); touch(f); fecha(); render(); toast(esc(x.nome) + ' adicionada.');
+    if (x.nome == 'Treinamento em Perícia') setTimeout(() => treinar(f, { modo: 'poder' }), 80) }
+
+  /* escolher perícias para treinar: lista TODAS, mostra o grau de cada uma e quais podem subir agora (e por que as outras não) */
+  const GRAU = { 0: 'Destreinado', 5: 'Treinado', 10: 'Veterano', 15: 'Expert' };
+  function treinar(f, o) {
+    const nx = nexDe(f), gm = o.modo == 'grau', de = gm ? (o.nex >= 70 ? 10 : 5) : null;
+    const total = gm ? 2 + Math.max(0, av(f, 'int')) : 2, sel = new Set();
+    const pode = s => { const t = n0(s.t);
+      if (t >= 15) return [false, 'Já é Expert'];
+      if (gm) return t == de ? [true, GRAU[t] + ' → ' + GRAU[t + 5]] : [false, t < de ? 'Precisa ser ' + GRAU[de] + ' (hoje: ' + GRAU[t] + ')' : 'Já passou deste grau (' + GRAU[t] + ')'];
+      if (t == 10 && nx < 70) return [false, 'Expert só a partir de NEX 70% (hoje: Veterano)'];
+      if (t == 5 && nx < 35) return [false, 'Veterano só a partir de NEX 35% (hoje: Treinado)'];
+      return [true, GRAU[t] + ' → ' + GRAU[t + 5]] };
+    const o2 = document.createElement('div'); o2.id = 'md';
+    const linhas = f.skills.map((s, i) => { const [ok, txt] = pode(s); return `<button class="cat-i ${ok ? '' : 'off'}" data-s="${i}" ${ok ? '' : 'disabled'}><b>${esc(s.n)}</b><small class="gr-t">${esc(txt)}</small></button>` }).join('');
+    const quantas = f.skills.filter(s => pode(s)[0]).length;
+    o2.innerHTML = `<div class="mb"><h3>${gm ? 'Grau de treinamento' : 'Treinamento em Perícia'}</h3>
+<p class="m" style="margin:0">${gm ? `NEX ${o.nex}%: escolha até <b>${total}</b> perícias ${de == 5 ? 'treinadas para subir a <b>Veterano</b>' : 'veteranas para subir a <b>Expert</b>'}.` : `Escolha <b>${total}</b> perícias para treinar. Destreinada vira Treinado; ${nx >= 35 ? 'Treinado vira Veterano' : 'Veterano só a partir de NEX 35%'}${nx >= 70 ? '; Veterano vira Expert' : ''}.`}</p>
+<p class="m" style="margin:0"><b id="gr-c">0 / ${total}</b> escolhidas${quantas ? '' : ' · nenhuma perícia pode subir agora'}</p>
+<div class="catl">${linhas}</div>
+<div class="g2b"><button class="prim" data-ok>Confirmar</button><button data-x>Fechar</button></div></div>`;
+    document.body.append(o2);
+    o2.onclick = e => {
+      if (e.target === o2 || e.target.closest('[data-x]')) { o2.remove(); return }
+      const b = e.target.closest('[data-s]');
+      if (b) { const i = +b.dataset.s;
+        if (sel.has(i)) sel.delete(i); else if (sel.size >= total) { toast('Você já escolheu ' + total + '. Toque numa escolhida para tirar.'); return } else sel.add(i);
+        b.classList.toggle('on', sel.has(i)); o2.querySelector('#gr-c').textContent = sel.size + ' / ' + total; return }
+      if (e.target.closest('[data-ok]')) {
+        if (!sel.size) { toast('Escolha ao menos uma perícia.'); return }
+        const nomes = [...sel].map(i => { const s = f.skills[i]; s.t = n0(s.t) + 5; return s.n });
+        if (o.av) remAviso(f, o.av);
+        calc(f); touch(f); o2.remove(); render(); toast('Perícias melhoradas: ' + esc(nomes.join(', ')) + '.') }
+    };
+  }
   const achar = b => LIVRO.find(y => y.ref == b.dataset.r);
 
   /* botão "＋ Do livro": navegar por classe / grupo */
@@ -528,5 +563,5 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     f._din = +data[0].dinheiro; status('salvo ✓');
   }
 
-  window.OP = { TABS, views: { g: vAgente, c: vCombate, p: vPericias, i: vInv, h: vHab, n: vDocs }, calc, derive, depois, acao, dinheiro, podeMec, mestre };
+  window.OP = { treinar, TABS, views: { g: vAgente, c: vCombate, p: vPericias, i: vInv, h: vHab, n: vDocs }, calc, derive, depois, acao, dinheiro, podeMec, mestre };
 })();

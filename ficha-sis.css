@@ -97,3 +97,6 @@ body.carimbo-mod,.carimbo-mod{display:none}body.sis-modular .carimbo-mod{display
 .per-sec .sk select[data-n]{flex:0 0 auto;min-width:96px}
 .it-res{font-size:13px;align-self:center}
 .mec>summary{cursor:pointer;min-height:36px;padding:6px 0}
+#md .cat-i.off{opacity:.5;cursor:default}
+#md .cat-i.on{outline:3px solid var(--carimbo,#b22);background:#0000000f}
+#md .cat-i .gr-t{white-space:normal}
