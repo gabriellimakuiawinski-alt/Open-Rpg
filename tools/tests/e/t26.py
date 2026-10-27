@@ -4,7 +4,7 @@ d=seed()
 with sync_playwright() as p:
     b=p.chromium.launch()
     pg=abre_pg(b,'J','ficha.html?id='+d['fJ']);pg.wait_for_timeout(2000);ev=pg.evaluate
-    pg.click('[data-tab=g]');pg.fill('[data-p="op.pp"]','50');pg.press('[data-p="op.pp"]','Tab');pg.wait_for_timeout(400)
+    pg.click('[data-tab=g]');pg.evaluate("document.querySelectorAll('details.mais').forEach(d=>d.open=true)");pg.fill('[data-p="op.pp"]','50');pg.press('[data-p="op.pp"]','Tab');pg.wait_for_timeout(400)
     pg.click('[data-tab=i]');pg.click('[data-act="op-cat"]');pg.wait_for_timeout(400)
     pg.fill('#catq','katana');pg.locator('#md .cat-i:has-text("Katana")').click();pg.wait_for_timeout(300)
     ev("""(()=>{const f=curF();f.inv.items.push({id:'x1',n:'Colete tático',tipo:'protecao',catg:1,esp:2,def:5,qtd:1,eq:false},{id:'x2',n:'Lupa velha',tipo:'geral',catg:0,esp:1,qtd:1},{id:'x3',n:'Poção',tipo:'consumivel',catg:0,esp:1,qtd:1});render()})()""")

@@ -7,7 +7,7 @@ with sync_playwright() as p:
     chk("armaEf: Cruel +2, Perigosa 19→17, Dum Dum x2→x3",ev("""(()=>{const S=SIS,a=(dano,crit,m)=>S.armaEf({arma:{dano,crit},mods:m.map(n=>({n}))});
       const c=a('1d10','19',['Cruel','Perigosa']),e=a('2d6','x2',['Dum Dum','Explosiva','Calibre Grosso']),z=a('1d6','19',['Certeira','Alongada']);
       return c.dano=='1d10+2'&&c.crit=='17'&&e.crit=='x3'&&e.dano=='3d6+2d6'&&z.atk==4})()"""))
-    pg.click('[data-tab=g]');pg.fill('[data-p="op.pp"]','50');pg.press('[data-p="op.pp"]','Tab');pg.wait_for_timeout(400);pg.wait_for_timeout(300)
+    pg.click('[data-tab=g]');pg.evaluate("document.querySelectorAll('details.mais').forEach(d=>d.open=true)");pg.fill('[data-p="op.pp"]','50');pg.press('[data-p="op.pp"]','Tab');pg.wait_for_timeout(400);pg.wait_for_timeout(300)
     pg.click('[data-tab=i]');pg.click('[data-act="op-cat"]');pg.wait_for_timeout(400)
     pg.fill('#catq','katana');pg.locator('#md .cat-i:has-text("Katana")').click();pg.wait_for_timeout(300)
     pg.click('[data-act="op-cat"]');pg.click('#md [data-ab="modificacao"]');pg.locator('#md .cat-i:has-text("Cruel")').click();pg.wait_for_timeout(300)
@@ -19,7 +19,7 @@ with sync_playwright() as p:
     chk("card de ataque mostra o dano com a modificação",'1d10+2' in pg.inner_text('.arma'),pg.inner_text('.arma'))
     pg.click('[data-tab=i]');pg.click('[data-act="op-modx"]');pg.wait_for_timeout(300)
     chk("remover volta categoria e tira a modificação",ev(f"(()=>{{const i={it};return i.catg==1&&i.mods.length==0}})()"))
-    pg.click('[data-tab=g]');pg.fill('[data-p="op.pp"]','0');pg.press('[data-p="op.pp"]','Tab');pg.wait_for_timeout(400)
+    pg.click('[data-tab=g]');pg.evaluate("document.querySelectorAll('details.mais').forEach(d=>d.open=true)");pg.fill('[data-p="op.pp"]','0');pg.press('[data-p="op.pp"]','Tab');pg.wait_for_timeout(400)
     pg.click('[data-tab=i]');pg.click('[data-act="op-cat"]');pg.click('#md [data-ab="modificacao"]');pg.locator('#md .cat-i:has-text("Perigosa")').click();pg.wait_for_timeout(300)
     pg.locator('#md .cat-i:has-text("Katana")').click();pg.wait_for_timeout(300)
     chk("Recruta não pode: patente bloqueia categoria II",ev(f"(()=>{{const i={it};return i.catg==1&&i.mods.length==0}})()"))

@@ -23,6 +23,7 @@ input:focus,select:focus{outline:0;border-bottom:2px solid var(--carimbo)}select
 .it .nm{flex:1 1 160px;display:flex;flex-direction:column}.it .nm b{font:700 20px var(--mao)}.it .nm small{font:400 12px var(--maq);color:var(--tinta2)}
 .preco{font:400 18px var(--maq);color:var(--ok);white-space:nowrap}
 .saldo{font:700 34px var(--mao);color:var(--ok)}
+.abas{display:flex;gap:6px;margin:0 0 14px;flex-wrap:wrap}.abas button{flex:1 1 90px;padding:12px 8px;font:700 17px var(--mao);min-height:44px;border-radius:6px}.abas button.on{background:var(--carimbo,#b22);color:#fff}
 .pers{display:flex;gap:8px;align-items:center;padding:6px 0;border-bottom:1px dashed #0002;flex-wrap:wrap}.pers b{flex:1 1 140px;font:700 20px var(--mao)}
 .pers input{width:100px;text-align:right;font:700 20px var(--mao)}
 #md{position:fixed;inset:0;background:#000c;display:flex;align-items:center;justify-content:center;z-index:20;padding:12px}
@@ -80,11 +81,13 @@ ${ITENS.filter(i=>i.loja_id==l.id).map(i=>{const sem=i.estoque!==null&&i.estoque
   return `<div class="it"><div class="nm"><b>${esc(i.item.n||'Item')}</b><small>${esc(desc(i.item))}${i.estoque!==null?' · estoque '+i.estoque:''}</small></div><span class="preco">${esc(din(i.preco))}</span><button class="prim" data-a="comprar" data-i="${i.id}" ${sem||pobre||!f?'disabled':''}>${sem?'Esgotado':'Comprar'}</button></div>`}).join('')||'<p class="m">Nada à venda agora.</p>'}</section>`).join('')||'<section class="card"><p class="m" style="margin:0">Nenhuma loja aberta agora. O mestre abre as lojas quando fizer sentido na história.</p></section>'}`}
 
 /* ---------- mestre ---------- */
+let ABA='lojas';
 function vMestre(){
   const pend=CAT.filter(x=>!x.aprovado);
-  return `<section class="card"><h2>Dinheiro dos personagens</h2>${FICHAS.map(x=>`<div class="pers"><b>${esc(x.nome||'Sem nome')}${x.npc?' <small class=m>(NPC)</small>':''}</b><button data-a="mais" data-f="${x.id}" data-v="-10">−10</button><input type="number" data-din="${x.id}" value="${n0(x.dinheiro)}" min="0" step="0.01"><button data-a="mais" data-f="${x.id}" data-v="10">+10</button></div>`).join('')||'<p class="m">Nenhuma ficha na campanha.</p>'}
-<p class="m" style="font-size:13px">Moeda: <b>${esc(moeda())}</b> (troque em Início → campanha → Sistema e regras).</p></section>
-<section class="card"><h2>Lojas</h2><p class="m" style="margin:0 0 10px;font-size:14px">Só lojas <b>abertas</b> aparecem para os jogadores. Abra e feche conforme a história.</p>
+  const P={};
+  P.din=`<section class="card"><h2>Dinheiro dos personagens</h2>${FICHAS.map(x=>`<div class="pers"><b>${esc(x.nome||'Sem nome')}${x.npc?' <small class=m>(NPC)</small>':''}</b><button data-a="mais" data-f="${x.id}" data-v="-10">−10</button><input type="number" data-din="${x.id}" value="${n0(x.dinheiro)}" min="0" step="0.01"><button data-a="mais" data-f="${x.id}" data-v="10">+10</button></div>`).join('')||'<p class="m">Nenhuma ficha na campanha.</p>'}
+<p class="m" style="font-size:13px">Moeda: <b>${esc(moeda())}</b> (troque em Início → campanha → Sistema e regras).</p></section>`;
+  P.lojas=`<section class="card"><h2>Lojas</h2><p class="m" style="margin:0 0 10px;font-size:14px">Só lojas <b>abertas</b> aparecem para os jogadores. Abra e feche conforme a história.</p>
 ${LOJAS.map(l=>`<div class="loja ${l.aberta?'':'fechada'}"><div class="row"><h3>${esc(l.nome)}</h3><span class="estado ${l.aberta?'on':'off'}">${l.aberta?'Aberta':'Fechada'}</span></div>
 ${l.descricao?`<p class="m" style="margin:4px 0">${esc(l.descricao)}</p>`:''}
 <div class="row" style="margin:8px 0"><button data-a="abrir" data-l="${l.id}">${l.aberta?'Fechar loja':'Abrir loja'}</button><button data-a="itemCat" data-l="${l.id}">＋ Do catálogo</button><button data-a="itemNovo" data-l="${l.id}">＋ Item próprio</button><span class="sp"></span><button class="fino" data-a="editLoja" data-l="${l.id}">Editar</button><button class="fino" data-a="delLoja" data-l="${l.id}">Excluir</button></div>
@@ -92,12 +95,14 @@ ${ITENS.filter(i=>i.loja_id==l.id).map(i=>`<div class="it"><div class="nm"><b>${
 <label class="m" style="font-size:12px">Preço <input type="number" data-preco="${i.id}" value="${n0(i.preco)}" min="0" step="0.01" style="width:90px"></label>
 <label class="m" style="font-size:12px">Estoque <input type="number" data-est="${i.id}" value="${i.estoque===null?'':i.estoque}" min="0" placeholder="∞" style="width:64px"></label>
 <button class="fino" data-a="editItem" data-i="${i.id}">Editar</button><button class="fino" data-a="delItem" data-i="${i.id}">Remover</button></div>`).join('')||'<p class="m">Loja vazia.</p>'}</div>`).join('')}
-<button class="prim" data-a="novaLoja">＋ Nova loja</button></section>
-<section class="card"><h2>Homebrews e itens da campanha</h2>${pend.length?`<p><b>Esperando sua aprovação:</b></p>${pend.map(x=>`<div class="it hb"><div class="nm"><b>${esc(x.nome)}</b><small>${esc(x.tipo)} · de ${esc(nomeDe(x.criado_por))}${(x.dados.ef||[]).length?' · efeitos: '+x.dados.ef.map(e=>(SIS.ALVOS.find(a=>a[0]==e.a)||[0,e.a])[1]+' '+(e.v>0?'+':'')+e.v+(e.nv?'×nível':'')).join(', '):''}</small>${x.dados.desc?`<small>${esc(x.dados.desc)}</small>`:''}</div><button class="prim" data-a="aprovar" data-c="${x.id}">Aprovar</button><button class="fino" data-a="delCat" data-c="${x.id}">Recusar</button></div>`).join('')}`:'<p class="m">Nada esperando aprovação.</p>'}
+<button class="prim" data-a="novaLoja">＋ Nova loja</button></section>`;
+  P.apr=`<section class="card"><h2>Homebrews e itens da campanha</h2>${pend.length?`<p><b>Esperando sua aprovação:</b></p>${pend.map(x=>`<div class="it hb"><div class="nm"><b>${esc(x.nome)}</b><small>${esc(x.tipo)} · de ${esc(nomeDe(x.criado_por))}${(x.dados.ef||[]).length?' · efeitos: '+x.dados.ef.map(e=>(SIS.ALVOS.find(a=>a[0]==e.a)||[0,e.a])[1]+' '+(e.v>0?'+':'')+e.v+(e.nv?'×nível':'')).join(', '):''}</small>${x.dados.desc?`<small>${esc(x.dados.desc)}</small>`:''}</div><button class="prim" data-a="aprovar" data-c="${x.id}">Aprovar</button><button class="fino" data-a="delCat" data-c="${x.id}">Recusar</button></div>`).join('')}`:'<p class="m">Nada esperando aprovação.</p>'}
 ${CAT.filter(x=>x.aprovado).map(x=>`<div class="it"><div class="nm"><b>${esc(x.nome)}</b><small>${esc(x.tipo)}${x.tipo=='item'?' · '+esc(desc(x.dados)):''}</small></div><button class="fino" data-a="delCat" data-c="${x.id}">Remover</button></div>`).join('')}
 <div class="row" style="margin-top:8px"><button data-a="catItem">＋ Item da campanha</button></div>
-<p class="m" style="font-size:13px">Itens da campanha aparecem no catálogo da ficha e da loja. Homebrews aprovados aparecem em Habilidades → “Da campanha”.</p></section>
-<section class="card"><h2>Últimas compras</h2>${COMPRAS.map(x=>`<div class="it"><div class="nm"><b>${esc(x.item_nome)} ×${x.qtd}</b><small>${esc((FICHAS.find(f=>f.id==x.personagem_id)||{}).nome||'—')} · ${new Date(x.em).toLocaleString('pt-BR')}</small></div><span class="preco">${esc(din(x.total))}</span></div>`).join('')||'<p class="m">Nenhuma compra ainda.</p>'}</section>`}
+<p class="m" style="font-size:13px">Itens da campanha aparecem no catálogo da ficha e da loja. Homebrews aprovados aparecem em Poderes → “Da campanha”.</p></section>`;
+  P.comp=`<section class="card"><h2>Últimas compras</h2>${COMPRAS.map(x=>`<div class="it"><div class="nm"><b>${esc(x.item_nome)} ×${x.qtd}</b><small>${esc((FICHAS.find(f=>f.id==x.personagem_id)||{}).nome||'—')} · ${new Date(x.em).toLocaleString('pt-BR')}</small></div><span class="preco">${esc(din(x.total))}</span></div>`).join('')||'<p class="m">Nenhuma compra ainda.</p>'}</section>`;
+  const T=[['lojas','Lojas'],['din','Dinheiro'],['apr','Aprovações'+(pend.length?' ('+pend.length+')':'')],['comp','Compras']];
+  return `<nav class="abas">${T.map(([k,l])=>`<button data-a="aba" data-k="${k}" class="${k==ABA?'on':''}">${l}</button>`).join('')}</nav>`+P[ABA]}
 let NOMES={};const nomeDe=u=>NOMES[u]||'jogador';
 
 /* ---------- janelas ---------- */
@@ -135,6 +140,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-a]')
   try{
     if(a=='comprar'){const i=ITENS.find(x=>x.id==d.i);if(!confirm(`Comprar ${i.item.n} por ${din(i.preco)}?`))return;b.disabled=true;
       chk(await db.rpc('comprar',{p_item:i.id,p_ficha:FSEL,p_qtd:1}));toast(`${esc(i.item.n)} comprado! Já está no inventário.`);return recarregar()}
+    if(a=='aba'){ABA=d.k;return render()}
     if(!mestre())return;
     if(a=='mais'){const f=FICHAS.find(x=>x.id==d.f);chk(await db.from('personagens').update({dinheiro:Math.max(0,n0(f.dinheiro)+ +d.v)}).eq('id',f.id).select('id'));return recarregar()}
     if(a=='novaLoja')return formLoja(null,async(n,ds)=>{chk(await db.from('lojas').insert({campanha_id:CID,nome:n,descricao:ds,ordem:LOJAS.length}).select('id'));await recarregar()});
