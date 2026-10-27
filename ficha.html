@@ -22,6 +22,13 @@ select option{background:var(--papel2);color:var(--tinta)}
 input[type=color]{width:34px;height:34px;padding:2px;flex:none;border:2px solid var(--lapis);border-radius:4px}input[type=number]{width:70px;text-align:center}
 :focus-visible{outline:3px solid var(--fita);outline-offset:2px;border-radius:4px}
 input[type=checkbox]{width:auto;flex:none;accent-color:var(--carimbo)}
+header{flex-wrap:nowrap;gap:8px;padding-bottom:10px}
+header select{max-width:none;min-width:0;background:#ffffff10;border:1px solid #ffffff2e;border-radius:8px;padding:9px 10px;font:400 17px var(--maq)}
+header a.tl{text-decoration:none;padding:9px 6px;font-size:15px}
+#mn{position:relative;flex:none}#mn summary{list-style:none;cursor:pointer;color:var(--giz2);font:400 15px var(--maq);padding:9px 12px;border:1px solid #ffffff2e;border-radius:8px}#mn summary::-webkit-details-marker{display:none}
+#mn[open] summary{background:#ffffff18;color:var(--fita)}
+.mnp{position:absolute;right:0;top:calc(100% + 6px);min-width:190px;background:#1c2423;border:1px solid #ffffff2e;border-radius:10px;padding:6px;display:flex;flex-direction:column;gap:2px;box-shadow:0 10px 30px #000a;z-index:9}
+.mnp button,.mnp a.tl{text-align:left;padding:11px 12px;border-radius:6px;font-size:15px}.mnp hr{border:0;border-top:1px dashed #ffffff22;margin:4px 0}.mnp #st{padding:4px 12px}.mnp #who{max-width:none;text-align:left}
 a.tl{color:var(--giz2);text-decoration:underline dashed;text-underline-offset:5px;padding:8px 10px;white-space:nowrap;font:400 14px var(--maq)}a.tl:hover{color:var(--fita)}
 .hid{display:none!important}
 .m{color:var(--tinta2)}header .m{color:var(--giz)}.sp{flex:1}#st{font:400 12px var(--maq);color:var(--giz)}#who{color:var(--giz);font:400 13px var(--maq);max-width:160px;overflow:hidden;white-space:nowrap;text-overflow:ellipsis}
@@ -72,7 +79,7 @@ h2::after{content:"";flex:1;border-bottom:2px dashed #00000026}
 #docver .dv{max-width:min(640px,100%);max-height:92vh;overflow:auto;background:var(--papel2);color:var(--tinta);padding:18px;display:flex;flex-direction:column;gap:12px;border-radius:3px;box-shadow:0 30px 60px -20px #000}
 #docver b{font:400 22px var(--maq)}#docver img{max-width:100%;border:6px solid #f8f4e8;box-shadow:0 6px 14px -8px #000}#docver p{margin:0;white-space:pre-wrap;font:700 21px/1.25 var(--mao);color:var(--caneta)}#docver button{align-self:flex-end;color:var(--tinta)}
 </style><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone-192.png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><script src="pwa.js" defer></script></head><body class="quadro">
-<header><select id="sel"></select><button data-act="new">＋ Nova</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><button data-act="delf" class="x">Excluir</button><span class="sp"></span><span id="st"></span><a href="index.html" class="tl" title="Voltar ao início">Início</a><a href="mesa.html" class="tl" title="Abrir o tabletop">Tabletop</a><button data-act="sair" id="who" title="Sair da conta"></button></header>
+<header><a href="index.html" class="tl" title="Voltar ao início">‹ Início</a><select id="sel"></select><details id="mn"><summary>Menu</summary><div class="mnp"><button data-act="new">Nova ficha</button><button data-act="dup">Duplicar</button><button data-act="exp">Exportar</button><button data-act="imp">Importar</button><a href="mesa.html" class="tl">Abrir tabletop</a><button data-act="delf" class="x">Excluir esta ficha</button><hr><span id="st"></span><button data-act="sair" id="who" title="Sair da conta"></button></div></details></header>
 <nav id="tabs"></nav><main id="app"></main><div id="toast"></div>
 <input type="file" id="fi" accept=".json,application/json" hidden>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
@@ -272,7 +279,7 @@ document.addEventListener('change',e=>{const t=e.target,f=curF();if(!f||!t.datas
   if(RR||('rr' in t.dataset&&t.tagName!='SELECT')){RR=false;render()}});
 $('#sel').onchange=e=>{SEL=e.target.value;localStorage.mesa_ficha_sel=SEL;render()};
 document.addEventListener('click',async e=>{
-  const b=e.target.closest('[data-act],[data-tab]');if(!b)return;const d=b.dataset,f=curF(),a=d.act;
+  const mnu=$('#mn');if(mnu&&mnu.open&&(e.target.closest('.mnp button,.mnp a')||!e.target.closest('#mn')))mnu.open=false;const b=e.target.closest('[data-act],[data-tab]');if(!b)return;const d=b.dataset,f=curF(),a=d.act;
   try{
     if(d.tab){tab=d.tab;render();return}
     if(a=='sair'){flush();await Mesa.sair();return}
