@@ -105,18 +105,30 @@ function ver(id){const en=fonte().find(x=>x.id==id);if(!en)return;const meu=TAB=
       else if(b.dataset.a=='del'){if(!confirm('Excluir "'+en.nome+'"? Não dá para desfazer.'))return;const r=await db.from('inimigos').delete().eq('id',id);if(r.error)throw r.error;MEUS=MEUS.filter(x=>x.id!=id);fecha();lista();toast('Inimigo excluído.')}
     }catch(err){toast('Erro: '+esc(err.message||err))}})}
 
+const TAMT={minusculo:.5,pequeno:.5,medio:1,grande:2,enorme:3,colossal:4};
+async function cenasDe(camp){const m=await db.from('mesas').select('id,nome').eq('campanha_id',camp);if(m.error||!(m.data||[]).length)return[];
+  const c=await db.from('cenas').select('id,nome,mesa_id,ordem,grade_px').in('mesa_id',m.data.map(x=>x.id)).order('ordem');
+  return(c.data||[]).map(x=>({...x,mesa:(m.data.find(y=>y.id==x.mesa_id)||{}).nome||''}))}
+async function enchePos(){const sl=$('#us');if(!sl)return;sl.innerHTML='<option value="">Não colocar token agora</option>';const L=await cenasDe($('#uc').value);
+  sl.insertAdjacentHTML('beforeend',L.map(c=>`<option value="${c.id}" data-px="${c.grade_px||50}">${esc(c.mesa)} — ${esc(c.nome)}</option>`).join(''))}
 async function usar(en){const cs=await campanhas();
   if(!cs.length){toast('Você precisa ser mestre ou admin de uma campanha para usar inimigos.');return}
   janela(`<h3>Usar ${esc(en.nome)}</h3><p class="m">Cria uma ficha de NPC (escondida dos jogadores) na campanha. Depois é só ligar o token a ela na mesa.</p>
 <label>Campanha<select id="uc">${cs.map(c=>`<option value="${c.id}">${esc(c.nome)}</option>`).join('')}</select></label><label>Quantidade<input id="uq" type="number" min="1" max="12" value="1"></label>
-<div class="bt"><button data-x>Cancelar</button><button data-a="ok" class="on">Criar ficha(s)</button></div>`,
+<label>Já colocar na mesa (token escondido dos jogadores)<select id="us"><option value="">Não colocar token agora</option></select></label>
+<div class="bt"><button data-x>Cancelar</button><button data-a="ok" class="on">Criar</button></div>`,
   async(e,o)=>{const b=e.target.closest('[data-a="ok"]');if(!b)return;b.disabled=true;
-    try{const camp=$('#uc').value,q=Math.max(1,Math.min(12,n0($('#uq').value)||1)),rows=[];
+    try{const camp=$('#uc').value,q=Math.max(1,Math.min(12,n0($('#uq').value)||1)),rows=[],cena=$('#us').value;
       for(let i=1;i<=q;i++){const nome=q>1?en.nome+' '+i:en.nome;rows.push({user_id:ME.id,campanha_id:camp,nome,npc:true,privada:true,dados:paraFicha(en,nome)})}
       const r=await db.from('personagens').insert(rows).select('id');if(r.error)throw r.error;
+      let nt=0;
+      if(cena){const gr=($('#us').selectedOptions[0]||{}).dataset||{},px=n0(gr.px)||50,tam=TAMT[norm(dados(en).tamanho)]||1,
+          tk=r.data.map((x,i)=>({cena_id:cena,nome:rows[i].nome,categoria:'chr',x:px*(2+i*(tam+0.5)),y:px*2,tam,personagem_id:x.id,oculto:true,criado_por:ME.id}));
+        const t=await db.from('tokens').insert(tk);if(t.error)toast('Fichas criadas, mas o token falhou: '+esc(t.error.message));else nt=tk.length}
       o.remove();
-      janela(`<h3>Pronto</h3><p>${q>1?q+' fichas criadas':'Ficha criada'} na campanha, como NPC privado.</p><div class="bt"><a href="ficha.html?id=${r.data[0].id}"><button class="on">Abrir ficha</button></a><button data-x>Fechar</button></div>`)}
-    catch(err){b.disabled=false;toast('Erro: '+esc(err.message||err))}})}
+      janela(`<h3>Pronto</h3><p>${q>1?q+' fichas criadas':'Ficha criada'} na campanha, como NPC privado.${nt?' '+(nt>1?nt+' tokens colocados':'Token colocado')+' na mesa, escondido: mostre quando quiser (olho no menu do token).':''}</p><div class="bt"><a href="ficha.html?id=${r.data[0].id}"><button class="on">Abrir ficha</button></a><button data-x>Fechar</button></div>`)}
+    catch(err){b.disabled=false;toast('Erro: '+esc(err.message||err))}});
+  enchePos();const uc=$('#uc');if(uc)uc.onchange=enchePos}
 
 /* ---------- editor ---------- */
 function editar(en){ED=JSON.parse(JSON.stringify(en||vazio()));ED.dados=dados(ED);desenhaEd()}

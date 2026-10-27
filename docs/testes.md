@@ -23,3 +23,4 @@ Falhas `ERR_TUNNEL_CONNECTION_FAILED` são as fontes do Google bloqueadas no amb
 
 ## Limites
 O mock não prova o realtime real nem multi-dispositivo. Validar no site com 2 contas depois de rodar os SQL.
+- t35 (treino por grau: 2/5/3 + Int, NEX 70) e t36 (editar monstro na ficha + token ao usar inimigo) em `tools/tests/e`.
