@@ -34,7 +34,7 @@
     const faltaTrilha = livro && nexDe(f) >= 10 && !f.op.trilha && !L.some(a => a.k == 'trilha');
     if (!L.length && !faltaTrilha) return '';
     const atr = S.ATR.map(([id, ab]) => `<button class="mini" data-act="op-atr" data-at="${id}">${ab} +1</button>`).join('');
-    const rot = a => !livro ? '＋ Adicionar habilidade' : a.k == 'trilha' ? (f.op.trilha ? 'Ver habilidades da trilha' : 'Escolher trilha') : a.k == 'poder' ? 'Escolher poder' : a.k == 'vers' ? 'Escolher (poder ou outra trilha)' : '＋ Ver habilidade de classe';
+    const rot = a => !livro ? '＋ Adicionar habilidade' : a.k == 'trilha' ? (f.op.trilha ? 'Ver habilidades da trilha' : 'Escolher trilha') : a.k == 'poder' ? 'Escolher poder' : a.k == 'vers' ? 'Escolher (poder ou outra trilha)' : a.k == 'ritual' ? 'Escolher ritual' : '＋ Ver habilidade de classe';
     const obrig = a => a.k == 'trilha' && livro && !f.op.trilha;          // sem trilha não dá para dispensar
     return `<section class="card aviso-nex"><h2>Novidades do personagem</h2>${faltaTrilha ? `<div class="av-l"><div class="av-t"><b>NEX ${nexDe(f)}%</b> — Você precisa escolher uma trilha de ${esc((S.CLASSES[f.op.classe] || {}).n || 'sua classe')}.</div>
 <div class="av-b"><button class="mini" data-act="op-trilha">Escolher trilha</button></div></div>` : ''}${L.map(a => `<div class="av-l" data-aviso="${a.id}">
@@ -102,7 +102,29 @@ ${D.pesadaSemProf ? '<p class="alerta">Proteção pesada sem a habilidade Prote�
       return `<div class="arma"><div class="ar-n"><b>${esc(it.n || 'Arma')}</b><small>${esc([ef.dano, ef.crit && 'crít. ' + ef.crit, ef.atk && 'ataque ' + sinal(ef.atk), a.alc, a.td].filter(Boolean).join(' · '))}${(it.mods || []).length ? ' · ' + esc(it.mods.map(S.modNome).join(', ')) : ''}</small></div>
 <button class="roll" data-act="op-atk" data-i="${i}" title="Atacar (${esc(per)})">Atacar</button><button class="mini" data-act="op-dano" data-i="${i}">Dano</button><button class="mini" data-act="op-modif" data-i="${i}">Modificar</button></div>` }).join('') || '<p class="m">Nenhuma arma no inventário.</p>'}</section>
 <section class="card"><h2>Resistências</h2><div class="res">${res.map(([n]) => { const i = f.skills.findIndex(s => s.n == n); return i < 0 ? '' : `<button class="btn-res" data-act="roll" data-i="${i}"><b>${n}</b><small id="rs${i}"></small></button>` }).join('')}</div>
-${D.res ? `<p class="m" style="font-size:13px">Habilidades: ${sinal(D.res)} em testes de resistência (já somado).</p>` : ''}</section>`;
+${D.res ? `<p class="m" style="font-size:13px">Habilidades: ${sinal(D.res)} em testes de resistência (já somado).</p>` : ''}</section>
+${condCard(f)}`;
+  }
+  /* condições (livro, Apêndice): marcadas na ficha, com o texto da regra vindo da tabela livro_regras */
+  let REGRAS = null, REG_TENTOU = false;
+  async function regrasCarrega() {
+    if (REGRAS) return REGRAS;
+    const r = await db.from('livro_regras').select('ref,grupo,subgrupo,nome,ordem,pagina,texto,dados').eq('sistema', 'op').eq('grupo', 'condicao').order('ordem');
+    if (r.error || !r.data.length) { toast('Condições do livro indisponíveis (rode o SQL schema_etapa11_regras.sql no Supabase).'); return null }
+    return REGRAS = r.data;
+  }
+  function condCard(f) {
+    const L = f.op.cond || [], R = REGRAS || [];
+    if (L.length && !REGRAS && !REG_TENTOU) { REG_TENTOU = true; regrasCarrega().then(r => { if (r) render() }) }
+    return `<section class="card"><h2>Condições</h2>${L.map(n => { const r = R.find(x => x.nome == n);
+      return `<div class="itr"><span class="m" style="flex:1"><b>${esc(n)}</b>${r ? ' — ' + esc(r.texto) : ''}</span><button class="mini" data-act="op-cond-x" data-n="${esc(n)}">Remover</button></div>` }).join('') || '<p class="m" style="margin:0 0 8px">Nenhuma condição ativa.</p>'}
+<button class="mini" data-act="op-cond">Adicionar condição</button></section>`;
+  }
+  async function condPicker(f) {
+    const R = await regrasCarrega(); if (!R) return;
+    janela('Condições', () => ['<p class="m" style="margin:0">Toque para marcar a condição na ficha. Efeitos iguais não acumulam: vale o mais severo.</p>',
+      R.map(r => `<button class="cat-i" data-n="${esc(r.nome)}"><b>${esc(r.nome)}${(f.op.cond || []).includes(r.nome) ? ' (ativa)' : ''}</b><small style="white-space:normal">${esc(r.texto)}</small></button>`).join('')],
+    (b, fecha) => { const n = b.dataset.n; f.op.cond = (f.op.cond || []).includes(n) ? f.op.cond.filter(x => x != n) : (f.op.cond || []).concat([n]); touch(f); fecha(); render() });
   }
 
   let PER_ADV = false;   // mostrar atributo e bônus extra de cada perícia (modo avançado)
@@ -199,6 +221,8 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     if (a == 'op-grau') { const av_ = (f.op.avisos || []).find(x => x.id == d.av); treinar(f, { modo: 'grau', av: d.av, nex: av_ ? nexAviso(av_) : nexDe(f) }); return true }
     if (a == 'op-hab') { await doAviso(f, d.av); return true }
     if (a == 'op-trilha') { await escolherTrilha(f); return true }
+    if (a == 'op-cond') { condPicker(f); return true }
+    if (a == 'op-cond-x') { f.op.cond = (f.op.cond || []).filter(x => x != d.n); touch(f); render(); return true }
     if (a == 'op-eq') { const it = f.inv.items[+d.i], antes = ULT.def; it.eq = !it.eq;
       if (it.eq && it.tipo == 'protecao') f.inv.items.forEach(o => { if (o !== it && o.tipo == 'protecao' && o.eq && ((o.sub == 'escudo') == (it.sub == 'escudo'))) o.eq = false });
       calc(f); touch(f); render(); if (it.tipo == 'protecao') toast(`Defesa ${antes} → <b>${ULT.def}</b>`); return true }
@@ -230,7 +254,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   /* catálogo base + itens da campanha */
   /* catálogo de itens: livro_itens (global) + itens da campanha + extras locais (luz do token etc.) */
   let ITENS = null;
-  const ABAS_IT = [['arma', 'Armas'], ['protecao', 'Proteções'], ['municao', 'Munição'], ['acessorio', 'Acessórios'], ['explosivo', 'Explosivos'], ['operacional', 'Operacionais'], ['paranormal', 'Paranormais'], ['modificacao', 'Modificações'], ['campanha', 'Campanha'], ['outros', 'Outros']];
+  const ABAS_IT = [['arma', 'Armas'], ['protecao', 'Proteções'], ['municao', 'Munição'], ['acessorio', 'Acessórios'], ['explosivo', 'Explosivos'], ['operacional', 'Operacionais'], ['paranormal', 'Paranormais'], ['modificacao', 'Modificações'], ['maldicao', 'Maldições'], ['amaldicoado', 'Amaldiçoados'], ['campanha', 'Campanha'], ['outros', 'Outros']];
   async function itensCarrega() {
     if (ITENS) return ITENS;
     const r = await db.from('livro_itens').select('ref,grupo,subgrupo,nome,ordem,dados').eq('sistema', 'op').order('ordem');
@@ -241,6 +265,9 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     return ITENS;
   }
   const infoIt = it => esc([S.TIPOS_ITEM.find(t => t[0] == it.tipo)?.[1], it.tipo == 'modificacao' ? '' : 'Cat. ' + S.ROMANO[it.catg || 0], it.tipo == 'modificacao' ? '' : n0(it.esp) + ' esp.', it._sub && it._g == 'arma' ? it._sub : '', it.def && 'Def +' + it.def, it.luz && (it.luz.t == 'c' ? 'cone ' : 'raio ') + it.luz.m + 'm', it.arma && [it.arma.dano, it.arma.crit && 'crít. ' + it.arma.crit, it.arma.alc].filter(Boolean).join(' '), (it.ef || []).length ? 'efeito automático' : ''].filter(Boolean).join(' · '));
+  const NOTAS_IT = {
+    maldicao: 'Maldição funciona como modificação: a primeira sobe a categoria do item em II, as seguintes em I. Um item pode ter várias, mas maldições iguais não acumulam. Só agentes especiais, oficiais de operações e agentes de elite recebem itens amaldiçoados. Cada maldição tem um preço em Sanidade (veja Amaldiçoados).',
+    amaldicoado: 'Itens especiais têm regras próprias; contam como categoria II e 1 espaço, salvo indicação. Preço da maldição: Conhecimento, Energia, Morte e Sangue tiram 2 de Sanidade por maldição do elemento quando você falha em teste de Intelecto, Agilidade, Presença e Força/Vigor, nessa ordem. Itens de Medo têm preço definido pelo mestre. O preço só acaba entre missões. Bônus de itens amaldiçoados não acumulam.' };
   async function catalogo(f) {
     const base = await itensCarrega();
     let extra = [];
@@ -257,7 +284,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     };
     const tela = () => {
       o.innerHTML = `<div class="mb"><h3>Catálogo</h3><input id="catq" placeholder="Buscar item" value="${esc(q)}"><div class="g2b">${ABAS_IT.filter(a => tem(a[0])).map(a => `<button class="mini" data-ab="${a[0]}" ${!q && a[0] == ab ? 'style="outline:2px solid currentColor"' : ''}>${a[1]}</button>`).join('')}</div><div class="catl" id="catlst">${lista()}</div>
-<p class="m" style="font-size:12px;margin:0">${f._camp && !mestre(f) ? 'Você pega o item; o mestre confere a patente e pode remover.' : ''}</p><button data-x style="align-self:flex-end">Fechar</button></div>`;
+${NOTAS_IT[ab] && !q ? `<p class="m" style="font-size:12px;margin:0">${NOTAS_IT[ab]}</p>` : ''}<p class="m" style="font-size:12px;margin:0">${f._camp && !mestre(f) ? 'Você pega o item; o mestre confere a patente e pode remover.' : ''}</p><button data-x style="align-self:flex-end">Fechar</button></div>`;
       const i = o.querySelector('#catq'); if (q) { i.focus(); i.setSelectionRange(q.length, q.length) }
     };
     tela(); document.body.append(o);
@@ -272,7 +299,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   }
   /* põe a modificação no item (sem checar patente) */
   function poeMod(f, it, m, e) {
-    it.mods = (it.mods || []).concat([{ n: m.n, desc: m.desc, catg: e.catg, esp: e.esp, def: e.def }]);
+    it.mods = (it.mods || []).concat([{ n: m.n, desc: m.desc, catg: e.catg, esp: e.esp, def: e.def, ...(m.maldicao ? { mal: 1 } : {}) }]);
     it.catg = Math.min(4, Math.round(n0(it.catg)) + e.catg); it.esp = Math.max(0, n0(it.esp) + e.esp); if (e.def) it.def = n0(it.def) + e.def;
     calc(f); touch(f);
   }
@@ -322,7 +349,7 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
   const tem1 = (it, m) => (it.mods || []).map(S.modNome).includes(m.n);
   /* aplica a modificação neste item (checa a patente; se não couber, oferece pedido ao mestre) */
   function aplicaNoItem(f, it, m) {
-    const d = m.mod || {}, c0 = Math.round(n0(it.catg)), c1 = Math.min(4, c0 + (d.catg || 0)), D = ULT || calc(f).D;
+    const d = m.mod || {}, c0 = Math.round(n0(it.catg)), c1 = Math.min(4, c0 + (d.catg || 0) + (m.maldicao && !(it.mods || []).some(x => x.mal) ? 1 : 0)), D = ULT || calc(f).D;
     const efeito = { catg: c1 - c0, esp: Math.min(0, d.esp || 0), def: d.def || 0 };
     if (c1 > c0 && c1 >= 1 && !livre(f) && D.porCat[c1] + 1 > D.patente[3][c1 - 1]) { pedeAoMestre(f, it, m, efeito, D, c1); return }
     poeMod(f, it, m, efeito); render(); toast(esc(m.n) + ' aplicada em ' + esc(it.n) + '.');
@@ -540,6 +567,13 @@ ${temLivro(f.op.classe) ? `<div class="g2b"><button class=add data-act="op-livro
     } else if (a.k == 'poder') {
       const L = LIVRO.filter(x => x.classe == cl && x.grupo == 'poder' && !jaTem(f, x));
       janela('Poder de ' + (S.CLASSES[cl] || {}).n, () => ['<p class="m" style="margin:0">Veja os pré-requisitos na descrição. Toque para adicionar.</p>', L.map(x => resumo(f, x)).join('')],
+        (b, fecha) => { const x = achar(b); if (!x) return; addLivro(f, x); fim(f, fecha, x, av) });
+    } else if (a.k == 'ritual') {
+      const mx = nxF >= 85 ? 4 : nxF >= 55 ? 3 : nxF >= 25 ? 2 : 1;       // círculo máximo por NEX (livro p.33)
+      const L = LIVRO.filter(x => x.grupo == 'ritual' && x.circulo <= mx && !jaTem(f, x));
+      let ult = 0;
+      janela('Aprender ritual', () => [`<p class="m" style="margin:0">NEX ${nx}%: o ocultista aprende 1 ritual de qualquer círculo até o ${mx}º. Ele não conta no limite de rituais conhecidos.</p>`,
+        L.map(x => { const t = x.circulo != ult ? (ult = x.circulo, titulo2(x.circulo + 'º círculo')) : ''; return t + resumo(f, x) }).join('') || '<p class="m">Você já conhece todos os rituais disponíveis.</p>'],
         (b, fecha) => { const x = achar(b); if (!x) return; addLivro(f, x); fim(f, fecha, x, av) });
     } else if (a.k == 'vers') {
       const P = LIVRO.filter(x => x.classe == cl && x.grupo == 'poder' && !jaTem(f, x)), T = LIVRO.filter(x => x.classe == cl && x.grupo == 'trilha' && x.nex == 10 && x.trilha != f.op.trilha && !jaTem(f, x));

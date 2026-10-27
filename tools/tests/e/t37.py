@@ -1,0 +1,32 @@
+# itens amaldiçoados: abas Maldições e Amaldiçoados, 1ª maldição sobe II e as seguintes I
+from lib2 import *
+d=seed()
+with sync_playwright() as p:
+    b=p.chromium.launch()
+    pg=abre_pg(b,'J','ficha.html?id='+d['fJ']);pg.wait_for_timeout(2000);ev=pg.evaluate
+    pg.click('[data-tab=g]');pg.evaluate("document.querySelectorAll('details.mais').forEach(d=>d.open=true)");pg.fill('[data-p="op.pp"]','200');pg.press('[data-p="op.pp"]','Tab');pg.wait_for_timeout(400)
+    pg.click('[data-tab=i]');pg.click('[data-act="op-cat"]');pg.wait_for_timeout(500)
+    abas=pg.locator('#md [data-ab]').all_inner_texts()
+    chk("abas Maldições e Amaldiçoados",'Maldições' in abas and 'Amaldiçoados' in abas,abas)
+    pg.click('#md [data-ab="amaldicoado"]');pg.wait_for_timeout(300)
+    chk("28 itens especiais",pg.locator('#md .cat-i').count()==28,pg.locator('#md .cat-i').count())
+    chk("nota com o preço da maldição",'Sanidade' in pg.inner_text('#md'))
+    pg.fill('#catq','jaqueta');pg.locator('#md .cat-i:has-text("Veríssimo")').click();pg.wait_for_timeout(400)
+    chk("item especial entra no inventário (cat. IV)",ev("curF().inv.items.some(i=>i.n.startsWith('Jaqueta de Ver')&&i.catg==4)"))
+    pg.click('[data-act="op-cat"]');pg.wait_for_timeout(300)
+    pg.fill('#catq','katana');pg.locator('#md .cat-i:has-text("Katana")').click();pg.wait_for_timeout(300)
+    k="curF().inv.items.find(i=>i.n=='Katana')"
+    c0=ev(k+".catg")
+    pg.locator('.op-it:has(input[value^="Katana"]) [data-act="op-modif"]').click();pg.wait_for_timeout(600)
+    nomes=pg.locator('#md .cat-i b').all_inner_texts()
+    chk("Modificar também lista maldições de arma",'Lancinante' in nomes and 'Cruel' in nomes and 'Carisma' not in nomes,nomes)
+    pg.locator('#md .cat-i:has-text("Lancinante")').click();pg.wait_for_timeout(500)
+    c1=ev(k+".catg")
+    chk("primeira maldição sobe a categoria em II",c1==c0+2,(c0,c1))
+    pg.locator('.op-it:has(input[value^="Katana"]) [data-act="op-modif"]').click();pg.wait_for_timeout(500)
+    pg.locator('#md .cat-i:has-text("Erosiva")').click();pg.wait_for_timeout(500)
+    chk("segunda maldição sobe em I",ev(k+".catg")==min(4,c1+1),ev(k+".catg"))
+    chk("dano extra da Lancinante entra no ataque",'+1d8' in ev("SIS.armaEf("+k+").dano"),ev("SIS.armaEf("+k+").dano"))
+    chk("sem erros",not pg.errs,pg.errs)
+    b.close()
+report()
