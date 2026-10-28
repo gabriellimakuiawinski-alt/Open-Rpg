@@ -1,4 +1,4 @@
-# Sistema SFL 2 — v0.5 (rascunho completo)
+# Search For Light (SFL 2) — v0.6 (rascunho completo)
 
 Feito para o mestre Gabriel. Marcas: [CONFIRMADO] = decisão do mestre; [PROPOSTA] = ideia do Claude, não vale até aprovar; [PENDENTE] = falta decidir. Tudo abaixo que não está como [CONFIRMADO] é [PROPOSTA].
 
@@ -16,7 +16,7 @@ Classes, trilhas e origens estão em `classes-sfl2.md` (v0.1). Melhoria de base,
 - [CONFIRMADO] (28/10/2026) Variações da mesma arma (arco curto e composto, besta leve e pesada) **dividem o mesmo treino**.
 - [CONFIRMADO] (28/10/2026) **Os selos da SFL 1 não existem na SFL 2**, ou existirão de forma diferente, porque representavam o que Helena conseguiu conter. Os novos tipos de zumbis e os infectados únicos serão criados com o mestre.
 - [CONFIRMADO] (28/10/2026) O mestre quer um **bom sistema de melhoria de base**, **economia na moeda da Estônia com loja no Open RPG**, e uma **mecânica única para o parkour**. Chefes ficam para depois. **Todo o sistema vai para o Open RPG** (ficha digital e loja). Ver `base-economia-parkour-sfl2.md`.
-- [PENDENTE] Nome do sistema.
+- [CONFIRMADO] (28/10/2026) **Nome do sistema: Search For Light.** O **Corpo soma no dano** do corpo a corpo. **Sem mecânica única de parkour** (a perícia Parkour continua). Valores e nomes atuais ficam como estão até o teste na mesa. A moeda e a loja já existem no Open RPG (euro). **O sistema já está no Open RPG** (ficha automática, rolagens, loja).
 
 ## 2. Teste básico (reserva de d20)
 - [CONFIRMADO] O teste rola uma **reserva de d20 igual ao valor do atributo** usado e fica com o **maior** resultado.
@@ -94,7 +94,7 @@ Cada jogador escolhe uma linha na criação e começa com o Nível 1. [PROPOSTA]
 - Iniciativa: teste de Reflexo (seção 2). Por turno: 1 ação, 1 movimento (9 m) e 1 reação limitada.
 - **Ataque** = reserva de d20 igual à Mira, maior dado + treino da arma ou categoria (o atributo não soma). [CONFIRMADO] **Não existe Defesa automática**: quem é atacado **rola a reação** (seção 8.2). [PROPOSTA] O ataque acerta se o total do atacante for **maior** que o total da reação; empate favorece quem se defende.
 - [CONFIRMADO] Mira: o **Reflexo define os dados** do ataque à distância e do Arremesso; no corpo a corpo, quem define os dados é o **Corpo** (força).
-- [PROPOSTA] Dano: dados da arma, mais o Corpo no corpo a corpo. [PENDENTE] Como o atributo não soma nos testes, o Corpo ainda soma no dano?
+- [PROPOSTA] Dano: dados da arma, mais o Corpo no corpo a corpo. [CONFIRMADO 28/10] O Corpo soma no dano do corpo a corpo.
 - [CONFIRMADO] **Crítico:** se o dado que ficou cair na **margem de crítico da arma** e o ataque **acertar**, é crítico: o **efeito da arma** acontece e, [PROPOSTA] os dados de dano são multiplicados pelo multiplicador da arma (só os dados da arma, não o Corpo). Um crítico que **erra** não faz nada (seção 8.3).
 - [PENDENTE] Reação contra poderes (como alguém se defende de um poder).
 
@@ -125,7 +125,7 @@ Cada jogador escolhe uma linha na criação e começa com o Nível 1. [PROPOSTA]
 - [CONFIRMADO] A **margem de crítico e o multiplicador variam por arma**, como em Ordem Paranormal. **Crítico é tirar número alto no dado, e nem sempre um crítico acerta** (o ataque ainda precisa vencer a reação).
 - Coluna **Crítico** = margem do dado que ficou e multiplicador dos dados de dano. Ex.: "19–20 ×2" = um 19 ou 20 no dado que ficou, que acerte, dobra os dados de dano e ativa o efeito. "×1" = só o efeito, sem multiplicar. Todos os valores abaixo são [PROPOSTA]: armas leves e precisas têm margem maior e multiplicador menor; armas pesadas têm margem 20 e multiplicador ×3.
 - [PROPOSTA] Como o jogador rola vários dados e fica com o maior, tirar 19 ou 20 é comum (cerca de 27% com 3 dados). Por isso a maioria das armas tem margem só no 20. Testar na mesa.
-- Dano corpo a corpo soma o Corpo [PENDENTE, ver seção 8]. Alerta +1 ou +2 é o barulho que a arma faz.
+- Dano corpo a corpo soma o Corpo [CONFIRMADO 28/10]. Alerta +1 ou +2 é o barulho que a arma faz.
 
 **Armas simples (sem treino; usam o bônus de Contundente, Cortante, Arremesso ou Tiro)**
 
@@ -265,19 +265,17 @@ Valores base [PROPOSTA], **recalibrados em 28/10** porque o atributo não soma m
 
 ## 16. Pendências do sistema
 **A decidir com o mestre**
-- Nome do sistema.
 - Se o jogador pode misturar linhas de poder (explicação pedida pelo mestre; ver abaixo).
-- Se o Corpo ainda soma no dano.
 - Reação contra poderes.
 - Origens ligadas à Estônia, nomes finais de classes e habilidades, trocar de trilha ou misturar classes.
 - Ritmo dos marcos e equilíbrio de tudo (testar na mesa).
 
 **A criar com o mestre**
 - Infectados únicos (no lugar dos selos) e novos tipos de zumbis.
-- Melhoria da base, economia e loja, mecânica única de parkour (rascunhos em `base-economia-parkour-sfl2.md`).
+- Melhoria da base (rascunho em `base-economia-parkour-sfl2.md`; falta construir a tela da base no Open RPG). Economia e loja já estão no Open RPG; o parkour ficou sem mecânica própria.
 - Chefes (depois).
 - Veículos.
-- Colocar o sistema inteiro no Open RPG (ficha digital e loja).
+- Open RPG: ficha, rolagens e loja já feitas (28/10); faltam a base, o bestiário e as rolagens no log da mesa.
 - Teste na mesa (uma sessão curta) para ajustar números.
 
 **Sobre misturar linhas de poder (a pergunta explicada)**
