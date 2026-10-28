@@ -5,8 +5,8 @@ Criado em 28/10/2026 para o mestre Gabriel. Marcas: [CONFIRMADO] = decisão do m
 ## 1. O que o mestre já decidiu (28/10/2026)
 - [CONFIRMADO] Quer um **bom sistema de melhoria de base**.
 - [CONFIRMADO] A economia usa a **moeda da Estônia** e a **loja fica no Open RPG**.
-- [CONFIRMADO] O parkour terá uma **mecânica única**, e ele aceita a ideia de perseguição.
-- [CONFIRMADO] **Todo o sistema vai para o Open RPG.**
+- [CONFIRMADO] (revisado em 28/10, 13:12) **Sem mecânica única de parkour.**
+- [CONFIRMADO] **Todo o sistema vai para o Open RPG.** Feito em 28/10: ficha, rolagens, catálogo e loja em euro (PR 37 do repositório).
 - [CONFIRMADO] Chefes ficam para depois.
 
 ## 2. Melhoria de base
@@ -61,28 +61,15 @@ A base é uma "ficha do grupo". Ela tem **cômodos** (módulos) que o grupo cons
 - [PROPOSTA] Ao criar os itens, cada um tem: nome, categoria, preço em €, espaço no inventário, e qual facção vende.
 - [PENDENTE] Faixa de preços (balanceamento): para segurar o poder, itens fortes devem ser raros e caros.
 
-## 4. Parkour: mecânica única
-O mestre aceitou a perseguição, mas quer algo **só do SFL 2**. Três direções (o mestre escolhe):
-
-### Direção A — Fôlego em corrida ("a trilha")
-- [PROPOSTA] Perseguição vira uma **trilha de 5 a 7 casas** entre o grupo e a ameaça. Cada rodada, o jogador escolhe uma **rota**: Segura (Atletismo, DT 10), Rápida (Parkour, DT 15) ou Arriscada (Parkour, DT 20). Rota rápida e arriscada avançam mais casas; falha custa Fôlego ou dano. O Fôlego vira o relógio da fuga.
-
-### Direção B — Cartas de obstáculo
-- [PROPOSTA] O mestre revela um **obstáculo** por rodada (muro, vão, grade, escombro) e o jogador resolve com uma **manobra** (Pular, Escalar, Deslizar, Rolar). Cada manobra usa uma perícia diferente e deixa **vantagem para a próxima** se der certo. Encadear manobras diferentes cria "combo" de fluxo (+1 dado).
-
-### Direção C — Ímpeto
-- [PROPOSTA] Uma nova barra **Ímpeto** (0 a 3) sobe a cada sucesso consecutivo em testes de movimento. Com Ímpeto alto, a próxima manobra rola +1 dado e o jogador pode fazer algo extra (empurrar um inimigo, pegar um item). Qualquer falha zera o Ímpeto. Conecta com o Batedor.
-
-- [PROPOSTA] Sugestão do Claude: **A + C**: a trilha dá tensão (quem está perto de quem), e o Ímpeto dá o gosto de fazer parkour bem.
-- [PENDENTE] Escolher a direção e ligar a Reflexo, Fôlego e à linha Predador/Sombra.
+## 4. Parkour
+[CONFIRMADO 28/10] Sem mecânica única de parkour. A perícia Parkour continua valendo para esquiva e fuga. As três direções que o Claude tinha proposto (trilha, manobras, Ímpeto) ficam descartadas.
 
 ## 5. Colocar o sistema no Open RPG
 - [CONFIRMADO] Todo o sistema vai para o Open RPG.
 - [PROPOSTA] Etapas: (1) fichas (atributos, perícias, recursos, Infecção), (2) classes, trilhas, origens e poderes, (3) armas e loja, (4) base, (5) combate e testes com rolagem de dados, (6) nome do sistema.
-- [PENDENTE] Preciso saber onde fica o código do Open RPG (repositório, linguagem) para começar. Quando o mestre quiser, é só abrir o repositório numa sessão.
+- Feito em 28/10/2026: sistema `sfl` no repositório gabriellimakuiawinski-alt/Open-Rpg (`sfl-dados.js`, `sfl-regras.js`, `ficha-sfl.js`, SQL `schema_etapa14_sfl_celular.sql`). Falta a base, o bestiário e as rolagens no log da mesa.
 
 ## 6. Pendências deste arquivo
-- Escolher a direção do parkour.
 - Responder as 4 perguntas da base.
 - Escolher como a moeda funciona no jogo (a, b ou c).
 - Nome do sistema.
