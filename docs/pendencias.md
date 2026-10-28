@@ -28,3 +28,6 @@ Feito em 27/10/2026: itens amaldiçoados, ritual por NEX, Ameaças da Realidade 
 ## Complementos (27/10/2026, em andamento)
 Feito: estrutura (escolha na campanha, etiqueta SaH, filtro) e os 91 itens do SaH (armas, munição, modificações, acessórios, explosivos, operacionais, medicamentos, paranormais e amaldiçoados). **Pendente do usuário:** rodar `schema_etapa13_sah_itens_celular.sql`.
 Falta do SaH: origens (20), poderes gerais (34), poderes paranormais (8), rituais (16, confirmar se entram), poderes e trilhas de classe, conferir a classe Sobrevivente, criaturas (12) e Ameaças da Realidade, regras opcionais (evolução por patentes, limite de itens vestidos etc.). Depois: livros dos arquivos secretos. Pontos a confirmar do livro: Revólver compacto (dano P), Bastão policial (alcance Curto), categoria da Lente de Revelação (inferida) e ficha do Fuzil Alheio (inferida).
+
+## Search For Light (28/10/2026)
+Feito: sistema `sfl` (ficha automática, classes, trilhas, origens, linhas de poder, armas com crítico por arma, catálogo e loja em euro). **Pendente do usuário:** rodar `schema_etapa14_sfl_celular.sql` no Supabase (libera o sistema 'sfl'). Falta: base da campanha, bestiário/infectados únicos, chefes, veículos, rolagens no log da mesa, token com Medo/Infecção. Valores [PROPOSTA] do sistema podem mudar após a mesa de teste (regenerar `sfl-dados.js`).
