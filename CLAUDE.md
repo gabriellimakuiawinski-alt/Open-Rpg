@@ -13,6 +13,7 @@ Site: https://gabriellimakuiawinski-alt.github.io/Open-Rpg/ (GitHub Pages, branc
 | sons e trilha | docs/som.md |
 | testes | docs/testes.md |
 | dados do livro (habilidades, rituais) | tools/livro/ + docs/banco.md |
+| sistema Search For Light (SFL 2) | docs/inicio-ficha.md (seção SFL) + docs/sfl/ |
 | o que falta / ideias | docs/pendencias.md |
 
 ## Regras que não mudam
@@ -36,4 +37,4 @@ Não dá para conferir o deploy do Pages daqui; avise o usuário para abrir em a
 Antes de publicar: `python3 tools/build/build.py` e rode os testes (docs/testes.md).
 
 ## Estado atual
-Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase, nesta ordem, `schema_etapa9d_enigmas.sql`, `schema_etapa12_itens_fx.sql` e `schema_etapa13_sah_itens.sql` (use as versões `_celular.sql` de uma linha, o editor do celular quebra colagem longa). Os anteriores, até a etapa 11, já estão rodados.
+Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase, nesta ordem, `schema_etapa9d_enigmas.sql`, `schema_etapa12_itens_fx.sql` e `schema_etapa13_sah_itens.sql` e por último `schema_etapa14_sfl_celular.sql` (libera o sistema Search For Light). Use as versões `_celular.sql` de uma linha, o editor do celular quebra colagem longa. Os anteriores, até a etapa 11, já estão rodados.

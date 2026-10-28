@@ -84,8 +84,8 @@ h2::after{content:"";flex:1;border-bottom:2px dashed #00000026}
 <input type="file" id="fi" accept=".json,application/json" hidden>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>
-<script src="sistemas.js?v=8"></script>
-<script src="ficha-op.js?v=20"></script><script src="ficha-monstro.js?v=2"></script>
+<script src="sfl-dados.js?v=1"></script><script src="sistemas.js?v=9"></script><script src="sfl-regras.js?v=1"></script>
+<script src="ficha-op.js?v=20"></script><script src="ficha-sfl.js?v=1"></script><script src="ficha-monstro.js?v=2"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px;font-size:16px">Não consegui carregar o login. Confira a internet e se o arquivo <b>comum.js</b> está na mesma pasta deste arquivo.</p>';throw new Error('Mesa indisponível')}
 const db=Mesa.db;
@@ -132,7 +132,7 @@ const completa=d=>{const b=nova('');for(const k of['info','attrs','stats','skill
   if(!Array.isArray(d.docs))d.docs=[];if(!Array.isArray(d.secoes))d.secoes=[];if(typeof d.notas!='string')d.notas='';return d},
 dadosDe=f=>{const{_camp,_dono,_donoNome,_priv,_npc,_din,...d}=f;return d},
 fromRow=r=>({...completa(r.dados||{}),id:r.id,nome:r.nome,_camp:r.campanha_id,_dono:r.user_id,_donoNome:NOMES[r.user_id]||'',_priv:!!r.privada,_npc:!!r.npc,_din:r.dinheiro==null?undefined:+r.dinheiro}),
-sisDe=f=>SIS.sistemaDe(CAMPS.find(c=>c.id==f._camp),f),ehOP=f=>!!f&&sisDe(f)=='op',
+sisDe=f=>SIS.sistemaDe(CAMPS.find(c=>c.id==f._camp),f),ehOP=f=>!!f&&sisDe(f)=='op',ehSFL=f=>!!f&&sisDe(f)=='sfl',
 curF=()=>ALL.find(f=>f.id==SEL),av=(f,id)=>{const a=f.attrs.find(a=>a.id==id);return a?+a.v||0:0},
 getP=(o,p)=>p.split('.').reduce((t,k)=>t==null?t:t[k],o),
 setP=(o,p,v)=>{const k=p.split('.');let t=o;for(let i=0;i<k.length-1;i++){if(t[k[i]]==null||typeof t[k[i]]!='object')t[k[i]]={};t=t[k[i]]}t[k[k.length-1]]=v},
@@ -242,6 +242,7 @@ ${vSecoes(f)}${vNotasSec(f)}`}
 
 function derive(){const f=curF();if(!f)return;
   if(ehOP(f))return OP.derive(f);
+  if(ehSFL(f))return SFL.derive(f);
   f.stats.forEach((s,i)=>{const e=$('#sb'+i);if(e){e.style.width=(s.max>0?Math.max(0,Math.min(100,s.cur/s.max*100)):0)+'%';e.style.background=s.c}});
   f.skills.forEach((s,i)=>{const e=$('#sk'+i);if(e){const n=av(f,s.a),b=(+s.t||0)+(+s.o||0);e.textContent=(n>0?n:2)+'d20'+(n>0?'':'↓')+(b?(b>0?' +':' ')+b:'')}});
   const ct=$('#ct');if(ct){const used=f.inv.items.reduce((t,it)=>t+(+it.esp||0)*(+it.qtd||0),0),cap=av(f,f.inv.capAttr)*(+f.inv.capMult||0)+(+f.inv.capExtra||0),cb=$('#cb');
@@ -249,18 +250,19 @@ function derive(){const f=curF();if(!f)return;
 const rotulo=x=>(x.nome||'Sem nome')+(x._dono!=ME.id?' — '+(x._donoNome||'outro'):'');
 function renderSel(){$('#sel').innerHTML=ALL.map(x=>`<option value="${x.id}" ${x.id==SEL?'selected':''}>${esc(rotulo(x))}</option>`).join('')}
 function render(){const f=curF();renderSel();
-  const op=ehOP(f),mon=op&&window.MON&&MON.ehMonstro(f),T=mon?MON.TABS:op?OP.TABS:TABS;document.body.classList.toggle('sis-monstro',!!mon);
-  document.body.classList.toggle('sis-op',op);document.body.classList.toggle('sis-modular',!!f&&!op);
+  const op=ehOP(f),sf=ehSFL(f),mon=op&&window.MON&&MON.ehMonstro(f),T=mon?MON.TABS:op?OP.TABS:sf?SFL.TABS:TABS;document.body.classList.toggle('sis-monstro',!!mon);
+  document.body.classList.toggle('sis-op',op||sf);document.body.classList.toggle('sis-sfl',sf);document.body.classList.toggle('sis-modular',!!f&&!op&&!sf);
   if(!T.some(x=>x[0]==tab))tab='g';
   /* Ordem Paranormal: aplica as regras antes de desenhar; se algo mudou e dá para editar, grava */
   if(op){const antes=ss(dadosDe(f));OP.calc(f);if(ss(dadosDe(f))!=antes&&podeEditar(f))touch(f)}
+  if(sf){const antes=ss(dadosDe(f));SFL.calc(f);if(ss(dadosDe(f))!=antes&&podeEditar(f))touch(f)}
   $('#tabs').innerHTML=T.map(([k,l])=>`<button data-tab=${k} class="${tab==k?'on':''}">${l}</button>`).join('');
-  const v=f?(mon&&MON.views[tab]?MON.views[tab]:op?OP.views[tab]:{g:vGeral,p:vPericias,i:vInv,n:vNotas}[tab])(f):'';
+  const v=f?(mon&&MON.views[tab]?MON.views[tab]:op?OP.views[tab]:sf?SFL.views[tab]:{g:vGeral,p:vPericias,i:vInv,n:vNotas}[tab])(f):'';
   $('#app').innerHTML=f&&!podeEditar(f)?`<fieldset disabled style="border:0;padding:0;margin:0;min-width:0">${v}</fieldset>`:v;const del=document.querySelector('[data-act=delf]');if(del)del.disabled=!!f&&f._dono!=ME.id;derive()}
 
 /* ============ AÇÕES ============ */
-const NEW={info:()=>({n:'Campo',v:''}),attrs:()=>({id:uid(),n:'ATR',v:1}),stats:()=>({id:uid(),n:'Nova',cur:0,max:0,c:'#6dd36d'}),skills:()=>({id:uid(),n:'Perícia',a:'',t:0,o:0}),items:()=>ehOP(curF())?{id:uid(),n:'',tipo:'geral',catg:0,esp:1,qtd:1,eq:false,desc:''}:{id:uid(),n:'',cat:'Geral',esp:1,qtd:1,desc:''},poderes:()=>({id:uid(),n:'',desc:''}),docs:()=>({id:uid(),t:'',txt:'',img:''}),secoes:()=>({id:uid(),t:'',l:[{n:'',v:''}]})};
-function roll(i){const f=curF(),s=f.skills[i],n=av(f,s.a),r=Array.from({length:n>0?n:2},()=>1+Math.floor(Math.random()*20)),best=n>0?Math.max(...r):Math.min(...r);let b=(+s.t||0)+(+s.o||0);
+const NEW={info:()=>({n:'Campo',v:''}),attrs:()=>({id:uid(),n:'ATR',v:1}),stats:()=>({id:uid(),n:'Nova',cur:0,max:0,c:'#6dd36d'}),skills:()=>({id:uid(),n:'Perícia',a:'',t:0,o:0}),items:()=>ehSFL(curF())?{id:uid(),n:'',tipo:'geral',esp:1,qtd:1,eq:false,desc:''}:ehOP(curF())?{id:uid(),n:'',tipo:'geral',catg:0,esp:1,qtd:1,eq:false,desc:''}:{id:uid(),n:'',cat:'Geral',esp:1,qtd:1,desc:''},poderes:()=>({id:uid(),n:'',desc:''}),docs:()=>({id:uid(),t:'',txt:'',img:''}),secoes:()=>({id:uid(),t:'',l:[{n:'',v:''}]})};
+function roll(i){const f=curF();if(ehSFL(f)){SFL.rolarPericia(f,i);return}const s=f.skills[i],n=av(f,s.a),r=Array.from({length:n>0?n:2},()=>1+Math.floor(Math.random()*20)),best=n>0?Math.max(...r):Math.min(...r);let b=(+s.t||0)+(+s.o||0);
   if(ehOP(f)){const D=OP.calc(f).D;b+=(D.per[s.n]||0)+(['Fortitude','Reflexos','Vontade'].includes(s.n)?D.res:0)}
   toast(`${esc(f.nome||'Ficha')} · ${esc(s.n)}: [${r}] → ${best}${b?(b>0?' +':' ')+b:''} = <b>${best+b}</b>`)}
 let RR=false; // redesenhar quando o campo perder o foco (não atrapalha a digitação)
@@ -273,9 +275,10 @@ document.addEventListener('input',e=>{const t=e.target,f=curF();if(!f)return;
   const p=t.dataset.p;if(!p)return;let v=t.value;if('n' in t.dataset)v=v===''?0:+v;setP(f,p,v);
   if(/\.luz\.t$/.test(p)&&!v){const it=getP(f,p.replace(/\.luz\.t$/,''));if(it)delete it.luz}
   if(p=='nome'){const o=$('#sel').selectedOptions[0];if(o)o.textContent=rotulo(f)}touch(f);
-  if(ehOP(f)){const rr=OP.depois(f,'rr' in t.dataset);if(rr){if(t.tagName=='SELECT')render();else RR=true}else derive()}else derive()});
+  if(ehOP(f)){const rr=OP.depois(f,'rr' in t.dataset);if(rr){if(t.tagName=='SELECT')render();else RR=true}else derive()}
+  else if(ehSFL(f)){const rr=SFL.depois(f,'rr' in t.dataset);if(rr){if(t.tagName=='SELECT')render();else RR=true}else derive()}else derive()});
 document.addEventListener('change',e=>{const t=e.target,f=curF();if(!f||!t.dataset)return;
-  if('din' in t.dataset){OP.dinheiro(f,t.value);return}
+  if('din' in t.dataset){(ehSFL(f)?SFL:OP).dinheiro(f,t.value);return}
   if(RR||('rr' in t.dataset&&t.tagName!='SELECT')){RR=false;render()}});
 $('#sel').onchange=e=>{SEL=e.target.value;localStorage.mesa_ficha_sel=SEL;render()};
 document.addEventListener('click',async e=>{
@@ -287,6 +290,7 @@ document.addEventListener('click',async e=>{
     if(a=='imp'){$('#fi').click();return}
     if(!f)return;
     if(a&&a.startsWith('mon-')){if(MON.acao(a,d,f))return}
+    if(a&&a.startsWith('sfl-')){if(!podeEditar(f)){toast('Somente leitura.');return}await SFL.acao(a,d,f);return}
     if(a&&a.startsWith('op-')){if(!podeEditar(f)){toast('Somente leitura.');return}await OP.acao(a,d,f);return}
     if(a=='secr+'){f.secoes[+d.i].l=f.secoes[+d.i].l||[];f.secoes[+d.i].l.push({n:'',v:''});touch(f);render();return}
     if(a=='secr-'){f.secoes[+d.i].l.splice(+d.j,1);touch(f);render();return}
@@ -299,8 +303,8 @@ document.addEventListener('click',async e=>{
       const{data,error}=await db.from('personagens').delete().eq('id',f.id).select('id');if(error)throw error;if(!data||!data.length)throw new Error('sem permissão para excluir');
       ALL=ALL.filter(x=>x!=f);if(!ALL.length)await criarPadrao();SEL=ALL[0].id;render()}
     else if(a=='add'){if(!listOf(f,d.l))f[d.l]=[];listOf(f,d.l).push(NEW[d.l]());touch(f);render()}
-    else if(a=='del'){const l=listOf(f,d.l),it=l[+d.i];l.splice(+d.i,1);if(ehOP(f))OP.calc(f);if(d.l=='attrs'){f.skills.forEach(s=>{if(s.a==it.id)s.a=''});if(f.inv.capAttr==it.id)f.inv.capAttr=''}touch(f);render()}
-    else if(a=='sd'){const s=f.stats[+d.i];s.cur=Math.max(0,(+s.cur||0)+ +d.d);if(ehOP(f)&&s.max>0)s.cur=Math.min(s.cur,+s.max);const i=$(`[data-p="stats.${d.i}.cur"]`);if(i)i.value=s.cur;touch(f);derive()}
+    else if(a=='del'){const l=listOf(f,d.l),it=l[+d.i];l.splice(+d.i,1);if(ehOP(f))OP.calc(f);if(ehSFL(f))SFL.calc(f);if(d.l=='attrs'){f.skills.forEach(s=>{if(s.a==it.id)s.a=''});if(f.inv.capAttr==it.id)f.inv.capAttr=''}touch(f);render()}
+    else if(a=='sd'){const s=f.stats[+d.i];s.cur=Math.max(0,(+s.cur||0)+ +d.d);if((ehOP(f)||ehSFL(f))&&s.max>0)s.cur=Math.min(s.cur,+s.max);const i=$(`[data-p="stats.${d.i}.cur"]`);if(i)i.value=s.cur;touch(f);derive()}
     else if(a=='docimg'){DOCI=+d.i;$('#docfile').click()}
     else if(a=='docx'){f.docs[+d.i].img='';touch(f);render()}
     else if(a=='docver'){verDoc(f.docs[+d.i])}

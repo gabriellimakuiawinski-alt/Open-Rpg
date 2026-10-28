@@ -54,3 +54,5 @@ Sincronia ficha↔token: `token_para_ficha, ficha_para_tokens, stats_aplica, bar
 - Etapa 11 (`schema_etapa11_regras.sql`, independente): tabela global `livro_regras` (grupo condicao, perigo ou regra; texto resumido, pagina). 36 condições, perigos (ambiente, armadilhas, doenças, venenos) e regras de cálculo. Gerada por `tools/livro/gerar_op_regras.py`.
 
 - Etapa 13 (`schema_etapa13_sah_itens.sql`, depois da 12; versão de uma linha `_celular.sql`): complemento **Sobrevivendo ao Horror (SaH)**. Amplia o check de `livro_itens.grupo` com `medicamento`, cria índice por `fonte` e insere 91 itens com `fonte='sah'` e `dados.comp='sah'` (+ `dados.pag` = página do livro). Gerada por `tools/livro/gerar_sah_itens.py`. A escolha de complementos de cada campanha fica em `campanhas.config.complementos` (lista de ids, ex. `['sah']`), sem SQL.
+
+- Etapa 14 (`schema_etapa14_sfl.sql`, depois da 5; versão de uma linha `_celular.sql`): libera `'sfl'` (Search For Light) no check `campanhas_sistema_ok`. Só isso: os dados do SFL (classes, trilhas, origens, poderes, armas) ficam no repositório (`sfl-dados.js`), porque são regras próprias do mestre, não de livro.
