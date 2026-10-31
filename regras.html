@@ -18,11 +18,13 @@ h2{font:400 16px var(--maq);color:var(--papel2);margin:18px 0 8px;letter-spacing
 .rg b{font:400 18px var(--maq)}.rg p{margin:0;font-size:15px}.rg small{font:400 12px var(--maq);color:var(--tinta2)}
 .tg{display:inline-block;padding:1px 7px;border-radius:9px;font:400 11px var(--maq);color:#fff;background:#555;margin-right:6px}
 .tg.medo{background:#6b4b9a}.tg.mental{background:#2f6f8f}.tg.paralisia{background:#8a5a1f}.tg.sentidos{background:#3d7a4a}.tg.fadiga{background:#8f3a3a}
+.compt{display:inline-block;padding:0 6px;border-radius:8px;font:400 11px var(--maq);background:#7a2e2e;color:#fff;vertical-align:middle}
 .vazio{padding:24px;border:2px dashed #ffffff33;border-radius:4px;text-align:center;opacity:.9}
 </style><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone-192.png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"></head><body>
 <header><a href="index.html">Início</a><h1>Regras do livro</h1></header>
 <main>
-<div class="abas"><button data-t="condicao" class="on">Condições</button><button data-t="perigo">Perigos</button><button data-t="regra">Cálculos</button></div>
+<div class="abas"><button data-t="condicao" class="on">Condições</button><button data-t="perigo">Perigos</button><button data-t="regra">Cálculos</button><button data-t="jogo">Novas regras <span class="compt">SaH</span></button><button data-t="opcional">Regras opcionais <span class="compt">SaH</span></button></div>
+<p id="dica" class="vazio" style="display:none;padding:10px;text-align:left"></p>
 <input class="busca" id="q" placeholder="Buscar pelo nome ou texto">
 <div id="lst"></div>
 </main>
@@ -33,19 +35,21 @@ if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px">Não
 const db=Mesa.db,$=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
 const norm=s=>String(s||'').normalize('NFD').replace(/[̀-ͯ]/g,'').toLowerCase();
 let L=[],TAB='condicao',Q='';
-function desenha(){
+const DICA={jogo:'Regras novas do Sobrevivendo ao Horror: valem junto com o livro básico (medo, perseguição, furtividade, investigação, fabricação e folgas).',opcional:'Regras opcionais do Sobrevivendo ao Horror: só valem se o mestre escolher. Marque as que sua mesa usa em Sistema e regras da campanha.'};
+function desenha(){const dc=$('#dica');dc.style.display=DICA[TAB]?'block':'none';dc.textContent=DICA[TAB]||'';
   const t=norm(Q),A=L.filter(x=>x.grupo==TAB&&(!t||norm(x.nome+' '+x.texto+' '+(x.subgrupo||'')).includes(t)));
   if(!A.length){$('#lst').innerHTML='<p class="vazio">Nada por aqui.</p>';return}
   let ult=null,h='<div class="lista">';
   A.forEach(x=>{
-    if(TAB=='perigo'&&x.subgrupo!=ult){ult=x.subgrupo;h+=`</div><h2>${esc(x.subgrupo)}</h2><div class="lista">`}
-    h+=`<div class="rg"><b>${esc(x.nome)}</b>${TAB=='condicao'&&x.dados&&x.dados.tipo&&x.dados.tipo!='outra'?`<span><span class="tg ${esc(x.dados.tipo)}">condição de ${esc(x.dados.tipo)}</span></span>`:''}<p>${esc(x.texto)}</p><small>Livro, p. ${x.pagina}</small></div>`});
+    if(TAB!='condicao'&&TAB!='regra'&&x.subgrupo!=ult){ult=x.subgrupo;h+=`</div><h2>${esc(x.subgrupo)}</h2><div class="lista">`}
+    h+=`<div class="rg"><b>${esc(x.nome)}</b>${TAB=='condicao'&&x.dados&&x.dados.tipo&&x.dados.tipo!='outra'?`<span><span class="tg ${esc(x.dados.tipo)}">condição de ${esc(x.dados.tipo)}</span></span>`:''}<p>${esc(x.texto)}</p><small>${x.fonte=='sah'?'<span class="compt">SaH</span> Sobrevivendo ao Horror':'Livro'}, p. ${x.pagina}</small></div>`});
   $('#lst').innerHTML=h+'</div>'}
 document.querySelectorAll('.abas button').forEach(b=>b.onclick=()=>{TAB=b.dataset.t;document.querySelectorAll('.abas button').forEach(x=>x.classList.toggle('on',x==b));desenha()});
 $('#q').oninput=e=>{Q=e.target.value;desenha()};
 (async()=>{
   await Mesa.exigirLogin();
-  const r=await db.from('livro_regras').select('ref,grupo,subgrupo,nome,ordem,pagina,texto,dados').eq('sistema','op').order('ordem');
+  const r=await db.from('livro_regras').select('ref,grupo,subgrupo,nome,ordem,pagina,texto,dados,fonte').eq('sistema','op').order('ordem');
   if(r.error||!r.data.length){$('#lst').innerHTML='<p class="vazio">Regras indisponíveis. O mestre precisa rodar o SQL schema_etapa11_regras.sql no Supabase.</p>';return}
-  L=r.data;desenha()})();
+  L=r.data;const h=location.hash.slice(1);if(DICA[h]||h=='perigo'||h=='regra'){TAB=h;document.querySelectorAll('.abas button').forEach(x=>x.classList.toggle('on',x.dataset.t==h))}
+  if(!L.some(x=>x.fonte=='sah'))DICA.jogo=DICA.opcional='Ainda sem as regras do Sobrevivendo ao Horror: o mestre precisa rodar o SQL schema_etapa15_sah_livro.sql no Supabase.';desenha()})();
 </script></body></html>
