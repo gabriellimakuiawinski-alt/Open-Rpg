@@ -66,7 +66,8 @@
   /* efeitos automáticos: habilidades (inclui homebrew) + itens equipados com bônus */
   function efeitos(f, n) {
     const E = {}, per = {}, soma = (a, v) => { if (a.startsWith('per:')) per[a.slice(4)] = (per[a.slice(4)] || 0) + v; else E[a] = (E[a] || 0) + v };
-    (f.poderes || []).forEach(p => { if (p.off) return; (p.ef || []).forEach(e => { if (e && e.a) soma(e.a, n0(e.v) * (e.nv ? n : 1)) }) });
+    /* ef.nv: multiplica pelo nível (NEX/5 ou estágio), arredondando para baixo; ef.min: só vale a partir desse nível */
+    (f.poderes || []).forEach(p => { if (p.off) return; (p.ef || []).forEach(e => { if (e && e.a && !(e.min && n < e.min)) soma(e.a, Math.floor(n0(e.v) * (e.nv ? n : 1))) }) });
     /* bônus de itens em perícia não se acumulam: vale o maior */
     /* aliados (ex.: Cão Adestrado) são fonte própria: somam com os itens, mas aliados não somam entre si (vale o maior) */
     const itPer = {}, alPer = {};
@@ -112,10 +113,14 @@
     const porCat = [0, 0, 0, 0, 0];
     itens.forEach(it => { const c = Math.max(0, Math.min(4, Math.round(n0(it.catg)))); if (c) porCat[c] += it.qtd === undefined ? 1 : Math.max(0, Math.round(n0(it.qtd))) });
     const excesso = [1, 2, 3, 4].filter(c => porCat[c] > pat[3][c - 1]).map(c => `${porCat[c]} itens de categoria ${ROMANO[c]} (limite ${pat[3][c - 1]})`);
+    /* itens vestidos com benefício (proteções e itens com botão Equipar): regra opcional do SaH limita a 4 (+1 com Mochileiro) */
+    const vestidos = itens.filter(it => it.eq && (it.tipo == 'protecao' || it.precisaEq)).length;
+    const limVest = 4 + ((f.poderes || []).some(p => p.n == 'Mochileiro' && !p.off) ? 1 : 0);
+    const vestExcesso = Array.isArray(cfg.regrasSah) && cfg.regrasSah.includes('vestidos') && vestidos > limVest ? vestidos - limVest : 0;
     const pesadaSemProf = arm && arm.sub == 'pesada' && !(f.poderes || []).some(p => /prote[cç][aã]o pesada/i.test(p.n || ''));
     return { n, nex: C.estagio ? null : nexDoNivel(n), estagio: C.estagio ? n : null, classe: C, pvMax, peMax, sanMax, pdMax, determinacao: !!cfg.determinacao,
       def, defDet: det, desloc, cap, usado, sobre, maxCarga, limPE, patente: pat, porCat, excesso, per, E, res: E.res || 0,
-      dtRitual: 10 + limPE + A('pre'), luz: luz(f), pesadaSemProf };
+      dtRitual: 10 + limPE + A('pre'), luz: luz(f), pesadaSemProf, vestidos, limVest, vestExcesso };
   }
 
   /* melhor luz que o inventário oferece: c = lanterna (cone), l = lampião (raio). Em metros. */
@@ -250,6 +255,11 @@
   ], modular: [] };
   /* complementos (livros extras) do Ordem Paranormal. Cada item/habilidade deles leva comp = id e a etiqueta (sigla) */
 const COMPLEMENTOS = [{ id: 'sah', sigla: 'SaH', nome: 'Sobrevivendo ao Horror', sistema: 'op' }];
+  /* regras opcionais do SaH que a campanha marca como "em uso" (texto em regras.html, aba Regras opcionais) */
+  const REGRAS_SAH = [['vestidos', 'Limite de itens vestidos (4)', 43], ['baterias', 'Duração de baterias', 39], ['nexexp', 'NEX e experiência', 98],
+    ['debilitantes', 'Ferimentos debilitantes', 105], ['semmapa', 'Jogando sem mapa', 106], ['patentes', 'Evolução por patentes', 108],
+    ['limites', 'Limites da compreensão humana (rituais)', 113], ['complexa', 'Conjuração complexa', 114], ['desconhecidos', 'Conjurando rituais desconhecidos', 117],
+    ['narrativo', 'Combate narrativo', 119]].map(([id, nome, pag]) => ({ id, sigla: 'p.' + pag, nome, pag }));
 const compDe = id => COMPLEMENTOS.find(c => c.id == id) || null;
 const TIPOS_ITEM = [['geral', 'Geral'], ['arma', 'Arma'], ['protecao', 'Proteção'], ['municao', 'Munição'], ['consumivel', 'Consumível'], ['paranormal', 'Paranormal']];
 
@@ -301,7 +311,7 @@ const TIPOS_ITEM = [['geral', 'Geral'], ['arma', 'Arma'], ['protecao', 'Proteç�
     return { nex, vd, razao: r, nivel, texto, alvos };
   }
 
-  window.SIS = { SISTEMAS, ATR, PERICIAS, TREINO, CLASSES, NEX, PATENTES, CIRCULO_PE, ROMANO, ALVOS, CATALOGO, TIPOS_ITEM, COMPLEMENTOS, compDe,
+  window.SIS = { SISTEMAS, ATR, PERICIAS, TREINO, CLASSES, NEX, PATENTES, CIRCULO_PE, ROMANO, ALVOS, CATALOGO, TIPOS_ITEM, COMPLEMENTOS, compDe, REGRAS_SAH,
     nivel, marcos, derivar, aplicar, prepararOP, luz, rolar, teste, uid, n0, armaEf, modNome, MODEF, calcVD, parecidos, nexDaFicha, dificuldade,
     sistemaDe: (camp, f) => (camp && SISTEMAS[camp.sistema] ? camp.sistema : camp ? 'op' : (f && SISTEMAS[f.sistema] ? f.sistema : 'op')),
     cfgDe: camp => (camp && camp.config && typeof camp.config == 'object' ? camp.config : {}) };

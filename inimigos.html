@@ -30,6 +30,7 @@ input.busca{width:100%;background:#0003;color:var(--giz2);border:1px solid #ffff
 #toast{position:fixed;left:50%;top:calc(12px + env(safe-area-inset-top));transform:translate(-50%,-260%) rotate(-2deg);background:#f2df7c;color:#3d3510;font:700 21px/1.1 var(--mao);padding:14px 20px;box-shadow:0 14px 22px -10px #000;z-index:30;transition:transform .3s;max-width:92vw}
 #toast.show{transform:translate(-50%,0) rotate(-2deg)}
 .vazio{padding:24px;border:2px dashed #ffffff33;border-radius:4px;text-align:center;opacity:.9}
+.compt{display:inline-block;margin-left:6px;padding:0 6px;border:1.5px solid currentColor;border-radius:3px;font:700 10px var(--maq);letter-spacing:.06em;vertical-align:middle;opacity:.85}
 </style><link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone-192.png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><script src="pwa.js" defer></script></head><body class="quadro">
 <header><a href="index.html">Início</a><h1>Inimigos</h1><button data-a="novo" class="on">Novo inimigo</button></header>
 <main>
@@ -40,7 +41,7 @@ input.busca{width:100%;background:#0003;color:var(--giz2);border:1px solid #ffff
 </main><div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>
-<script src="sistemas.js?v=5"></script>
+<script src="sistemas.js?v=10"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px">Não consegui carregar o login. Confira a internet.</p>';throw new Error('Mesa indisponível')}
 const db=Mesa.db,$=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -63,7 +64,7 @@ ${d.pericias.length?`<p><b>Perícias</b> ${d.pericias.map(p=>esc(p.n)+' '+sinal(
 ${d.sentidos?`<p><b>Sentidos</b> ${esc(d.sentidos)}</p>`:''}${d.resist?`<p><b>Resistências</b> ${esc(d.resist)}</p>`:''}${d.vuln?`<p><b>Vulnerabilidades</b> ${esc(d.vuln)}</p>`:''}
 ${d.ataques.length?`<h4>Ataques</h4>${d.ataques.map(a=>`<p class="acao"><b>${esc(a.n)}</b> ${esc(a.alc||'')} · teste ${sinal(n0(a.teste))} · dano ${esc(a.dano||'—')}</p>`).join('')}`:''}
 ${d.habilidades.length?`<h4>Habilidades</h4>${d.habilidades.map(h=>`<p class="acao"><b>${esc(h.n)}</b>${h.acao?' ('+esc(h.acao)+')':''} ${esc(h.desc||'')}</p>`).join('')}`:''}
-${d.desc?`<p class="m" style="margin-top:8px">${esc(d.desc)}</p>`:''}</div>`}
+${d.desc?`<p class="m" style="margin-top:8px">${esc(d.desc)}</p>`:''}${en.fonte=='sah'?`<p class="m">Sobrevivendo ao Horror${en.pagina?', p. '+esc(en.pagina):''}</p>`:''}</div>`}
 
 /* ---------- inimigo -> ficha de NPC (Ordem Paranormal, classe oculta "Criatura") ---------- */
 function paraFicha(en,nome){const d=dados(en),f={nome:nome||en.nome};
@@ -83,10 +84,10 @@ function paraFicha(en,nome){const d=dados(en),f={nome:nome||en.nome};
 
 /* ---------- lista ---------- */
 const fonte=()=>TAB=='meus'?MEUS:LIVRO;
-function lista(){const q=norm($('#q').value),L=fonte().filter(e=>(!FIL||e.elemento==FIL)&&(!q||norm(e.nome).includes(q)));
-  $('#fil').innerHTML=['',...ELEM].map(x=>`<button data-f="${x}" class="${FIL==x?'on':''}">${x||'Todos'}</button>`).join('');
+function lista(){const q=norm($('#q').value),L=fonte().filter(e=>(!FIL||(FIL=='SaH'?e.fonte=='sah':FIL=='Básico'?e.fonte!='sah':e.elemento==FIL))&&(!q||norm(e.nome).includes(q)));
+  $('#fil').innerHTML=['',...ELEM,...(TAB=='livro'&&LIVRO.some(e=>e.fonte=='sah')?['Básico','SaH']:[])].map(x=>`<button data-f="${x}" class="${FIL==x?'on':''}">${x||'Todos'}</button>`).join('');
   if(TAB=='livro'&&!LIVRO_OK){$('#lst').innerHTML='<div class="vazio"><b>Os inimigos do livro ainda não foram ativados.</b><br>O mestre do site precisa rodar o SQL do bestiário no Supabase.</div>';return}
-  $('#lst').innerHTML=L.length?`<div class="lista">${L.map(e=>`<button class="en" data-id="${e.id}"><b>${esc(e.nome)}</b><span><span class="el ${esc(e.elemento)}">${esc(e.elemento||'—')}</span><small>${e.vd?'VD '+esc(e.vd)+' · ':''}PV ${dados(e).pv} · Def ${dados(e).def}</small></span></button>`).join('')}</div>`
+  $('#lst').innerHTML=L.length?`<div class="lista">${L.map(e=>`<button class="en" data-id="${e.id}"><b>${esc(e.nome)}${e.fonte=='sah'?' <span class="compt" title="Sobrevivendo ao Horror">SaH</span>':''}</b><span><span class="el ${esc(e.elemento)}">${esc(e.elemento||'—')}</span><small>${e.vd?'VD '+esc(e.vd)+' · ':''}PV ${dados(e).pv} · Def ${dados(e).def}</small></span></button>`).join('')}</div>`
     :`<div class="vazio">${TAB=='meus'?'<b>Você ainda não criou inimigos.</b><br>Toque em <b>Novo inimigo</b>, ou copie um do livro para a sua lista.':'Nenhum inimigo encontrado.'}</div>`}
 
 /* ---------- janela ---------- */

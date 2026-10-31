@@ -314,7 +314,7 @@ section{margin-top:38px}
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>
 <script src="som.js?v=9"></script>
-<script src="sfl-dados.js?v=1"></script><script src="sistemas.js?v=9"></script><script src="sfl-regras.js?v=1"></script>
+<script src="sfl-dados.js?v=1"></script><script src="sistemas.js?v=10"></script><script src="sfl-regras.js?v=1"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px;font-size:16px">Não consegui carregar o login. Confira a internet e se o arquivo <b>comum.js</b> está na mesma pasta deste arquivo.</p>';throw new Error('Mesa indisponível')}
 const db=Mesa.db;
@@ -683,8 +683,9 @@ async function acao(a,d){
       {id:'moeda',rot:'Símbolo do dinheiro',val:k.moeda||(c.sistema=='sfl'?'€':'R$'),ph:'R$'},
       {id:'determinacao',rot:'Regra de Determinação (PD no lugar de PE e SAN)',val:k.determinacao?'1':'0',opcoes:sn},
       {id:'comps',rot:'Complementos que vai usar (livros extras)',comps:SIS.COMPLEMENTOS.filter(x=>x.sistema=='op'),val:k.complementos||[],se:['sistema','op']},
+      {id:'regrasSah',rot:'Regras opcionais do Sobrevivendo ao Horror em uso (veja em Regras do livro)',comps:SIS.REGRAS_SAH,val:k.regrasSah||[],se:['sistema','op']},
       {id:'catalogoLivre',rot:'Jogadores pegam itens do catálogo sozinhos',val:k.catalogoLivre===false?'0':'1',opcoes:[['1','Sim'],['0','Não (só pela loja ou pelo mestre)']]}],ok:'Salvar',carimbo:'Atualizada'},
-      async v=>{const config={...k,moeda:v.moeda||(v.sistema=='sfl'?'€':'R$'),determinacao:v.determinacao=='1',catalogoLivre:v.catalogoLivre=='1',complementos:v.sistema=='op'?(v.comps||[]):(k.complementos||[])};
+      async v=>{const config={...k,moeda:v.moeda||(v.sistema=='sfl'?'€':'R$'),determinacao:v.determinacao=='1',catalogoLivre:v.catalogoLivre=='1',complementos:v.sistema=='op'?(v.comps||[]):(k.complementos||[]),regrasSah:v.sistema=='op'?(v.regrasSah||[]):(k.regrasSah||[])};
         const{data,error}=await db.from('campanhas').update({sistema:v.sistema,config}).eq('id',c.id).select('id');if(error)throw error;if(!data.length)throw new Error('Sem permissão.')});
     await carregar();desenhar();return}
   if(a=='renomear'){await pedir({titulo:'Renomear campanha',campos:[{id:'nome',rot:'Novo nome',val:c.nome}],ok:'Salvar',carimbo:'Atualizada',validar:v=>v.nome?'':'O nome não pode ficar vazio.'},

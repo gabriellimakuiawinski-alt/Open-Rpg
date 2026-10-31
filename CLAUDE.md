@@ -37,4 +37,4 @@ Não dá para conferir o deploy do Pages daqui; avise o usuário para abrir em a
 Antes de publicar: `python3 tools/build/build.py` e rode os testes (docs/testes.md).
 
 ## Estado atual
-Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase, nesta ordem, `schema_etapa9d_enigmas.sql`, `schema_etapa12_itens_fx.sql` e `schema_etapa13_sah_itens.sql` e por último `schema_etapa14_sfl_celular.sql` (libera o sistema Search For Light). Use as versões `_celular.sql` de uma linha, o editor do celular quebra colagem longa. Os anteriores, até a etapa 11, já estão rodados.
+Ver docs/pendencias.md. **Pendente do usuário:** rodar no Supabase `schema_etapa15_sah_livro_celular.sql` (resto do Sobrevivendo ao Horror; versão de uma linha, o editor do celular quebra colagem longa). Até a etapa 14 já está rodado (conferido em 31/10/2026). A parte de alterar tabelas da etapa 15 já foi aplicada pelo MCP; faltam os inserts (o arquivo inteiro é re-executável).
