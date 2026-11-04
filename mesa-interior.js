@@ -13,6 +13,15 @@ const snap=n=>{const q=(S.gs||50)/2;return Math.round(n/q)*q};
 const sel=()=>{if(!INT.sel)return null;const L=list();if(L.includes(INT.sel))return INT.sel;INT.sel=L.find(q=>q.id==INT.sel.id)||null;return INT.sel};
 const mapas=()=>[...LIB.values()].filter(i=>i.k=='map').sort((a,b)=>(a.n||'').localeCompare(b.n||''));
 
+/* a borda do interior vira parede (4 trechos marcados com iid, acompanham o interior) */
+function paredes(o){
+ S.walls=(S.walls||[]).filter(w=>w.iid!=o.id);
+ const x=o.x,y=o.y,X=o.x+o.w,Y=o.y+o.h;
+ [[x,y,X,y],[X,y,X,Y],[X,Y,x,Y],[x,Y,x,y]].forEach(([a,b,c,d])=>S.walls.push({x1:a,y1:b,x2:c,y2:d,d:0,o:0,iid:o.id}));
+ WV++
+}
+INT.paredes=paredes;
+
 /* desenho do interior (chamado no render, logo depois dos mapas) */
 INT.draw=function(x,v,Q,X0,Y0,X1,Y1){
  for(const o of list()){
@@ -61,8 +70,8 @@ INT.down=function(p,dbl){
 INT.move=function(p){
  const d=drag;if(!d||d.k!='int')return;
  if(d.m=='new'){const c=INT.cur;if(!c)return;c.x=Math.min(d.a.x,p.x);c.y=Math.min(d.a.y,p.y);c.w=Math.abs(p.x-d.a.x);c.h=Math.abs(p.y-d.a.y)}
- else if(d.m=='rs'){d.o.w=Math.max(S.gs/2,snap(p.x)-d.o.x);d.o.h=Math.max(S.gs/2,snap(p.y)-d.o.y);sync()}
- else if(d.m=='mv'){if(!d.moved&&Math.hypot(p.x-d.sx,p.y-d.sy)>6/S.v.z)d.moved=1;if(d.moved){d.o.x=snap(p.x-d.dx);d.o.y=snap(p.y-d.dy);sync()}}
+ else if(d.m=='rs'){d.o.w=Math.max(S.gs/2,snap(p.x)-d.o.x);d.o.h=Math.max(S.gs/2,snap(p.y)-d.o.y);paredes(d.o);sync()}
+ else if(d.m=='mv'){if(!d.moved&&Math.hypot(p.x-d.sx,p.y-d.sy)>6/S.v.z)d.moved=1;if(d.moved){d.o.x=snap(p.x-d.dx);d.o.y=snap(p.y-d.dy);paredes(d.o);sync()}}
 };
 INT.up=function(d,p){
  if(d.m=='new'){
@@ -94,13 +103,13 @@ function agir(a,id){
   if(!st)return;if(!r)return toast('Escolha um mapa.');
   const prop=$('int_p')&&$('int_p').checked?1:0;
   if(st.id){const o=L.find(q=>q.id==st.id);if(o){o.i=r.value;o.p=prop}}
-  else{const o={id:uid(),i:r.value,x:st.x,y:st.y,w:st.w,h:st.h,t:1,p:prop};L.push(o);INT.sel=o;toast('Interior marcado. Está com telhado: toque duas vezes nele para tirar.')}
+  else{const o={id:uid(),i:r.value,x:st.x,y:st.y,w:st.w,h:st.h,t:1,p:prop};L.push(o);INT.sel=o;paredes(o);toast('Interior marcado, com a borda como parede. Está com telhado: toque duas vezes nele para tirar.')}
   ED=null;$('ed').classList.add('hid');save();opts();draw();return
  }
  if(a=='sel'){INT.sel=L.find(q=>q.id==id)||null;opts();draw();return}
  if(a=='roof'&&s){alterna(s);return}
  if(a=='swap'&&s){dialogo({id:s.id,i:s.i,p:s.p});return}
- if(a=='del'&&s){if(!confirm('Remover este interior? O mapa continua na biblioteca.'))return;S.ints=L.filter(q=>q!==s);INT.sel=null;save();opts();draw();return}
+ if(a=='del'&&s){if(!confirm('Remover este interior? O mapa continua na biblioteca.'))return;S.ints=L.filter(q=>q!==s);S.walls=(S.walls||[]).filter(w=>w.iid!=s.id);WV++;INT.sel=null;save();opts();draw();return}
  if(a=='off'||a=='on'){L.forEach(q=>q.t=a=='on'?1:0);save();opts();draw();toast(a=='on'?'Todos os telhados postos.':'Todos os telhados tirados.');return}
 }
 INT.opts=function(){

@@ -29,3 +29,4 @@ O mock não prova o realtime real nem multi-dispositivo. Validar no site com 2 c
 - t45 (SaH completo: origens, poderes gerais com treino automático, trilhas, rituais, paranormais, Sobrevivente pelo livro, regras opcionais da campanha, bestiário e regras.html). `mkdb.sh` roda também a etapa 15.
 - t43 (ficha Search For Light: classe, origem, marcos, escolhas, rolagens, crítico, poder, Infecção, catálogo) e t44 (criar campanha SFL, moeda € e catálogo na loja). `mkdb.sh` roda também a etapa 14.
 - t46 (mapas de interior: marcar, telhado, salvar, jogador, remover, desfazer). `mkdb.sh` roda também a etapa 16.
+- t47 (parede automática na borda do interior + luzes fixas coloridas). `mkdb.sh` roda também a etapa 17.
