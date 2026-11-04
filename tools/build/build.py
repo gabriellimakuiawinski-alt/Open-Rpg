@@ -182,10 +182,28 @@ rep("function isCone(t){",
 rep("else if(k=='lc'||k=='ll'){const m=k=='lc';if(sel.lo&&isCone(sel)==m)sel.lo=0;else{sel.lo=1;",
     "else if(k=='lc'||k=='ll'){const m=k=='lc';if(sel.lo&&isCone(sel)==m)sel.lo=0;else if(luzAuto(sel)){const z=luzInv(sel,m?'c':'l');if(!z){toast(m?'Sem lanterna no inventário da ficha.':'Sem lampião no inventário da ficha.');return}sel.lo=1;sel.lm=m?'c':'l';sel.lz=z;if(m&&!(sel.la>0&&sel.la<360))sel.la=60}else{sel.lo=1;")
 rep("if(!sel.lz)sel.lz=m?10:6}}else if(k=='rl'", "if(!sel.lz)sel.lz=m?10:6}}else if(k=='rl'")
+
+# ---- etapa 16: mapas de interior (mesa-interior.js) ----
+rep('<button data-t="wall" data-i="wall" title="Luz e paredes (W)"></button>', '<button data-t="wall" data-i="wall" title="Luz e paredes (W)"></button><button data-t="int" data-i="int" title="Interiores (I)"></button>')
+rep("const PA={wall:", "const PA={int:'<path d=\"M3 11l9-7 9 7v9H3zM9 20v-6h6v6\"/>',wall:")
+rep("body.jog [data-t=fog],body.jog [data-t=wall],", "body.jog [data-t=fog],body.jog [data-t=wall],body.jog [data-t=int],")
+rep("function setTool(t){if(!GER&&(t=='fog'||t=='wall'))return;", "function setTool(t){if(!GER&&(t=='fog'||t=='wall'||t=='int'))return;")
+rep("{v:'sel',f:'fog',r:'rul',w:'wall'}[k]", "{v:'sel',f:'fog',r:'rul',w:'wall',i:'int'}[k]")
+rep(":tool=='wall'?wallOpts(B):", ":tool=='wall'?wallOpts(B):tool=='int'?INT.opts():")
+rep("else if(tool=='wall')wallDown(p,dbl);", "else if(tool=='wall')wallDown(p,dbl);\nelse if(tool=='int')INT.down(p,dbl);")
+rep("else if(drag.k=='rul')ruler.b=p;else if(drag.k=='fog')", "else if(drag.k=='int')INT.move(p);else if(drag.k=='rul')ruler.b=p;else if(drag.k=='fog')")
+rep("if(drag.k=='fog')return fin();const k=drag.k;", "if(drag.k=='int'){const d0=drag;drag=null;INT.up(d0,w(e));return}if(drag.k=='fog')return fin();const k=drag.k;")
+rep("else{x.fillStyle='#242941';x.fillRect(r.x,r.y,r.w,r.h)}});", "else{x.fillStyle='#242941';x.fillRect(r.x,r.y,r.w,r.h)}});\nINT.draw(x,v,Q,VX0,VY0,VX1,VY1);")
+rep("if(!VIEW&&(tool=='wall'||S.nt)){", "INT.marks(x,v);if(!VIEW&&(tool=='wall'||S.nt)){")
+rep("s.fcol=S.fcol;s.fa=S.fa}WV++;", "s.fcol=S.fcol;s.fa=S.fa;s.ints=S.ints}WV++;")
+rep("m:S.maps,w:S.walls.filter(w=>!w.a)}", "m:S.maps,n:S.ints||[],w:S.walls.filter(w=>!w.a)}")
+rep("S.maps=o.m;S.walls=", "S.maps=o.m;S.ints=o.n||[];S.walls=")
+rep("maps:S.maps,nt:S.nt,dl:S.dl,lg:", "maps:S.maps,ints:S.ints||[],nt:S.nt,dl:S.dl,lg:")
+rep("[...s.maps.map(m=>m.i),", "[...s.maps.map(m=>m.i),...(s.ints||[]).map(o=>o.i),")
 FONTS='<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin><link href="https://fonts.googleapis.com/css2?family=Caveat:wght@500;700&family=Hanken+Grotesk:wght@400;500;700&family=Special+Elite&display=swap" rel="stylesheet"><link rel="stylesheet" href="tema.css?v=10"><link rel="stylesheet" href="tema-mesa.css?v=9">'
 s=s.replace("</head>",FONTS+"</head>",1)
 PWA='<link rel="manifest" href="manifest.webmanifest"><link rel="icon" href="icones/icone-192.png"><link rel="apple-touch-icon" href="icones/apple-touch-icon.png"><meta name="mobile-web-app-capable" content="yes"><meta name="apple-mobile-web-app-capable" content="yes"><script src="pwa.js" defer></script>'
 s=s.replace("</head>",PWA+"</head>",1)
-s=s.replace("</body>",'<script src="sistemas.js?v=10"></script><script src="mesa-fx.js?v=9"></script><script src="mesa-musica.js?v=9"></script><script src="mesa-dados.js?v=9"></script><script src="mesa-ficha.js?v=3"></script><script src="mesa-notas.js?v=10"></script><script src="mesa-exportar.js?v=9"></script></body>',1)
+s=s.replace("</body>",'<script src="sistemas.js?v=10"></script><script src="mesa-fx.js?v=9"></script><script src="mesa-musica.js?v=9"></script><script src="mesa-dados.js?v=9"></script><script src="mesa-ficha.js?v=3"></script><script src="mesa-notas.js?v=10"></script><script src="mesa-interior.js?v=2"></script><script src="mesa-exportar.js?v=9"></script></body>',1)
 open(OUT, "w", encoding="utf-8").write(s)
 print("mesa.html gerado:", len(s), "bytes")
