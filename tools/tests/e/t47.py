@@ -1,0 +1,53 @@
+# Parede automática na borda do interior + luzes fixas coloridas (cena escura)
+from lib import *
+d=seed()
+M=q
+m2=ids(1,9)
+pgx.admin(f"insert into public.arquivos(id,mesa_id,tipo,nome,path,mime,tamanho,criado_por) values ('{m2}','{d['m']}','mapa','Interior Casa','{d['m']}/{m2}.png','image/png',10,'{U['M']}')")
+pgx.admin(f"insert into storage.objects(bucket_id,name,owner) values ('mesa-arquivos','{d['m']}/{m2}.png','{U['M']}')")
+def scr(pg,x,y):
+    return pg.evaluate(f"(()=>{{const r=cv.getBoundingClientRect(),v=S.v;return[r.left+v.x+{x}*v.z,r.top+v.y+{y}*v.z]}})()")
+with sync_playwright() as p:
+    b=p.chromium.launch()
+    pg=abre(b,'M',d);ev=pg.evaluate
+    ev("S.v={x:0,y:0,z:1};draw()");pg.wait_for_timeout(100)
+    pg.click('[data-t=int]')
+    x0,y0=scr(pg,300,300);x1,y1=scr(pg,500,450)
+    pg.mouse.move(x0,y0);pg.mouse.down();pg.mouse.move(x1,y1,steps=5);pg.mouse.up();pg.wait_for_timeout(200)
+    pg.check(f'#ew input[name=int_m][value="{m2}"]');pg.click('#ew [data-int=ok]');pg.wait_for_timeout(1200)
+    iw=ev("S.walls.filter(w=>w.iid).length")
+    chk("borda do interior vira 4 paredes",iw==4,iw)
+    chk("paredes cobrem o retângulo",ev("(()=>{const o=S.ints[0],w=S.walls.filter(w=>w.iid==o.id);const xs=w.flatMap(q=>[q.x1,q.x2]),ys=w.flatMap(q=>[q.y1,q.y2]);return Math.min(...xs)==o.x&&Math.max(...xs)==o.x+o.w&&Math.min(...ys)==o.y&&Math.max(...ys)==o.y+o.h})()"))
+    chk("paredes gravadas no banco",M("select to_jsonb(jsonb_array_length(paredes)) from public.cenas where id='%s'"%d['cA'])==4)
+    # mover o interior leva as paredes
+    xa,ya=scr(pg,400,380);xb,yb=scr(pg,500,380)
+    pg.mouse.move(xa,ya);pg.mouse.down();pg.mouse.move(xb,yb,steps=5);pg.mouse.up();pg.wait_for_timeout(900)
+    chk("mover o interior move as paredes",ev("(()=>{const o=S.ints[0];return o.x>300&&S.walls.filter(w=>w.iid==o.id).length==4&&Math.min(...S.walls.filter(w=>w.iid==o.id).flatMap(q=>[q.x1,q.x2]))==o.x})()"),ev("JSON.stringify(S.ints[0])"))
+    # luzes fixas
+    pg.click('[data-t=lz]');pg.wait_for_timeout(100)
+    chk("painel de luzes abre","luzes fixas" in ev("document.getElementById('opt').innerText").lower())
+    pg.click('#opt [data-o=night]');pg.wait_for_timeout(200)
+    chk("cena escura ligada pelo painel",ev("S.nt")==1)
+    pg.click('#opt [data-lz=cor][data-v="#9fd0ff"]');pg.wait_for_timeout(100)
+    lx,ly=scr(pg,600,550);pg.mouse.click(lx,ly);pg.wait_for_timeout(300)
+    chk("toque no mapa cria a luz",ev("S.luzes.length")==1 and ev("S.luzes[0].c")=="#9fd0ff",ev("JSON.stringify(S.luzes)"))
+    ev("(()=>{const i=document.querySelector('#opt [data-lzi=R]');i.value=9;i.dispatchEvent(new Event('input',{bubbles:true}));i.dispatchEvent(new Event('change',{bubbles:true}))})()");pg.wait_for_timeout(900)
+    chk("alcance ajustado e salvo",ev("S.luzes[0].R")==9 and M("select to_jsonb(luzes->0->'R') from public.cenas where id='%s'"%d['cA'])==9)
+    pg.click('#opt [data-lz=tipo][data-v=c]');pg.wait_for_timeout(200)
+    chk("lanterna mostra abertura e direção","Direção" in ev("document.getElementById('opt').innerText") or "DIREÇÃO" in ev("document.getElementById('opt').innerText"))
+    lg=ev("lightsData().filter(L=>L.c).map(L=>[L.c,L.R,L.la])")
+    chk("luz fixa entra na escuridão com cor",len(lg)==1 and lg[0][0]=="#9fd0ff" and lg[0][2]==60,lg)
+    # a imagem fica diferente dentro da luz (brilho azul)
+    ev("S.v={x:0,y:0,z:1};draw()");pg.wait_for_timeout(300)
+    # jogador recebe a luz
+    pg.click('[data-t=sel]');pg.wait_for_timeout(1200)
+    pj=abre(b,'J',d);pj.wait_for_timeout(800)
+    chk("jogador recebe as luzes e a cena escura",pj.evaluate("S.nt==1&&(S.luzes||[]).length==1&&lightsData().some(L=>L.c)"),pj.evaluate("JSON.stringify([S.nt,S.luzes])"))
+    chk("jogador não vê o botão de luzes",pj.evaluate("getComputedStyle(document.querySelector('[data-t=lz]')).display")=='none')
+    # remover interior remove paredes
+    pg.click('[data-t=int]');x,y=scr(pg,500+0,380)
+    ev("INT.sel=S.ints[0];opts()");pg.click('#opt [data-int=del]');pg.wait_for_timeout(600)
+    chk("remover interior remove as paredes dele",ev("S.walls.filter(w=>w.iid).length")==0)
+    chk("sem erros de script",not [e for e in pg.errs if 'ERR_TUNNEL' not in e and 'Failed to load resource' not in e],pg.errs[:3])
+    b.close()
+report()

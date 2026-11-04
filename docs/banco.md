@@ -60,3 +60,5 @@ Sincronia ficha↔token: `token_para_ficha, ficha_para_tokens, stats_aplica, bar
 - Etapa 14 (`schema_etapa14_sfl.sql`, depois da 5; versão de uma linha `_celular.sql`): libera `'sfl'` (Search For Light) no check `campanhas_sistema_ok`. Só isso: os dados do SFL (classes, trilhas, origens, poderes, armas) ficam no repositório (`sfl-dados.js`), porque são regras próprias do mestre, não de livro.
 
 - `cenas.interiores` (etapa 16): lista jsonb de interiores da cena (ver docs/mesa.md). `arquivo_em_uso` também libera arquivos usados em interiores de cena visível.
+
+- `cenas.luzes` (etapa 17): luzes fixas da cena (jsonb array; ver docs/mesa.md).

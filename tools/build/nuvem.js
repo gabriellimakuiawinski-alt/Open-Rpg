@@ -69,12 +69,12 @@ const TK=new Set(['id','n','k','i','di','alts','x','y','z','r','lk','hid','dn','
 function rowTok(t,cena){const d={};for(const k in t)if(!TK.has(k)&&t[k]!==undefined)d[k]=t[k];
  return{id:t.id,cena_id:cena,nome:String(t.n==null?'':t.n),categoria:['chr','prop','mnt'].includes(t.k)?t.k:'chr',imagem_id:isU(t.i)?t.i:null,imagem_caido_id:isU(t.di)?t.di:null,alts:(t.alts||[]).filter(isU),x:r2n(t.x),y:r2n(t.y),tam:+t.z||1,rot:r2n(t.r),travado:!!t.lk,oculto:!!t.hid,caido:!!t.dn,personagem_id:isU(t.pj)?t.pj:null,rol:t.rol==null?null:Math.round(t.rol),dados:d,criado_por:t.cb===undefined?ME.id:t.cb}}
 const tokFrom=r=>({...(r.dados||{}),id:r.id,n:r.nome,k:r.categoria,i:r.imagem_id,di:r.imagem_caido_id,alts:r.alts||[],x:+r.x,y:+r.y,z:+r.tam,r:+r.rot,lk:r.travado?1:0,hid:r.oculto?1:0,dn:r.caido?1:0,rol:r.rol==null?undefined:r.rol,pj:r.personagem_id,cb:r.criado_por});
-const sceneRow=(s,i)=>({id:s.id,mesa_id:MESA.id,nome:s.n||'Cena',ordem:i,escuro:!!s.nt,escuridao:s.dl==null?.92:s.dl,grade_px:s.gs||50,grade_m:s.gm==null?1.5:s.gm,grade_visivel:s.grid!==false,nevoa:s.fg||[],nevoa_cor:s.fcol||'#000000',nevoa_opacidade:s.fa==null?.6:s.fa,paredes:s.walls||[],interiores:s.ints||[]});
-const sceneFrom=c=>({id:c.id,n:c.nome,maps:[],tok:[],fg:c.nevoa||[],walls:c.paredes||[],ints:c.interiores||[],nt:c.escuro?1:0,dl:+c.escuridao,gs:+c.grade_px,gm:+c.grade_m,grid:c.grade_visivel!==false,fcol:c.nevoa_cor||'#000000',fa:+c.nevoa_opacidade,ver:c.versao||0});
+const sceneRow=(s,i)=>({id:s.id,mesa_id:MESA.id,nome:s.n||'Cena',ordem:i,escuro:!!s.nt,escuridao:s.dl==null?.92:s.dl,grade_px:s.gs||50,grade_m:s.gm==null?1.5:s.gm,grade_visivel:s.grid!==false,nevoa:s.fg||[],nevoa_cor:s.fcol||'#000000',nevoa_opacidade:s.fa==null?.6:s.fa,paredes:s.walls||[],interiores:s.ints||[],luzes:s.luzes||[]});
+const sceneFrom=c=>({id:c.id,n:c.nome,maps:[],tok:[],fg:c.nevoa||[],walls:c.paredes||[],ints:c.interiores||[],luzes:c.luzes||[],nt:c.escuro?1:0,dl:+c.escuridao,gs:+c.grade_px,gm:+c.grade_m,grid:c.grade_visivel!==false,fcol:c.nevoa_cor||'#000000',fa:+c.nevoa_opacidade,ver:c.versao||0});
 const mapRow=(m,sc,i)=>({id:m.id,cena_id:sc,arquivo_id:m.i,x:r2n(m.x),y:r2n(m.y),escala:+m.s||1,travado:!!m.l,ordem:i}),
 mapFrom=r=>({id:r.id,i:r.arquivo_id,x:+r.x,y:+r.y,s:+r.escala,l:r.travado?1:0});
 const folderRow=f=>({id:f.id,mesa_id:MESA.id,tipo:K2T[f.k]||'chr',nome:f.n||''}),plRow=p=>({id:p.id,mesa_id:MESA.id,nome:p.n||'',faixas:(p.t||[]).filter(isU)});
-function applyScene(s){S.cur=s.id;S.tok=s.tok;S.fg=s.fg;S.maps=s.maps;S.walls=s.walls||(s.walls=[]);S.ints=s.ints||(s.ints=[]);S.nt=s.nt||0;S.dl=s.dl==null?.92:s.dl;S.gs=s.gs||50;S.gm=s.gm==null?1.5:s.gm;S.grid=s.grid!==false;S.fcol=s.fcol||'#000000';S.fa=s.fa==null?.6:s.fa;WV++}
+function applyScene(s){S.cur=s.id;S.tok=s.tok;S.fg=s.fg;S.maps=s.maps;S.walls=s.walls||(s.walls=[]);S.ints=s.ints||(s.ints=[]);S.luzes=s.luzes||(s.luzes=[]);S.nt=s.nt||0;S.dl=s.dl==null?.92:s.dl;S.gs=s.gs||50;S.gm=s.gm==null?1.5:s.gm;S.grid=s.grid!==false;S.fcol=s.fcol||'#000000';S.fa=s.fa==null?.6:s.fa;WV++}
 const tkSnap=(t,sc)=>{const r=rowTok(t,sc);return{s:sc,k:ss(r),kb:ss({...r,x:0,y:0})}};
 function snapLast(){LAST.s.clear();LAST.m.clear();LAST.t.clear();LAST.f.clear();LAST.p.clear();
  S.scenes.forEach((s,i)=>{LAST.s.set(s.id,ss(sceneRow(s,i)));s.maps.forEach((m,j)=>LAST.m.set(m.id,{s:s.id,k:ss(mapRow(m,s.id,j))}));s.tok.forEach(t=>LAST.t.set(t.id,tkSnap(t,s.id)))});
@@ -149,7 +149,7 @@ async function garanteAtiva(){if(!GER||!S.scenes.length)return;if(!S.scenes.some
 function esperaJogador(on){let e=document.getElementById('espera');if(!e){e=document.createElement('div');e.id='espera';e.textContent='Aguardando o mestre mostrar uma cena…';document.body.append(e)}e.style.display=on?'flex':'none'}
 async function carregarAtiva(){await carregarTudo();await loadLib();const s=scene(MESA.cena_ativa);sel=selM=null;tmOpen=false;
  if(s){esperaJogador(0);applyScene(s);HS=[snapJ()];RD=[];FK=DK=null;autoFit=true;fit();pedeFit();ui();draw();dock();sync()}
- else{S.scenes=[];S.tok=[];S.fg=[];S.maps=[];S.walls=[];S.ints=[];WV++;esperaJogador(1);ui();draw()}}
+ else{S.scenes=[];S.tok=[];S.fg=[];S.maps=[];S.walls=[];S.ints=[];S.luzes=[];WV++;esperaJogador(1);ui();draw()}}
 async function resync(){try{const keep=S.cur;await carregarTudo();await loadLib();const s=scene(keep)||scene(MESA.cena_ativa)||S.scenes[0];sel=selM=null;if(s){applyScene(s);HS=[snapJ()];RD=[];ui();dock();draw();sync()}else if(!GER)esperaJogador(1)}catch(e){cs('sem conexão',1)}}
 
 /* ---------- tempo real ---------- */
@@ -165,7 +165,7 @@ function aplicaCena(c){const s=scene(c.id),n=sceneFrom(c);
  const idx=S.scenes.indexOf(s),L=LAST.s.get(s.id),mine=ss(sceneRow(s,idx));
  if(!GER&&(c.versao||0)!==(s.ver||0)){s.ver=c.versao||0;refetchTok(s)}
  if(L&&mine!==L)return;const nr=ss(sceneRow({...n,tok:[],maps:[]},idx));if(L===nr)return;
- s.n=n.n;s.nt=n.nt;s.dl=n.dl;s.gs=n.gs;s.gm=n.gm;s.grid=n.grid;s.fcol=n.fcol;s.fa=n.fa;s.fg=n.fg;s.walls=n.walls;s.ints=n.ints;LAST.s.set(s.id,ss(sceneRow(s,idx)));
+ s.n=n.n;s.nt=n.nt;s.dl=n.dl;s.gs=n.gs;s.gm=n.gm;s.grid=n.grid;s.fcol=n.fcol;s.fa=n.fa;s.fg=n.fg;s.walls=n.walls;s.ints=n.ints;s.luzes=n.luzes;LAST.s.set(s.id,ss(sceneRow(s,idx)));
  if(s.id==S.cur){applyScene(s);FK=DK=null;ui();dockQ();draw();sync()}else dockQ()}
 async function refetchTok(s){const{data,error}=await sb.from('tokens').select('*').eq('cena_id',s.id).order('criado_em');if(error)return;const ids=new Set(data.map(r=>r.id));
  for(let i=s.tok.length;i--;)if(!ids.has(s.tok[i].id)){if(sel===s.tok[i]){sel=null;ui()}LAST.t.delete(s.tok[i].id);s.tok.splice(i,1)}
