@@ -33,3 +33,6 @@ Falta do SaH: origens (20), poderes gerais (34), poderes paranormais (8), rituai
 
 ## Search For Light (28/10/2026)
 Feito: sistema `sfl` (ficha automática, classes, trilhas, origens, linhas de poder, armas com crítico por arma, catálogo e loja em euro). **Pendente do usuário:** rodar `schema_etapa14_sfl_celular.sql` no Supabase (libera o sistema 'sfl'). Falta: base da campanha, bestiário/infectados únicos, chefes, veículos, rolagens no log da mesa, token com Medo/Infecção. Valores [PROPOSTA] do sistema podem mudar após a mesa de teste (regenerar `sfl-dados.js`).
+
+## Mapas de interior (04/11/2026)
+Feito (etapa 16, SQL já rodado pelo MCP). Ideias: telhado some sozinho quando um personagem entra; paredes e luz próprias do interior; esconder a imagem do interior do jogador até tirar o telhado.

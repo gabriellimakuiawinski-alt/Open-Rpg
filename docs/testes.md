@@ -28,3 +28,4 @@ O mock não prova o realtime real nem multi-dispositivo. Validar no site com 2 c
 - t41 (complementos SaH no catálogo, Equipar, aliado, Bateria Potente) e t42 (escolha de complementos na campanha). `mkdb.sh` agora roda também a etapa 13. Num `pg.evaluate` de função que abre janela (ex. `novaCamp`) use `setTimeout(fn,0)`, senão o teste trava esperando a janela fechar.
 - t45 (SaH completo: origens, poderes gerais com treino automático, trilhas, rituais, paranormais, Sobrevivente pelo livro, regras opcionais da campanha, bestiário e regras.html). `mkdb.sh` roda também a etapa 15.
 - t43 (ficha Search For Light: classe, origem, marcos, escolhas, rolagens, crítico, poder, Infecção, catálogo) e t44 (criar campanha SFL, moeda € e catálogo na loja). `mkdb.sh` roda também a etapa 14.
+- t46 (mapas de interior: marcar, telhado, salvar, jogador, remover, desfazer). `mkdb.sh` roda também a etapa 16.

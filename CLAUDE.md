@@ -37,4 +37,4 @@ Não dá para conferir o deploy do Pages daqui; avise o usuário para abrir em a
 Antes de publicar: `python3 tools/build/build.py` e rode os testes (docs/testes.md).
 
 ## Estado atual
-Ver docs/pendencias.md. Todos os SQLs até a etapa 15 estão rodados (31/10/2026). SQL grande não cola no editor do celular: rode pelo MCP do Supabase (escrita funcionou; a extensão `http` está instalada e dá para baixar o arquivo do GitHub conferindo o md5).
+Ver docs/pendencias.md. Todos os SQLs até a etapa 16 estão rodados (04/11/2026). SQL grande não cola no editor do celular: rode pelo MCP do Supabase (escrita funcionou; a extensão `http` está instalada e dá para baixar o arquivo do GitHub conferindo o md5).
