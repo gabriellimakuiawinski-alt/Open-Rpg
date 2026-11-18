@@ -109,6 +109,29 @@
   .slabel{position:absolute;left:0;top:0;pointer-events:none;white-space:nowrap;font:italic 600 12px "Barlow Condensed";letter-spacing:.16em;text-transform:uppercase;color:#e9e3d4;text-shadow:0 0 5px #000,0 0 9px #000;opacity:.82}
   .glabel{position:absolute;left:0;top:0;pointer-events:none;white-space:nowrap;font:700 13px "Barlow Condensed";letter-spacing:.18em;text-transform:uppercase;color:#052415;background:#7cffb0;padding:3px 9px;border-radius:3px;box-shadow:0 2px 10px #000a}
   .orback{position:fixed;top:14px;right:14px;z-index:30;font:600 13px "Barlow Condensed";letter-spacing:.14em;text-transform:uppercase;color:#e9e3d4;text-decoration:none;background:#0c0d10cc;border:1px solid #ffffff2a;padding:8px 12px;border-radius:4px;backdrop-filter:blur(6px)}.orback:hover{color:#fff;border-color:#ffffff66}
+  .nlabel{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;white-space:nowrap;font:700 12px "Barlow Condensed";letter-spacing:.12em;text-transform:uppercase;color:#f3eee2;background:rgba(10,11,14,.78);border:1px solid #ffffff30;padding:2px 8px 2px 6px;border-radius:12px;display:flex;align-items:center;gap:5px;text-shadow:0 1px 2px #000}
+  .nlabel i{width:9px;height:9px;border-radius:50%;display:inline-block;box-shadow:0 0 0 2px #0008}.nlabel.mestre{border-style:dashed;opacity:.8}.nlabel.sel{border-color:#fff;background:#000d}
+  .rlabel{position:absolute;left:0;top:0;pointer-events:auto;cursor:pointer;white-space:nowrap;font:italic 700 12px "Barlow Condensed";letter-spacing:.14em;text-transform:uppercase;color:#fff;background:rgba(8,9,11,.6);border-left:3px solid var(--rc);padding:1px 7px;text-shadow:0 0 4px #000}.rlabel.mestre{opacity:.75;border-left-style:dashed}
+  .v8dia{display:flex;align-items:center;gap:8px;margin-bottom:6px}.v8dia b{flex:1;text-align:center;font:700 20px "Barlow Condensed";letter-spacing:.12em;color:var(--amber)}
+  .master-inl{display:none;min-width:40px}body.master .master-inl{display:inline-block}
+  #tempoList .it{display:flex;gap:6px;align-items:flex-start}#tempoList .dd{font:700 12px "Barlow Condensed";color:var(--amber);min-width:30px}#tempoList .it.fut{opacity:.6}#tempoList .diario span{flex:1;white-space:pre-wrap;color:#cfc9bd}#tempoList .x{cursor:pointer;color:#ff7b70;padding:0 4px}
+  .v8res{display:flex;flex-wrap:wrap;gap:5px;margin:6px 0}.chip.lv-pouco{color:#ff9a7a}.chip.lv-medio{color:#e3b341}.chip.lv-muito{color:#7cffb0}
+  .v8grid{display:grid;grid-template-columns:1fr 1fr;gap:4px 8px}.v8grid label.f{display:flex;flex-direction:column;gap:2px}
+  #cenList .it{display:flex;gap:6px;align-items:center}#cenList .btn{padding:4px 8px;font-size:12px}
+  #rotaBox{display:none;position:fixed;left:14px;bottom:90px;padding:12px 14px;width:240px;z-index:7}
+  #v8help{display:none;position:fixed;left:50%;top:50%;transform:translate(-50%,-50%);z-index:60;padding:18px 20px;width:min(380px,92vw)}#v8help h2{margin:0 0 10px}.hk{display:flex;gap:10px;align-items:center;margin:5px 0;font-size:14px}.hk kbd{min-width:52px;text-align:center;font:700 12px "Barlow Condensed";letter-spacing:.1em;background:#22252c;border:1px solid #ffffff2a;border-radius:4px;padding:3px 6px}
+  #v8quick{display:none}
+  @media (max-width:760px){
+    #sideToggle{display:none!important}
+    #v8quick{display:flex;position:fixed;left:10px;right:10px;bottom:12px;gap:8px;z-index:8}#v8quick .btn{flex:1;padding:12px 4px;font-size:14px;min-height:46px;background:rgba(14,15,18,.92);border:1px solid #ffffff2a;backdrop-filter:blur(6px)}
+    .btn{min-height:40px}.inp{font-size:16px}#side .row{min-height:34px}
+    #info{bottom:72px!important;max-height:60%!important;border-radius:14px 14px 4px 4px}
+    #side{bottom:72px!important;max-height:62%!important}
+    #rotaBox{left:10px;right:10px;width:auto;bottom:76px}
+    #compass{bottom:76px!important}#mapScale{display:none}
+    .orback{display:none}
+    .zlabel{font-size:12px}.nlabel,.rlabel{font-size:11px}
+  }
   #rulerBox{display:none;left:14px;bottom:90px;padding:12px 14px;width:230px;z-index:6}
   #rulerBox .rb-d{font:700 30px "Barlow Condensed";letter-spacing:.06em;color:var(--amber);line-height:1}
   #rulerBox .rb-s{font-size:11px;color:var(--mut);letter-spacing:.12em;text-transform:uppercase;margin:2px 0 8px}
@@ -1613,13 +1636,14 @@ return {THREE, MapControls};
 
 <div id="top" class="panel">
   <div class="logo"><span>2</span></div>
-  <div><a class="orback" id="orBack" href="index.html">‹ Campanha</a><h1 id="cityName">Cidade-Fronteira</h1><div class="sub">SFL 2 · cidade expandida · litoral e fronteira</div></div>
+  <div><h1 id="cityName">Cidade-Fronteira</h1><div class="sub">SFL 2 · cidade expandida · litoral e fronteira</div></div>
 </div>
 
 <button id="sideToggle" class="panel btn">☰ Camadas</button>
 <aside id="side" class="panel">
   <h3>Buscar</h3>
   <input class="inp" id="busca" placeholder="Local, bairro, zona ou rua  ( / )" autocomplete="off" style="margin-bottom:4px">
+  <div style="display:flex;gap:6px;margin-bottom:4px"><select class="inp" id="buscaTipo" style="flex:1"><option value="">Tudo</option><option value="p">Locais</option><option value="com">Comércio</option><option value="d">Bairros</option><option value="z">Zonas</option><option value="n">NPCs</option><option value="ro">Rotas</option><option value="r">Ruas</option></select><select class="inp" id="buscaFac" style="flex:1"></select></div>
   <div class="list" id="buscaRes" style="max-height:210px"></div>
   <div class="master-only" style="margin-bottom:10px"><button class="btn acc" id="btnNovo">+ Adicionar marcador</button></div>
   <h3>Camadas</h3>
@@ -1645,10 +1669,35 @@ return {THREE, MapControls};
     <label class="f">Raio revelado (m)</label><input type="range" id="grRaio" min="80" max="600" step="20" value="280" style="width:100%">
     <div class="btns" style="margin-top:6px"><button class="btn" id="btnGrupoNome">Renomear</button><button class="btn danger" id="btnTrilhaLimpa">Limpar trilha</button><button class="btn danger" id="btnGrupoTira">Tirar do mapa</button></div>
   </div>
+  <h3>Linha do tempo</h3>
+  <div class="v8dia"><button class="btn master-inl" id="diaMenos" title="Voltar um dia ( [ )">−</button><b id="diaN">Dia 1</b><button class="btn master-inl" id="diaMais" title="Avançar um dia ( ] )">+</button></div>
+  <div class="list" id="tempoList" style="max-height:200px"></div>
+  <div class="btns master-only" style="margin-top:6px"><button class="btn acc" id="btnNovoEvento">+ Evento</button><button class="btn" id="btnDiario">+ Nota no diário</button></div>
+  <h3>NPCs</h3>
+  <label class="row"><input type="checkbox" id="lyNpcs" checked> Mostrar NPCs no mapa</label>
+  <div class="list" id="npcList" style="max-height:160px"></div>
+  <div class="btns master-only" style="margin-top:6px"><button class="btn acc" id="btnNovoNpc">+ NPC</button></div>
+  <h3>Rotas</h3>
+  <label class="row"><input type="checkbox" id="lyRotas" checked> Mostrar rotas (esgoto, contrabando, trilhas)</label>
+  <div class="list" id="rotaList" style="max-height:160px"></div>
+  <div class="btns master-only" style="margin-top:6px"><button class="btn acc" id="btnNovaRota">+ Rota</button></div>
   <h3>Hora e clima</h3>
   <div class="seg" id="segHora"><button data-v="amanhecer">Amanhecer</button><button data-v="dia" class="on">Dia</button><button data-v="entardecer">Tarde</button><button data-v="noite">Noite</button></div>
   <div style="display:flex;align-items:center;gap:8px;margin:8px 0 2px"><input type="range" id="horaRange" min="0" max="24" step="0.1" value="12" style="flex:1"><span id="horaLbl" style="font:600 13px 'Barlow Condensed';letter-spacing:.08em;min-width:42px;text-align:right">12:00</span></div>
   <div class="seg" id="segClima" style="margin-top:8px"><button data-v="limpo" class="on">Limpo</button><button data-v="nublado">Nublado</button><button data-v="neblina">Neblina</button><button data-v="chuva">Chuva</button><button data-v="neve">Neve</button></div>
+  <h3>Imagem do mapa</h3>
+  <p style="font-size:12px;color:var(--mut);margin:0 0 6px">Gera a vista atual em alta resolução. Use “Vista de cima” antes para um mapa de mesa.</p>
+  <div class="btns"><button class="btn" id="btnExp2">Baixar imagem 2x</button><button class="btn" id="btnExp4">Baixar imagem 4x</button></div>
+  <div class="master-only" style="margin-top:6px"><select class="inp" id="expMesa"></select><div class="btns" style="margin-top:6px"><button class="btn acc" id="btnExpMesa">Enviar para os mapas da mesa</button></div></div>
+  <h3>Som e ajuda</h3>
+  <div class="btns"><button class="btn" id="btnSom">Som ambiente: desligado</button><button class="btn" id="btnAjuda">Atalhos ( ? )</button></div>
+  <input type="range" id="sndVol" min="0" max="1" step="0.05" value="0.6" style="width:100%;margin-top:6px">
+  <div class="master-only">
+    <h3>Cenários salvos</h3>
+    <p style="font-size:12px;color:var(--mut);margin:0 0 6px">Guarde o mapa como está (névoa, zonas, NPCs, dia) e volte a ele depois.</p>
+    <div class="btns"><button class="btn acc" id="btnSalvaCen">Salvar cenário atual</button></div>
+    <div class="list" id="cenList" style="margin-top:6px;max-height:200px"></div>
+  </div>
   <h3>Ferramentas</h3>
   <div class="btns"><button class="btn" id="btnRegua">Régua e tempo de viagem</button></div>
   <label class="row"><input type="checkbox" id="lyZonas" checked> Zonas (território, perigo, contaminação)</label>
@@ -1687,6 +1736,10 @@ return {THREE, MapControls};
     <text x="22" y="14.5" text-anchor="middle" font-size="7" font-family="Barlow Condensed" font-weight="700" fill="#fff">N</text></svg>
 </div>
 <div id="hint" class="panel"><b>WASD</b> ou <b>arrastar</b> move · <b>Botão direito</b> gira · <b>Roda</b> zoom · <b>Clique</b> num distrito ou ícone · <b>R</b> volta</div>
+<a class="orback" id="orBack" href="index.html">‹ Campanha</a>
+<div id="rotaBox" class="panel"><b>Nova rota</b><div id="rotaN" style="font-size:12px;color:var(--mut);margin:4px 0 8px">0 pontos</div><div class="btns"><button class="btn acc" id="rotaOk">Concluir</button><button class="btn" id="rotaUndo">Desfazer</button><button class="btn" id="rotaOff">Cancelar</button></div></div>
+<div id="v8help" class="panel"></div>
+<div id="v8quick"><button class="btn" id="qGrupo">Grupo</button><button class="btn" id="qBusca">Buscar</button><button class="btn" id="qCamadas">Painel</button><button class="btn" id="qVolta">Campanha</button></div>
 <div id="toast" class="panel"></div><div id="mapScale" class="panel" style="right:85px;bottom:17px;padding:7px 10px;font:11px Barlow;color:#cfc9bd;pointer-events:none"><div id="scaleLine" style="width:100px;border:1px solid #ddd;border-top:0;height:5px;margin-bottom:4px"></div><span id="scaleText">500 m</span></div>
 <div id="rulerBox" class="panel"><div id="rulerOut"></div>
   <label class="f" style="margin-top:10px">Terreno</label><select class="inp" id="rulerTerr"><option value="1">Ruas livres</option><option value="1.6">Entulho e barricadas (×1,6)</option><option value="2.3">Mata, lama ou neve (×2,3)</option></select>
@@ -4166,7 +4219,7 @@ function migrateCity(data){
   const via=data.locais.find(p=>p.id==='viaduto');if(via&&via.px===1000&&via.py===735){via.px=983;via.py=712}
   const old=data.monotrilho?.trechos||[];
   data.monotrilho={trechos:Array.from({length:5},(_,i)=>['inativo','reparo','operacional','rompido'].includes(old[i])?old[i]:(i===4?'rompido':'inativo'))};
-  migrateV7(data);
+  migrateV7(data);migrateV8(data);
   data.versao=3;return data;
 }
 let monorailCarGeometry,monorailCarMaterial;
@@ -4416,6 +4469,39 @@ function migrateV7(data){
   data.ferramentasV7=true;return data;
 }
 
+/* ===== v8: tipos, locais novos e dados de campanha ===== */
+Object.assign(TIPOS,{radio:'Rádio / transmissão',policia:'Polícia / quartel',esgoto:'Esgoto / metrô',agua:'Água',bunker:'Bunker',arena:'Arena'});
+const V8_POIS=[
+  {id:'hosp_campanha',nome:'Välihaigla · Hospital de Campanha',tipo:'saude',px:925,py:505,desc:'Tendas brancas e macas no estacionamento atrás do Hospital Central. Atendem quem chega com algo para trocar.',segredo:'Os remédios vêm de saques que a AMC finge não ver.'},
+  {id:'abrigo_escola',nome:'Varjend · Abrigo da Escola Velha',tipo:'segura',px:250,py:455,desc:'Ginásio com colchões, cozinha comunitária e um portão vigiado. Aceitam famílias por algumas noites.',segredo:''},
+  {id:'escambo',nome:'Vahetusturg · Mercado de Escambo',tipo:'mercado',px:640,py:585,desc:'Bancas improvisadas sob lonas entre os blocos. Nada de dinheiro: munição, remédio e comida são a moeda.',segredo:'Um dos vendedores repassa informações aos Renegados.'},
+  {id:'torre_radio',nome:'Raadiomast · Torre de Rádio',tipo:'radio',px:270,py:300,desc:'Mastro treliçado no alto do bairro. Quem controla a torre fala com a cidade inteira.',segredo:'O transmissor ainda funciona se alguém religar o gerador.'},
+  {id:'transmissao_amc',nome:'AMC saatja · Ponto de Transmissão da AMC',tipo:'radio',px:745,py:360,desc:'Antenas e parabólicas montadas num prédio vizinho à sede. Repetem o mesmo aviso a cada hora.',segredo:'A AMC escuta tudo que passa pela frequência local.'},
+  {id:'quartel',nome:'Kaitseväe kasarm · Quartel Abandonado',tipo:'policia',px:1240,py:745,desc:'Muros altos, guaritas vazias e sacos de areia. O pátio de viaturas foi saqueado.',segredo:'O paiol subterrâneo continua lacrado.'},
+  {id:'esgoto',nome:'Kanalisatsioon · Entrada do Esgoto',tipo:'esgoto',px:880,py:612,desc:'Uma galeria pluvial aberta perto do viaduto. Dá acesso aos túneis sob a cidade.',segredo:'Os túneis ligam o Porto ao Galpão 8.'},
+  {id:'metro',nome:'Metroo · Túnel do Metrô Inacabado',tipo:'esgoto',px:560,py:505,desc:'Escadas que descem para uma estação nunca inaugurada. Escuro total depois do primeiro lance.',segredo:''},
+  {id:'cisterna',nome:'Veepaak · Cisterna Comunitária',tipo:'agua',px:425,py:560,desc:'Caixa d’água coletiva com fila todas as manhãs. Os Sobreviventes controlam a válvula.',segredo:''},
+  {id:'estacao_balti',nome:'Balti jaam · Estação Ferroviária',tipo:'trem',px:478,py:300,desc:'Estação de passageiros com plataformas cobertas e vagões parados há meses.',segredo:'Um vagão-tanque está cheio de combustível.'},
+  {id:'bunker',nome:'Varjend 7 · Bunker da Defesa Civil',tipo:'bunker',px:620,py:735,desc:'Uma porta de aço meio enterrada numa praça. Ninguém sabe se há gente dentro.',segredo:'Há gente dentro, e eles têm rádio.'},
+  {id:'arena',nome:'Võitlusareen · Arena de Luta',tipo:'arena',px:1160,py:545,desc:'Um galpão com ringue cercado de tambores em chamas. Apostas em comida e munição.',segredo:'Os Renegados recrutam os vencedores.'},
+  {id:'clinica',nome:'Kiirabi · Clínica Improvisada',tipo:'saude',px:500,py:835,desc:'Uma antiga loja virou consultório. A enfermeira cobra pouco e pergunta menos ainda.',segredo:''},
+  {id:'combustivel',nome:'Kütusehoidla · Depósito de Combustível',tipo:'posto',px:1290,py:430,desc:'Tanques cilíndricos atrás de uma cerca dupla. Cheiro forte de diesel.',segredo:'Dois tanques ainda estão cheios.'}
+];
+const V8_ROTAS=[
+  {id:'rota-esgoto',nome:'Túneis do esgoto',tipo:'esgoto',pts:[[880,612],[985,560],[1100,600],[1250,592]],risco:4,desc:'Galerias escuras e alagadas sob a baixada.',segredo:'Infectados se escondem na galeria principal.',mestre:true},
+  {id:'rota-contrabando',nome:'Rota de contrabando do porto',tipo:'contrabando',pts:[[1030,225],[985,290],[985,330],[1017,550],[1105,795]],risco:3,desc:'Caminho usado pelos Corredores para tirar carga do porto sem passar pela AMC.',segredo:'',mestre:true},
+  {id:'rota-trilha',nome:'Trilha do klint',tipo:'trilha',pts:[[560,865],[480,940],[330,1060]],risco:2,desc:'Trilha pela mata até o planalto, longe da estrada principal.',segredo:'',mestre:false}
+];
+function migrateV8(data){
+  if(!data.locaisV8){for(const p of V8_POIS)if(!data.locais.some(q=>q.id===p.id))data.locais.push({...p,mestre:false});data.locaisV8=true}
+  if(!Array.isArray(data.npcs))data.npcs=[];
+  if(!Array.isArray(data.rotas))data.rotas=V8_ROTAS.map(r=>JSON.parse(JSON.stringify(r)));
+  if(!Array.isArray(data.eventos))data.eventos=[];
+  if(!Array.isArray(data.diario))data.diario=[];
+  if(!(data.dia>=1))data.dia=1;
+  return data;
+}
+
 /* ===== Open RPG: dados da campanha (Supabase) ===== */
 const CID=new URLSearchParams(location.search).get('camp');
 const OR={db:null,ger:false,papel:null,novo:false,grupo:null,cenas:[],data:null,t:0,busy:false};
@@ -4425,7 +4511,7 @@ async function ORinit(){
   if(!db){orMsg('Não consegui carregar o login. Confira a internet.');throw new Error('Mesa indisponível')}
   if(!CID){orMsg('Abra o mapa pela tela da campanha.');throw new Error('sem campanha')}
   OR.db=db;
-  const u=await window.Mesa.exigirLogin();
+  const u=await window.Mesa.exigirLogin();OR.uid=u.id;
   const cm=await db.from('campanha_membros').select('user_id,papel').eq('campanha_id',CID);
   OR.papel=((cm.data||[]).find(x=>x.user_id==u.id)||{}).papel||null;
   if(!OR.papel){orMsg('Você não faz parte desta campanha.');throw new Error('sem acesso')}
@@ -4445,7 +4531,7 @@ async function ORinit(){
   OR.grupo=g.data&&g.data.px!=null?g.data:null;
   if(OR.ger){
     const ms=await db.from('mesas').select('id,nome').eq('campanha_id',CID);
-    const ids=(ms.data||[]).map(m=>m.id);
+    OR.mesas=ms.data||[];const ids=OR.mesas.map(m=>m.id);
     if(ids.length){const cs=await db.from('cenas').select('id,nome,mesa_id,ordem').in('mesa_id',ids).order('ordem');
       const nm=Object.fromEntries((ms.data||[]).map(m=>[m.id,m.nome]));
       OR.cenas=(cs.data||[]).map(c=>({id:c.id,nome:c.nome,mesa:c.mesa_id,mesaNome:nm[c.mesa_id]||'Mesa'}))}
@@ -4458,10 +4544,14 @@ function ORpublico(d){
   p.distritos.forEach(x=>{delete x.segredo;delete x.rumores;delete x.encontros;if(!x.descoberto){x.desc='';x.sub=''}});
   p.locais=p.locais.filter(l=>!l.mestre).map(l=>{delete l.segredo;delete l.link;delete l.temMapa;try{const di=poiDist(l);if(di>=0&&!p.distritos[di].descoberto)l.desc=''}catch(e){}return l});
   p.zonas=(p.zonas||[]).filter(z=>!z.mestre).map(z=>{delete z.segredo;return z});
+  p.npcs=(p.npcs||[]).filter(n=>!n.mestre).map(n=>{delete n.segredo;return n});
+  p.rotas=(p.rotas||[]).filter(r=>!r.mestre).map(r=>{delete r.segredo;return r});
+  p.eventos=(p.eventos||[]).filter(e=>!e.mestre&&e.dia<=(p.dia||1)).map(e=>({id:e.id,dia:e.dia,titulo:e.titulo,desc:e.desc}));
   return p;
 }
 function save(){
   if(!OR.ger)return;
+  try{DATA.clima=st.clima;DATA.hora=Math.round(st.hora*10)/10}catch(e){}
   clearTimeout(OR.t);OR.pend=1;OR.t=setTimeout(ORflush,900);
 }
 async function ORflush(){
@@ -4484,6 +4574,114 @@ const OR_=await ORinit();
 let DATA=OR.data;
 function load(){try{const s=JSON.parse(localStorage.getItem(KEY));if(s&&s.distritos&&s.distritos.length===ND&&s.locais)return migrateCity(s)}catch(e){}return migrateCity(JSON.parse(JSON.stringify(DEFAULT_DATA)))}
 /* save() agora vem do Open RPG (orcode.js) */
+/* =====================================================================
+   v8 — VIDA NA RUÍNA: acampamentos, gente, fogueiras, hordas, poças, vidro,
+   passarelas caídas, canais bloqueados, ruínas por bairro e os locais novos
+   ===================================================================== */
+const v8Stats={acampamentos:0,pessoas:0,hordas:0,pocas:0,vidro:0,pontes:0,canais:0,ruinas:0,locais:0,fogueiras:0};
+const v8Fx={corvos:[],fogos:[],sitios:{}};
+function genV8(){
+  const rr=mulberry32(880808),RR=(a,b)=>a+(b-a)*rr(),pick=a=>a[Math.floor(rr()*a.length)];
+  const sh=(c,j=.15)=>{const f=1+(rr()-.5)*2*j;return [c[0]*f,c[1]*f,c[2]*f]};
+  const CONC=[.43,.42,.40],DARK=[.2,.19,.18],BRICK=[.46,.23,.17],RUST=[.45,.26,.15],WOOD=[.40,.29,.19],ASH=[.17,.16,.15],LIME=[.62,.58,.48],TILE=[.52,.25,.16],METAL=[.38,.39,.40],GLASSB=[.42,.52,.58],
+    WHITE=[.82,.82,.78],OLIVE=[.30,.33,.20],TARP=[[.16,.30,.52],[.58,.40,.12],[.50,.16,.12],[.25,.38,.22],[.55,.55,.50]],
+    SKIN=[[.62,.46,.36],[.45,.32,.24],[.30,.21,.16],[.70,.56,.45]],CLOTH=[[.18,.20,.24],[.32,.28,.22],[.40,.12,.10],[.20,.30,.22],[.45,.42,.36],[.12,.12,.13],[.26,.30,.40]];
+  const free=k=>k>=0&&ids[k]>=0&&!(flags[k]&(1|2|32))&&!occ[k];
+  const spot=(x,z,r,tries=80)=>{for(let t=0;t<tries;t++){const q=rr()*6.283,d=Math.sqrt(rr())*r,X=x+Math.cos(q)*d,Z=z+Math.sin(q)*d;if(free(cellAt(X,Z)))return [X,Z]}return null};
+  const pessoa=(x,z,d,a=rr()*6.28,lean=0,pal=CLOTH)=>{box(x,z,.55,1.1,.38,a,sh(pick(pal),.2),d,0,lean);box(x,z,.5,.55,.34,a,sh(pick(pal),.2),d,1.02,lean);box(x,z,.24,.25,.24,a,sh(pick(SKIN),.1),d,1.58,lean);v8Stats.pessoas++};
+  const cao=(x,z,d)=>{const a=rr()*6.28,c=sh(pick([[.30,.22,.14],[.12,.11,.10],[.55,.45,.32]]),.15);box(x,z,.95,.45,.3,a,c,d,.38);box(x+Math.cos(a)*.55,z-Math.sin(a)*.55,.32,.3,.26,a,c,d,.68);for(const u of [-.35,.35])for(const v of [-.1,.1]){const [lx,lz]=toW(x,z,a,u,v);box(lx,lz,.1,.38,.1,a,c,d,0)}};
+  const fogo=(x,z,d,s=1)=>{for(let k=0;k<7;k++){const q=k/7*6.283;box(x+Math.cos(q)*.75*s,z+Math.sin(q)*.75*s,.35,.25,.3,q,sh(DARK,.2),d)}box(x,z,.9*s,.18,.25,rr()*3,WOOD,d,.1);box(x,z,.9*s,.18,.25,rr()*3,WOOD,d,.15);
+    const g=glow(x,H(x,z)+1.4,z,9*s,0xff8a30,1);fires.push(g);v8Fx.fogos.push([x,z]);v8Stats.fogueiras++};
+  const tenda=(x,z,d,a,c,w=3.2,dp=4.2)=>{pushA(roofs,x,H(x,z),z,w,1.9,dp,a,sh(c,.12),d)};
+  const varal=(x,z,d,a)=>{const L=RR(5,8);const [x1,z1]=toW(x,z,a,-L/2,0),[x2,z2]=toW(x,z,a,L/2,0);box(x1,z1,.1,1.9,.1,a,WOOD,d);box(x2,z2,.1,1.9,.1,a,WOOD,d);box(x,z,L,.03,.03,a,DARK,d,1.85);
+    for(let u=-L/2+.6;u<L/2-.4;u+=RR(.6,1.1)){const [cx,cz]=toW(x,z,a,u,0);box(cx,cz,RR(.4,.8),RR(.5,.9),.04,a,sh(pick([...TARP,...CLOTH,WHITE]),.2),d,1.05)}};
+  const horta=(x,z,d,a)=>{for(let i=0;i<3;i++){const [hx,hz]=toW(x,z,a,0,(i-1)*1.6);box(hx,hz,4.5,.32,1.1,a,[.28,.20,.13],d);for(let u=-1.9;u<2;u+=.45){const [px,pz]=toW(hx,hz,a,u,0);box(px,pz,.32,RR(.25,.6),.32,rr()*3,sh([.24,.42,.16],.25),d,.32)}}};
+  const painel=(x,z,d,a)=>{box(x,z,.12,.9,.12,a,METAL,d);box(x,z,2,.06,1.1,a,[.08,.11,.2],d,1,0,.5)};
+  const cisterna=(x,z,d,r=1.2)=>{cyl(x,z,r,2.6,sh([.18,.28,.42],.1),d);cyl(x,z,r*1.06,.18,DARK,d,2.6)};
+  const entulho=(x,z,r,d,n,pal)=>{for(let i=0;i<n;i++){const q=rr()*6.283,t=Math.sqrt(rr())*r,px=x+Math.cos(q)*t,pz=z+Math.sin(q)*t;const k=cellAt(px,pz);if(k<0||ids[k]<0||(flags[k]&2))continue;
+    pushA(boxes,px,H(px,pz)+(1-t/r)*r*.18,pz,RR(.5,2.6),RR(.3,1.4),RR(.5,2.3),rr()*3.14,sh(pick(pal),.2),d,RR(-.5,.5),RR(-.5,.5))}};
+
+  /* ---------- acampamentos de sobreviventes ---------- */
+  const acamp=(x,z,d,o={})=>{
+    const n=o.tendas??Math.floor(RR(3,7)),cor=o.cor;
+    for(let i=0;i<n;i++){const s=spot(x,z,o.r||16);if(!s)continue;tenda(s[0],s[1],d,rr()*3.14,cor||pick(TARP),RR(2.6,3.6),RR(3.4,4.8))}
+    const f=spot(x,z,5)||[x,z];fogo(f[0],f[1],d);
+    const np=o.pessoas??Math.floor(RR(4,9));for(let i=0;i<np;i++){const q=rr()*6.283,t=RR(1.4,3.2);const px=f[0]+Math.cos(q)*t,pz=f[1]+Math.sin(q)*t;if(free(cellAt(px,pz)))pessoa(px,pz,d,Math.atan2(f[0]-px,f[1]-pz)+Math.PI)}
+    if(rr()<.6){const s=spot(x,z,(o.r||16)*.8);if(s)varal(s[0],s[1],d,rr()*3.14)}
+    if(rr()<.5){const s=spot(x,z,(o.r||16));if(s)horta(s[0],s[1],d,rr()*3.14)}
+    if(rr()<.55){const s=spot(x,z,(o.r||16));if(s){painel(s[0],s[1],d,rr()*6.28);painel(s[0]+2.3,s[1],d,0)}}
+    if(rr()<.5){const s=spot(x,z,(o.r||16));if(s)cisterna(s[0],s[1],d)}
+    if(rr()<.55){const s=spot(x,z,(o.r||16));if(s)cao(s[0],s[1],d)}
+    for(let i=0;i<4;i++){const s=spot(x,z,(o.r||16));if(s)box(s[0],s[1],RR(.6,1.1),RR(.5,1),RR(.5,1),rr()*3,sh(pick([WOOD,RUST,[.2,.3,.2]]),.2),d)}
+    v8Stats.acampamentos++;ruinStats.sites.push(['a',...P(x,z).map(Math.round)]);
+  };
+  const praças=[];
+  for(let t=0;t<12000&&praças.length<22;t++){const i=Math.floor(rr()*NX),j=Math.floor(rr()*NZ),k=j*NX+i;const d=ids[k];if(d<0||![0,1,4,5,6].includes(d))continue;if(!(flags[k]&(16|8|4))||(flags[k]&(1|2|32))||occ[k])continue;
+    const x=cx_(i),z=cz_(j);if(praças.some(p=>Math.hypot(p[0]-x,p[1]-z)<260))continue;let ok=0;for(let q=0;q<8;q++){if(free(cellAt(x+Math.cos(q*.785)*10,z+Math.sin(q*.785)*10)))ok++}if(ok<6)continue;praças.push([x,z,d])}
+  for(const [x,z,d] of praças)acamp(x,z,d);
+
+  /* ---------- locais novos (adereços 3D) ---------- */
+  const pendOcc=[];
+  const at=(px,py)=>{const [x,z]=W(px,py);return [x,z,distAt(x,z)]};
+  const site=(id,px,py,w,dp,r=90)=>{let [x,z,d]=at(px,py);if(d<0)d=6;let s=findSite(d,w,dp,{street:false,near:[x,z],radius:r,tries:260})||findSite(d,w*.7,dp*.7,{street:false,near:[x,z],radius:r*1.8,tries:300})||findSite(d,w*.7,dp*.7,{street:false,near:[x,z],radius:r*5,tries:600});if(!s)return null;pendOcc.push([s.x,s.z,w+2,dp+2,s.a]);v8Stats.locais++;v8Fx.sitios[id]=[px,py,...P(s.x,s.z).map(Math.round)];return {...s,d}};
+  let s;
+  if((s=site('hosp_campanha',925,505,26,20))){for(let i=0;i<6;i++){const [tx,tz]=toW(s.x,s.z,s.a,(i%3-1)*8,(i<3?-1:1)*5);tenda(tx,tz,s.d,s.a,WHITE,5,7);}const [cx,cz]=toW(s.x,s.z,s.a,0,0);box(cx,cz,1.4,.06,1.4,0,[.75,.1,.1],s.d,2.1);for(let i=0;i<7;i++){const p=spot(s.x,s.z,12);if(p)pessoa(p[0],p[1],s.d)}}
+  if((s=site('abrigo_escola',250,455,22,16)))acamp(s.x,s.z,s.d,{tendas:5,pessoas:9,r:11});
+  if((s=site('escambo',640,585,26,22))){for(let i=0;i<10;i++){const [tx,tz]=toW(s.x,s.z,s.a,(i%5-2)*4.6,(i<5?-1:1)*4);box(tx,tz,3,.9,1.6,s.a,WOOD,s.d);pushA(roofs,tx,H(tx,tz)+2.2,tz,3.4,.7,2.4,s.a,sh(pick(TARP),.1),s.d);box(tx,tz,.1,2.2,.1,0,METAL,s.d)}for(let i=0;i<16;i++){const p=spot(s.x,s.z,12);if(p)pessoa(p[0],p[1],s.d)}fogo(s.x,s.z,s.d,.8)}
+  const mastro=(x,z,d,Hh,w0)=>{const n=Math.round(Hh/5);for(let i=0;i<n;i++){const w=w0*(1-i/n*.8),y=i*5;const col=i%4<2?[.62,.16,.12]:[.82,.80,.76];for(const [u,v] of [[-1,-1],[1,-1],[1,1],[-1,1]])box(x+u*w/2,z+v*w/2,.55,5,.55,0,col,d,y);box(x,z,.9,5,.9,0,col,d,y);if(i%2===0){box(x,z-w/2,w,.3,.3,0,METAL,d,y+2.5);box(x,z+w/2,w,.3,.3,0,METAL,d,y+2.5);box(x-w/2,z,.3,.3,w,0,METAL,d,y+2.5);box(x+w/2,z,.3,.3,w,0,METAL,d,y+2.5)}}
+    glow(x,H(x,z)+n*5+1,z,14,0xff2a2a,1,scene)};
+  if((s=site('torre_radio',270,300,10,10))){mastro(s.x,s.z,s.d,70,5);box(s.x+7,s.z,5,2.6,4,0,CONC,s.d);box(s.x+7,s.z+3.5,1.6,1,1,0,[.3,.3,.2],s.d)}
+  if((s=site('transmissao_amc',745,360,10,10))){mastro(s.x,s.z,s.d,45,3.5);for(let i=0;i<3;i++)pushA(cyls,s.x+(i-1)*2,H(s.x,s.z)+30+i*4,s.z+2.2,1.6,.25,1.6,i,WHITE,s.d,1.2,0)}
+  if((s=site('quartel',1240,745,42,32,240))){const L=42,Wd=32;for(const [u,v,w,dd] of [[0,-Wd/2,L,.5],[0,Wd/2,L,.5],[-L/2,0,.5,Wd],[L/2,0,.5,Wd]]){const [x,z]=toW(s.x,s.z,s.a,u,v);box(x,z,w,3,dd,s.a,sh(CONC,.05),s.d)}
+    for(const [u,v] of [[-L/2,-Wd/2],[L/2,Wd/2]]){const [x,z]=toW(s.x,s.z,s.a,u,v);box(x,z,3,7,3,s.a,DARK,s.d);box(x,z,3.6,.3,3.6,s.a,OLIVE,s.d,7)}
+    for(let i=0;i<3;i++){const [x,z]=toW(s.x,s.z,s.a,-12+i*12,6);box(x,z,14,5,8,s.a,sh(OLIVE,.1),s.d)}for(let i=0;i<4;i++){const [x,z]=toW(s.x,s.z,s.a,-14+i*8,-10);box(x,z,4.2,1.8,2,s.a+rr()*.4,sh(OLIVE,.15),s.d)}
+    for(let i=0;i<10;i++){const [x,z]=toW(s.x,s.z,s.a,-6+i*1.2,-Wd/2+1.2);box(x,z,1.1,.45,.6,s.a,[.52,.47,.34],s.d,(i%2)*.45)}}
+  if((s=site('esgoto',880,612,8,6))){box(s.x,s.z,6,1.2,5,s.a,CONC,s.d);box(s.x,s.z,4.2,.02,3.4,s.a,[.02,.02,.02],s.d,1.21);for(let i=0;i<5;i++){const [x,z]=toW(s.x,s.z,s.a,-1.8+i*.9,2.6);box(x,z,.08,1.4,.08,s.a,RUST,s.d,1.2)}entulho(s.x,s.z,7,s.d,8,[CONC,RUST])}
+  if((s=site('metro',560,505,8,10))){box(s.x,s.z,5,2.8,9,s.a,sh(CONC,.05),s.d);const [x,z]=toW(s.x,s.z,s.a,0,4.6);box(x,z,3.6,2.2,.08,s.a,[.02,.02,.02],s.d,.1);box(x,z,4.4,.7,.3,s.a,[.12,.25,.5],s.d,2.6)}
+  if((s=site('cisterna',425,560,10,10))){cyl(s.x,s.z,4,6,sh([.32,.34,.36],.05),s.d);cyl(s.x,s.z,4.3,.4,DARK,s.d,6);for(let i=0;i<9;i++){const [x,z]=toW(s.x,s.z,s.a,-5-i*1,0);if(free(cellAt(x,z)))pessoa(x,z,s.d,s.a+Math.PI/2)}}
+  if((s=site('estacao_balti',478,300,70,16,130))){for(const v of [-4,4]){const [x,z]=toW(s.x,s.z,s.a,0,v);box(x,z,66,1,4.6,s.a,CONC,s.d);for(let u=-30;u<=30;u+=10){const [px,pz]=toW(x,z,s.a,u,0);box(px,pz,.3,4.2,.3,s.a,METAL,s.d,1)}box(x,z,66,.3,5.4,s.a,[.22,.30,.24],s.d,5.2)}
+    for(let i=0;i<3;i++){const [x,z]=toW(s.x,s.z,s.a,-22+i*19,0);box(x,z,17,3.6,3,s.a,sh([.18,.30,.22],.1),s.d,.5);box(x,z,17.4,.4,3.2,s.a,DARK,s.d,4.1)}}
+  if((s=site('bunker',620,735,14,12))){box(s.x,s.z,12,2.4,9,s.a,sh(CONC,.04),s.d);pushA(roofs,s.x,H(s.x,s.z)+2.4,s.z,12.4,1.2,9.4,s.a,[.25,.33,.18],s.d);const [x,z]=toW(s.x,s.z,s.a,0,4.6);box(x,z,2.4,2.1,.25,s.a,[.25,.27,.28],s.d);for(const u of [-4,4]){const [vx,vz]=toW(s.x,s.z,s.a,u,-2);cyl(vx,vz,.35,4.2,METAL,s.d)}}
+  if((s=site('arena',1160,545,22,22))){const R=7;for(let i=0;i<4;i++){const q=s.a+i*Math.PI/2;box(s.x+Math.cos(q)*R,s.z-Math.sin(q)*R,.15,1.3,2*R,q,RUST,s.d);for(const k of [-1,1]){const [px,pz]=toW(s.x,s.z,q,R,k*R);box(px,pz,.25,1.6,.25,q,METAL,s.d)}}
+    for(let i=0;i<6;i++){const q=i/6*6.283;const x=s.x+Math.cos(q)*(R+2.5),z=s.z+Math.sin(q)*(R+2.5);cyl(x,z,.42,1.1,RUST,s.d);const g=glow(x,H(x,z)+1.8,z,7,0xff7a20,1);fires.push(g)}
+    for(let i=0;i<28;i++){const q=rr()*6.283,t=RR(R+1.2,R+6);const x=s.x+Math.cos(q)*t,z=s.z+Math.sin(q)*t;if(free(cellAt(x,z)))pessoa(x,z,s.d,Math.atan2(s.x-x,s.z-z)+Math.PI)}pessoa(s.x-1,s.z,s.d);pessoa(s.x+1,s.z,s.d)}
+  if((s=site('clinica',500,835,10,8))){tenda(s.x,s.z,s.d,s.a,WHITE,4,5);box(s.x+3,s.z,1.6,.06,1.6,0,[.75,.1,.1],s.d,2.6);for(let i=0;i<5;i++){const p=spot(s.x,s.z,6);if(p)pessoa(p[0],p[1],s.d)}}
+  if((s=site('combustivel',1290,430,40,30,140))){for(let i=0;i<6;i++){const [x,z]=toW(s.x,s.z,s.a,-12+(i%3)*12,(i<3?-1:1)*7);cyl(x,z,5,8+rr()*3,sh([.68,.68,.62],.06),s.d);cyl(x,z,5.2,.3,RUST,s.d,8)}
+    for(const [u,v,w,dd] of [[0,-15,40,.12],[0,15,40,.12],[-20,0,.12,30],[20,0,.12,30]]){const [x,z]=toW(s.x,s.z,s.a,u,v);box(x,z,w,2.4,dd,s.a,METAL,s.d)}}
+
+  for(const o of pendOcc)markOcc(...o);
+  /* ---------- hordas de infectados ---------- */
+  for(const [px,py,n] of [[1330,275,46],[1250,592,38],[705,1185,30],[1390,300,26],[1180,640,24]]){const c0=W(px,py),c=spot(c0[0],c0[1],140,400);if(!c)continue;const [x,z]=c;
+    for(let i=0;i<n;i++){const q=rr()*6.283,t=Math.sqrt(rr())*22;const X=x+Math.cos(q)*t,Z=z+Math.sin(q)*t,k=cellAt(X,Z);if(k<0||(flags[k]&(2|32))||occ[k])continue;pessoa(X,Z,Math.max(0,ids[k]),q,RR(-.25,.25),[[.28,.30,.24],[.22,.22,.20],[.35,.30,.26],[.20,.24,.20]])}
+    v8Stats.hordas++}
+
+  /* ---------- poças e vidro quebrado nas ruas ---------- */
+  for(const [pts,w] of RUAS){if(w<6)continue;for(const p of samplesAlong(pts,38)){const k=cellAt(p.x,p.z);if(k<0||!(flags[k]&1)||ids[k]<0)continue;const d=ids[k];
+    if(rr()<.32){const a=Math.atan2(p.dx,p.dz);const off=(rr()-.5)*w*.6;pushA(boxes,p.x-p.dz*off,H(p.x,p.z)+.04,p.z+p.dx*off,RR(1.4,5),.03,RR(1,3.2),a+RR(-.4,.4),[.05,.06,.075],d);v8Stats.pocas++}
+    if(d===1&&rr()<.5){for(let i=0;i<6;i++){const off=(rr()<.5?-1:1)*w*RR(.42,.5);pushA(boxes,p.x-p.dz*off+RR(-2,2),H(p.x,p.z)+.03,p.z+p.dx*off+RR(-2,2),RR(.2,.6),.03,RR(.2,.5),rr()*3,sh(GLASSB,.2),d);v8Stats.vidro++}}}}
+
+  /* ---------- passarelas caídas sobre avenidas ---------- */
+  let feitas=0;
+  for(const [pts,w] of RUAS){if(feitas>=3||w<12)continue;const sm=samplesAlong(pts,60);if(sm.length<6)continue;const p=sm[Math.floor(sm.length*RR(.3,.7))];const k=cellAt(p.x,p.z);if(k<0||![3,5,6].includes(ids[k]))continue;const d=ids[k];
+    const nx=-p.dz,nz=p.dx,a=Math.atan2(p.dx,p.dz),half=w/2+3,yy=6.5;
+    for(const sg of [-1,1]){const x=p.x+nx*half*sg,z=p.z+nz*half*sg;box(x,z,1.4,yy,1.4,a,CONC,d);box(x,z,2.2,4.5,8,a,sh(CONC,.05),d,0)}
+    const x1=p.x+nx*half*.5,z1=p.z+nz*half*.5;pushA(boxes,x1,H(x1,z1)+yy*.55,z1,2.6,.7,half*1.05,a+Math.PI/2,CONC,d,0,.0);
+    const x2=p.x-nx*half*.45,z2=p.z-nz*half*.45;pushA(boxes,x2,H(x2,z2)+yy*.3,z2,2.6,.7,half*1.1,a+Math.PI/2,sh(CONC,.05),d,.42,0);
+    entulho(p.x-nx*half*.15,p.z-nz*half*.15,5,d,14,[CONC,DARK,RUST]);feitas++;v8Stats.pontes++}
+
+  /* ---------- canais e docas bloqueados ---------- */
+  let can=0;for(let t=0;t<40000&&can<8;t++){const i=Math.floor(rr()*NX),j=Math.floor(rr()*NZ),k=j*NX+i;if(!(flags[k]&2))continue;const x=cx_(i),z=cz_(j);const [px,py]=P(x,z);if(px<-50||px>1500||py<40||py>980)continue;
+    let land=-1;for(let q=0;q<8;q++){const kk=cellAt(x+Math.cos(q*.785)*14,z+Math.sin(q*.785)*14);if(kk>=0&&!(flags[kk]&2)&&ids[kk]>=0){land=ids[kk];break}}if(land<0)continue;
+    const a=rr()*3.14;pushA(boxes,x,-1.2,z,RR(14,22),2.2,RR(5,7),a,sh(RUST,.15),land,RR(-.12,.12),RR(-.2,.2));for(let q=0;q<6;q++)pushA(boxes,x+RR(-9,9),-.4,z+RR(-9,9),RR(1,3),RR(.6,1.2),RR(1,3),rr()*3,sh(pick([WOOD,RUST,DARK]),.2),land,RR(-.3,.3));can++;v8Stats.canais++}
+
+  /* ---------- ruínas com cara de cada bairro ---------- */
+  const PAL={0:[LIME,BRICK,TILE,[.55,.5,.42]],1:[CONC,GLASSB,METAL,DARK],2:[RUST,[.15,.30,.45],[.55,.18,.12],METAL],3:[RUST,METAL,DARK,CONC],4:[WOOD,BRICK,TILE,[.5,.45,.38]],5:[CONC,[.5,.5,.48],DARK,ASH],6:[BRICK,WOOD,CONC,RUST]};
+  for(let d=0;d<7;d++){const b=DBOX[d];if(!b)continue;let n=0;for(let t=0;t<4000&&n<22;t++){const x=RR(b[0],b[2]),z=RR(b[1],b[3]),k=cellAt(x,z);if(!free(k)||ids[k]!==d)continue;entulho(x,z,RR(3,7),d,Math.floor(RR(8,16)),PAL[d]);n++;v8Stats.ruinas++}}
+
+  /* ---------- corvos (bandos que circulam) ---------- */
+  for(let i=0;i<7;i++){const [px,py]=pick([[1330,275],[1250,592],[565,165],[983,712],[177,881],[705,1185],[890,460],[330,245]]);v8Fx.corvos.push(W(px+RR(-40,40),py+RR(-30,30)))}
+}
+
 const st={hov:-1,sel:-1,selPoi:null,mode:0,master:false,preview:false,noite:false,placing:null,hora:12,clima:'limpo',tool:null,selZone:null};
 const pview=()=>!st.master||st.preview;
 const esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
@@ -4660,6 +4858,7 @@ function selectPoi(id,fly){
     <label class="f">Tamanho</label><select class="inp" data-k="tam"><option value="p" ${p.tam==='p'?'selected':''}>Pequeno</option><option value="" ${!p.tam?'selected':''}>Normal</option><option value="g" ${p.tam==='g'?'selected':''}>Grande</option></select>
     <label class="row" style="margin-top:8px"><input type="checkbox" data-k="mestre" ${p.mestre?'checked':''}> Esconder dos jogadores</label>
     <div class="btns" style="margin-top:10px"><button class="btn acc" data-act="mover">Mover (clique no mapa)</button><button class="btn" data-act="dup">Duplicar</button><button class="btn danger" data-act="del">Remover marcador</button></div>`}
+  h+=v8PoiHtml(p);
   info.innerHTML=h;info.classList.remove('hidden');info.dataset.kind='p';info.dataset.ref=id;
   if(fly){const [x,z]=posOf(p);flyTo(x,z,560)}
 }
@@ -4752,7 +4951,7 @@ $('btnRestorePois').addEventListener('click',()=>{const base=migrateCity(JSON.pa
 $('lyDetails').addEventListener('change',e=>{detailMeshes.forEach(m=>m.visible=e.target.checked);updateCityDetailLOD()});
 $('sideToggle').addEventListener('click',()=>$('side').classList.toggle('open'));
 $('btnHist').addEventListener('click',()=>{st.sel=-1;st.selPoi=null;refresh();info.innerHTML=`<button class="close" data-x>×</button><div class="kicker">A cidade</div><h2>${esc(DATA.cidade)}</h2><p>${esc(DATA.historia||'')}</p>`;info.classList.remove('hidden');info.dataset.kind='h'});
-function rerenderInfo(){if(info.dataset.kind==='mono'){showMonorail();return}if(info.classList.contains('hidden')||info.dataset.kind==='h')return;info.dataset.kind==='d'?selectDistrict(+info.dataset.ref):info.dataset.kind==='z'?selectZone(info.dataset.ref):selectPoi(info.dataset.ref)}
+function rerenderInfo(){if(v8Rerender())return;if(info.dataset.kind==='mono'){showMonorail();return}if(info.classList.contains('hidden')||info.dataset.kind==='h')return;info.dataset.kind==='d'?selectDistrict(+info.dataset.ref):info.dataset.kind==='z'?selectZone(info.dataset.ref):selectPoi(info.dataset.ref)}
 addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select'))return;if(e.key==='r'||e.key==='R')resetView();if(e.key==='Escape'){cancelPlacement();if(st.tool)setTool(null);st.sel=-1;st.selPoi=null;info.classList.add('hidden');refresh()}});
 
 const DAY={bg:new THREE.Color(0x6b716f),hs:new THREE.Color(0xcfcbc0),hg:new THREE.Color(0x2a2620),hi:1,sc:new THREE.Color(0xffe6c8),si:1.7,exp:1.0};
@@ -4882,7 +5081,7 @@ function loop(now){
       if(next!==renderScale){renderScale=next;resize()}
     }
   }
-  applyDN(dt,now);fxFrame(now);grupoAnim(now);
+  applyDN(dt,now);fxFrame(now);grupoAnim(now);v8Frame(now);
   const tt=now/1000;fires.forEach((f,i)=>{const s=f.userData.s??(f.userData.s=f.scale.x);f.scale.setScalar(s*(.85+.25*Math.sin(tt*9+i*1.7)*Math.sin(tt*5.3+i)))});
   beacons.forEach((b,i)=>b.material.opacity=i===0?(.35+.65*Math.max(0,Math.sin(tt*1.6)))*(.4+.6*dn):(Math.sin(tt*3+i)>0?(.5+.5*dn):.05));
   dangerRings.forEach((r,i)=>{const k=(tt*.5+i*.3)%1;r.scale.setScalar(20+k*40);r.material.opacity=(1-k)*(.25+.6*dn)});
@@ -4893,7 +5092,7 @@ function loop(now){
   if(runningTrain)animateMonorail(now);
   if(waterfallTex&&landmark.cachoeira&&Math.hypot(controls.target.x-landmark.cachoeira[0],controls.target.z-landmark.cachoeira[1])<1400&&camera.position.distanceTo(controls.target)<2500){waterfallTex.offset.y=-(now*.00035)%1;needsFrame=true}
   renderer.render(scene,camera);
-  if(updateHud||wxActive){placeLabels();placeZoneLabels();placeStreetLabels();placeGrupoLabel();rulerSize();updateScale()}
+  if(updateHud||wxActive){placeLabels();placeZoneLabels();placeStreetLabels();placeGrupoLabel();v8Place();rulerSize();updateScale()}
   lastFrame=now;
   cameraDirty=false;
   requestAnimationFrame(loop);
@@ -5059,7 +5258,7 @@ function setTool(name){
   st.tool=name;brush.down=false;brushRing.visible=false;
   document.body.classList.toggle('tool-regua',name==='regua');document.body.classList.toggle('tool-nevoa',name==='nevoa');
   const paint=name==='nevoa';controls.mouseButtons.LEFT=paint?-1:THREE.MOUSE.PAN;controls.touches.ONE=paint?-1:THREE.TOUCH.PAN;
-  $('rulerBox').style.display=name==='regua'?'block':'none';$('fogBox').style.display=name==='nevoa'?'block':'none';
+  $('rulerBox').style.display=name==='regua'?'block':'none';$('rotaBox').style.display=name==='rota'?'block':'none';if(name!=='rota')v8RotaCancel();$('fogBox').style.display=name==='nevoa'?'block':'none';
   $('btnRegua').classList.toggle('acc',name==='regua');$('btnGrupo').classList.toggle('acc',name==='grupo');if(name==='grupo')toast('Toque no mapa onde o grupo está agora');$('btnPincel').classList.toggle('acc',name==='nevoa');
   if(name==='regua')toast('Régua: clique em pontos do mapa para medir');if(name==='nevoa')toast('Pincel: arraste para revelar ou cobrir');
   if(st.placing)cancelPlacement();
@@ -5073,7 +5272,7 @@ canvas.addEventListener('pointermove',e=>{
     if(brush.down&&(e.buttons&1))fogPaint(g.x,g.z,brush.r*.7,brush.reveal)}}
 });
 addEventListener('pointerup',()=>{if(brush.down){brush.down=false;fogSaveData();renderLabels();renderLists();v7Refresh(true)}});
-function v7Tool(r,e){
+function v7Tool(r,e){if(v8Tool(r,e))return true;
   if(st.placing&&(st.placing.kind==='zona'||st.placing.kind==='zmove')&&r.p&&masterNow()){
     const [px,py]=P(r.p.x,r.p.z).map(v=>Math.round(v));
     if(st.placing.kind==='zmove'){const z=DATA.zonas.find(q=>q.id===st.placing.id);if(z){z.px=px;z.py=py}}
@@ -5099,18 +5298,18 @@ function placeStreetLabels(){
 
 /* ---------- busca ---------- */
 function runSearch(q){
-  const out=$('buscaRes'),n=normTxt(q).trim();if(n.length<2){out.innerHTML='';return}
+  const out=$('buscaRes'),n=normTxt(q).trim();if(n.length<2&&!v8FiltroAtivo()){out.innerHTML='';return}
   const hits=[];const sc=(txt,desc)=>{const t=normTxt(txt);if(t.startsWith(n))return 3;if(t.includes(n))return 2;if(desc&&normTxt(desc).includes(n))return 1;return 0};
   DATA.locais.forEach(p=>{if(!poiVisible(p))return;const s=Math.max(sc(p.nome,p.desc),sc(TIPOS[p.tipo]||'',''),masterNow()?sc('',p.segredo):0);if(s)hits.push({s,k:'p',id:p.id,t:p.nome,sub:TIPOS[p.tipo]||'Local'})});
   DATA.distritos.forEach((d,i)=>{if(pview()&&!d.descoberto)return;const s=Math.max(sc(d.nome,d.desc),sc(d.sub,''));if(s)hits.push({s,k:'d',id:i,t:d.nome,sub:'Bairro'})});
   (DATA.zonas||[]).forEach(z=>{if(!zoneVisible(z))return;const s=Math.max(sc(z.nome,z.desc),sc(ZT[z.tipo]?.nome||'',''));if(s)hits.push({s,k:'z',id:z.id,t:z.nome,sub:'Zona'})});
   RUAS_NOMES.forEach(([nm,px,py])=>{if(sc(nm,'')){const [x,z]=W(px,py);if(!(pview()&&DATA.nevoaOn&&fogAt(x,z)<.35))hits.push({s:sc(nm,''),k:'r',id:nm,t:nm,sub:'Rua',px,py})}});
-  hits.sort((a,b)=>b.s-a.s);
-  out.innerHTML=hits.slice(0,10).map(h=>`<div class="it" data-k="${h.k}" data-id="${esc(h.id)}" ${h.k==='r'?`data-px="${h.px}" data-py="${h.py}"`:''}>${esc(h.t)}<span class="tag-m" style="background:#2b2f36;color:#9aa1ab">${h.sub}</span></div>`).join('')||'<div class="it fog">Nada encontrado</div>';
+  v8SearchExtra(hits,sc);hits.sort((a,b)=>b.s-a.s);
+  out.innerHTML=hits.slice(0,v8FiltroAtivo()?40:10).map(h=>`<div class="it" data-k="${h.k}" data-id="${esc(h.id)}" ${h.k==='r'?`data-px="${h.px}" data-py="${h.py}"`:''}>${esc(h.t)}<span class="tag-m" style="background:#2b2f36;color:#9aa1ab">${h.sub}</span></div>`).join('')||'<div class="it fog">Nada encontrado</div>';
 }
 $('busca').addEventListener('input',e=>runSearch(e.target.value));
 $('buscaRes').addEventListener('click',e=>{const it=e.target.closest('[data-k]');if(!it)return;const k=it.dataset.k,id=it.dataset.id;
-  if(k==='p')selectPoi(id,true);else if(k==='d')selectDistrict(+id,true);else if(k==='z')selectZone(id,true);else{const [x,z]=W(+it.dataset.px,+it.dataset.py);flyTo(x,z,520)}
+  if(k==='p')selectPoi(id,true);else if(k==='d')selectDistrict(+id,true);else if(k==='z')selectZone(id,true);else if(k==='n')selectNpc(id,true);else if(k==='ro')selectRota(id,true);else{const [x,z]=W(+it.dataset.px,+it.dataset.py);flyTo(x,z,520)}
   $('side').classList.remove('open')});
 addEventListener('keydown',e=>{if(e.key==='/'&&!e.target.matches('input,textarea,select')){e.preventDefault();$('side').classList.add('open');$('busca').focus()}});
 
@@ -5279,7 +5478,7 @@ async function build(){
   await yieldToBrowser();ld('Bairros, natureza e relevo',34);
   genPredios();genCasas();genPeriferia();genUrbanServices();genKlint();genWaterfall();genLandmarks();genNature();genMata();computeCentroids();
   captureStructures=false;
-  ld('Barricadas e ruínas',50);genRuinas();
+  ld('Barricadas e ruínas',50);genRuinas();genV8();
   await yieldToBrowser();ld('Terreno e texturas',56);
   makeGround(makeGroundTexture());
   await yieldToBrowser();ld('Montando os edifícios',64);
@@ -5362,6 +5561,7 @@ async function moveGrupo(px,py){
   if(tr.length>1500)tr.splice(0,tr.length-1500);
   G.px=px;G.py=py;GR.dirty=true;
   if(rev)fogSaveData();
+  v8Visit(px,py);
   await ORgrupoSalvar();toast('Grupo movido');
 }
 async function ORrecarrega(){
@@ -5369,7 +5569,7 @@ async function ORrecarrega(){
   if(!r.data||!r.data.dados||!r.data.dados.distritos)return;
   DATA=migrateCity({...r.data.dados,nevoaPng:r.data.nevoa||undefined});
   $('cityName').textContent=DATA.cidade||'Cidade-Fronteira';
-  buildLabels();refresh();applyMonorailState();fogLoadData();rerenderInfo();
+  buildLabels();refresh();applyMonorailState();fogLoadData();v8AfterReload();rerenderInfo();
 }
 async function ORgrupoRecarrega(){
   const g=await OR.db.from('cidade_grupo').select('px,py,nome,trilha').eq('campanha_id',CID).maybeSingle();
@@ -5413,6 +5613,330 @@ if(OR.ger){st.master=true;document.body.classList.add('master');[...$('segModo')
 else{$('segModo').style.display='none';const h=$('segModo').previousElementSibling;if(h)h.style.display='none'}
 ORlive();
 if(OR.ger&&OR.novo)save();
+
+/* =====================================================================
+   v8 — NPCs, rotas, linha do tempo, diário, comércio, visitados, anotações,
+   exportar imagem, filtros de busca, atalhos, som ambiente e cenários
+   ===================================================================== */
+const ROTA_T={esgoto:{n:'Esgoto / túnel',c:'#7fa04a',v:3},contrabando:{n:'Contrabando',c:'#e3b341',v:4},trilha:{n:'Trilha',c:'#58c98a',v:4},monotrilho:{n:'Monotrilho',c:'#4fd1d9',v:26},estrada:{n:'Estrada',c:'#c3c7cd',v:30},outro:{n:'Outra',c:'#b072ff',v:4.5}};
+const NIVEL={'':'—',pouco:'Pouco',medio:'Médio',muito:'Muito'};
+const RECURSOS=[['agua','Água'],['comida','Comida'],['comb','Combustível'],['mun','Munição'],['rem','Remédios']];
+const CLIMAS={limpo:'Limpo',nublado:'Nublado',neblina:'Neblina',chuva:'Chuva',neve:'Neve'};
+Object.assign(ICONS,{
+  radio:'<path d="M12 21V9M8 21l4-12 4 12M6.5 6.5a8 8 0 0 1 11 0M9 9a4 4 0 0 1 6 0"/>',
+  policia:'<path d="M12 3l8 3v6c0 5-3.5 8-8 9-4.5-1-8-4-8-9V6z"/><path d="M9 12l2 2 4-4"/>',
+  esgoto:'<circle cx="12" cy="12" r="8"/><path d="M4 12h16M12 4v16M6.5 6.5l11 11"/>',
+  agua:'<path d="M12 3c3 4.5 6 7.5 6 11a6 6 0 0 1-12 0c0-3.5 3-6.5 6-11z"/>',
+  bunker:'<path d="M3 18h18M5 18v-5a7 7 0 0 1 14 0v5M10 18v-4h4v4"/>',
+  arena:'<path d="M4 20l7-7M20 20l-7-7M5 4l6 6M19 4l-6 6M3 21l2-2M21 21l-2-2"/>'
+});
+let lsNotas={};try{lsNotas=JSON.parse(localStorage.getItem('or-cidade-notas-'+CID)||'{}')}catch(e){}
+const minhaNota=(k,v)=>{if(v===undefined)return lsNotas[k]||'';if(v)lsNotas[k]=v;else delete lsNotas[k];try{localStorage.setItem('or-cidade-notas-'+CID,JSON.stringify(lsNotas))}catch(e){}};
+const facOpts=v=>Object.entries(FACCOES).map(([k,f])=>`<option value="${k}" ${k===(v||'nen')?'selected':''}>${f.nome}</option>`).join('');
+const uid8=p=>p+'-'+Date.now().toString(36)+Math.floor(Math.random()*999);
+const fogHide=(x,z)=>pview()&&DATA.nevoaOn&&fogAt(x,z)<.35;
+
+/* ---------- local: comércio, visitado e anotações ---------- */
+function v8PoiHtml(p){
+  let h='';
+  if(p.visitado)h+=`<div class="chip" style="margin-top:6px;color:#7cffb0">Visitado pelo grupo</div>`;
+  const c=p.com;
+  if(c&&c.on){h+=`<h3>Comércio e recursos</h3><div class="v8res">${c.fac&&c.fac!=='nen'?`<span class="chip"><span class="dot" style="background:${(FACCOES[c.fac]||FACCOES.nen).cor}"></span>${esc((FACCOES[c.fac]||FACCOES.nen).nome)}</span>`:''}
+    ${RECURSOS.map(([k,n])=>c[k]?`<span class="chip lv-${c[k]}">${n}: ${NIVEL[c[k]]}</span>`:'').join('')}</div>${c.preco?`<p style="white-space:pre-wrap">${esc(c.preco)}</p>`:''}`}
+  h+=`<h3>Minhas anotações</h3><textarea class="inp" data-v8note="p:${esc(p.id)}" rows="3" placeholder="Só você vê (fica neste aparelho)">${esc(minhaNota('p:'+p.id))}</textarea>`;
+  if(masterNow()){const c2=p.com||{};
+    h+=`<h3>Grupo e comércio (mestre)</h3><label class="row"><input type="checkbox" data-k="visitado" ${p.visitado?'checked':''}> Visitado pelo grupo</label>
+    <label class="row"><input type="checkbox" data-v8c="on" ${c2.on?'checked':''}> Tem comércio / recursos</label>
+    ${c2.on?`<label class="f">Quem controla</label><select class="inp" data-v8c="fac">${facOpts(c2.fac)}</select>
+    <div class="v8grid">${RECURSOS.map(([k,n])=>`<label class="f">${n}<select class="inp" data-v8c="${k}">${Object.entries(NIVEL).map(([v,t])=>`<option value="${v}" ${v===(c2[k]||'')?'selected':''}>${t}</option>`).join('')}</select></label>`).join('')}</div>
+    <label class="f">Preços e trocas (jogadores veem)</label><textarea class="inp" data-v8c="preco" rows="3" placeholder="Ex.: 1 lata de comida = 3 balas">${esc(c2.preco||'')}</textarea>`:''}`}
+  return h;
+}
+info.addEventListener('input',e=>{
+  const n=e.target.dataset.v8note;if(n!==undefined){minhaNota(n,e.target.value);return}
+  const c=e.target.dataset.v8c;if(c&&info.dataset.kind==='p'&&masterNow()){const p=DATA.locais.find(l=>l.id===info.dataset.ref);if(!p)return;p.com=p.com||{};p.com[c]=e.target.type==='checkbox'?e.target.checked:e.target.value;save();if(e.target.tagName==='SELECT'||e.target.type==='checkbox')selectPoi(p.id,false);return}
+  const k=e.target.dataset.k8;if(!k)return;const o=v8Obj();if(!o||!masterNow())return;
+  let v=e.target.type==='checkbox'?e.target.checked:e.target.value;if(k==='dia'||k==='risco')v=Math.max(1,Math.round(+v)||1);
+  o[k]=v;save();
+  if(info.dataset.kind==='rota'){rotaKey='';renderRotas()}
+  if(info.dataset.kind==='npc')npcKey='';
+  if(info.dataset.kind==='ev')renderTempo();
+  if(e.target.tagName==='SELECT'||e.target.type==='checkbox')v8Rerender();
+});
+function v8Obj(){const k=info.dataset.kind,id=info.dataset.ref;return k==='npc'?DATA.npcs.find(q=>q.id===id):k==='rota'?DATA.rotas.find(q=>q.id===id):k==='ev'?DATA.eventos.find(q=>q.id===id):null}
+function v8Rerender(){const k=info.dataset.kind;if(info.classList.contains('hidden'))return['npc','rota','ev'].includes(k);
+  if(k==='npc'){selectNpc(info.dataset.ref,false);return true}if(k==='rota'){selectRota(info.dataset.ref,false);return true}if(k==='ev'){selectEvento(info.dataset.ref);return true}return false}
+function v8Visit(px,py){let n=0;for(const p of DATA.locais){if(p.mestre||p.visitado)continue;if(Math.hypot((p.px-px)*4,(p.py-py)*5)<130){p.visitado=true;n++}}if(n){save();refresh()}}
+function v8Close(){st.sel=-1;st.selPoi=null;info.classList.add('hidden');refresh()}
+const delBtn=(act,txt)=>`<button class="btn danger" data-v8a="${act}">${txt}</button>`;
+info.addEventListener('click',e=>{
+  const b=e.target.closest('[data-v8a]');if(!b||!masterNow())return;const a=b.dataset.v8a,o=v8Obj();
+  if(a.startsWith('del')&&!b.dataset.conf){b.dataset.conf=1;b.textContent='Confirmar remoção';return}
+  if(a==='delnpc'){DATA.npcs=DATA.npcs.filter(q=>q!==o);npcKey='';save();v8Close();renderV8Lists()}
+  if(a==='movnpc'){st.placing={kind:'nmove',id:o.id};document.body.classList.add('placing');toast('Toque no mapa para a nova posição')}
+  if(a==='delrota'){DATA.rotas=DATA.rotas.filter(q=>q!==o);rotaKey='';renderRotas();save();v8Close();renderV8Lists()}
+  if(a==='redraw'){rotaEdit=o.id;rotaPts=[];setTool('rota');toast('Toque nos pontos da nova rota e depois em Concluir')}
+  if(a==='delev'){DATA.eventos=DATA.eventos.filter(q=>q!==o);save();v8Close();renderTempo()}
+  if(a==='evnow'){aplicaEvento(o,true);save();renderTempo();selectEvento(o.id)}
+});
+
+/* ---------- NPCs ---------- */
+let npcEls=[],npcKey='';
+function npcVisible(n){return !(pview()&&n.mestre)&&$('lyNpcs').checked}
+function renderNpcs(){
+  const sig=JSON.stringify(DATA.npcs.map(n=>[n.id,n.nome,n.fac,n.mestre,n.px,n.py]))+pview()+$('lyNpcs').checked+(st.selNpc||'');if(sig===npcKey)return;npcKey=sig;
+  npcEls.forEach(n=>n.el.remove());
+  npcEls=DATA.npcs.filter(npcVisible).map(n=>{const el=document.createElement('div');el.className='nlabel'+(n.mestre?' mestre':'')+(st.selNpc===n.id?' sel':'');el.innerHTML=`<i style="background:${(FACCOES[n.fac]||FACCOES.nen).cor}"></i>${esc(n.nome)}`;el.onclick=ev=>{ev.stopPropagation();selectNpc(n.id,false)};labelsEl.appendChild(el);const [x,z]=W(n.px,n.py);return {el,x,z,n}});
+}
+function selectNpc(id,fly){
+  const n=DATA.npcs.find(q=>q.id===id);if(!n)return;st.selNpc=id;st.sel=-1;st.selPoi=null;st.selZone=null;npcKey='';refresh(false);
+  const f=FACCOES[n.fac]||FACCOES.nen;
+  let h=`<button class="close" data-x>×</button><div class="kicker">NPC</div><h2>${esc(n.nome)}</h2>${n.fac&&n.fac!=='nen'?`<span class="chip"><span class="dot" style="background:${f.cor}"></span>${esc(f.nome)}</span>`:''}${n.mestre?'<span class="chip" style="color:var(--amber)">Escondido dos jogadores</span>':''}<p>${esc(n.desc||'')}</p>`;
+  if(!pview()&&n.segredo)h+=`<div class="secret"><b>Só o mestre</b>${esc(n.segredo)}</div>`;
+  h+=`<h3>Minhas anotações</h3><textarea class="inp" data-v8note="n:${esc(n.id)}" rows="3" placeholder="Só você vê">${esc(minhaNota('n:'+n.id))}</textarea>`;
+  if(masterNow())h+=`<h3>Editar (mestre)</h3><label class="f">Nome</label><input class="inp" data-k8="nome" value="${esc(n.nome)}">
+    <label class="f">Facção</label><select class="inp" data-k8="fac">${facOpts(n.fac)}</select>
+    <label class="f">Quem é (jogadores veem)</label><textarea class="inp" data-k8="desc">${esc(n.desc||'')}</textarea>
+    <label class="f">Notas do mestre</label><textarea class="inp" data-k8="segredo">${esc(n.segredo||'')}</textarea>
+    <label class="row"><input type="checkbox" data-k8="mestre" ${n.mestre?'checked':''}> Esconder dos jogadores</label>
+    <div class="btns" style="margin-top:10px"><button class="btn acc" data-v8a="movnpc">Mover (toque no mapa)</button>${delBtn('delnpc','Remover NPC')}</div>`;
+  info.innerHTML=h;info.classList.remove('hidden');info.dataset.kind='npc';info.dataset.ref=id;v8Mobile();
+  if(fly){const [x,z]=W(n.px,n.py);flyTo(x,z,520)}
+}
+
+/* ---------- rotas ---------- */
+const rotaGroup=new THREE.Group();scene.add(rotaGroup);
+let rotaKey='',rotaEls=[],rotaPts=[],rotaEdit=null,rotaTmp=null;
+function rotaVisible(r){return !(pview()&&r.mestre)&&$('lyRotas').checked&&r.pts&&r.pts.length>1}
+function rotaLen(r){let m=0;for(let i=1;i<r.pts.length;i++){const a=W(...r.pts[i-1]),b=W(...r.pts[i]);m+=Math.hypot(b[0]-a[0],b[1]-a[1])}return m}
+function tubeFor(pts,color,rad,op){const v=[];for(let i=0;i<pts.length;i++){const b=W(...pts[i]);if(i){const a=W(...pts[i-1]),n=Math.max(1,Math.ceil(Math.hypot(b[0]-a[0],b[1]-a[1])/25));for(let k=1;k<=n;k++){const x=a[0]+(b[0]-a[0])*k/n,z=a[1]+(b[1]-a[1])*k/n;v.push(new THREE.Vector3(x,Math.max(0,H(x,z))+7,z))}}else v.push(new THREE.Vector3(b[0],Math.max(0,H(b[0],b[1]))+7,b[1]))}
+  if(v.length<2)return null;const cv=new THREE.CatmullRomCurve3(v,false,'catmullrom',0);const g=new THREE.TubeGeometry(cv,Math.min(900,v.length*3),rad,6,false);
+  const m=new THREE.Mesh(g,new THREE.MeshBasicMaterial({color,transparent:true,opacity:op,depthTest:false,depthWrite:false}));m.renderOrder=43;return m}
+function renderRotas(){
+  const sig=JSON.stringify(DATA.rotas.map(r=>[r.id,r.tipo,r.pts,r.mestre,r.nome]))+pview()+$('lyRotas').checked+(st.selRota||'');if(sig===rotaKey)return;rotaKey=sig;
+  while(rotaGroup.children.length){const c=rotaGroup.children[0];c.geometry.dispose();rotaGroup.remove(c)}rotaEls.forEach(r=>r.el.remove());rotaEls=[];
+  for(const r of DATA.rotas){if(!rotaVisible(r))continue;const t=ROTA_T[r.tipo]||ROTA_T.outro,sel=st.selRota===r.id;const m=tubeFor(r.pts,t.c,sel?4.5:2.8,sel?.95:.72);if(m)rotaGroup.add(m);
+    const mid=r.pts[Math.floor(r.pts.length/2)],prev=r.pts[Math.floor(r.pts.length/2)-1]||mid;const [x,z]=W((mid[0]+prev[0])/2,(mid[1]+prev[1])/2);
+    const el=document.createElement('div');el.className='rlabel'+(r.mestre?' mestre':'');el.style.setProperty('--rc',t.c);el.textContent=r.nome;el.onclick=ev=>{ev.stopPropagation();selectRota(r.id,false)};labelsEl.appendChild(el);rotaEls.push({el,x,z,pts:r.pts})}
+  needsFrame=true;
+}
+function rotaTempo(r){const m=rotaLen(r),t=ROTA_T[r.tipo]||ROTA_T.outro,f=1+((r.risco||1)-1)*.15,hrs=m/1000/t.v*f;return {m,txt:hrs<1?Math.round(hrs*60)+' min':hrs.toFixed(1).replace('.',',')+' h'}}
+function selectRota(id,fly){
+  const r=DATA.rotas.find(q=>q.id===id);if(!r)return;st.selRota=id;rotaKey='';renderRotas();const t=ROTA_T[r.tipo]||ROTA_T.outro,tm=rotaTempo(r);
+  let h=`<button class="close" data-x>×</button><div class="kicker">Rota · ${esc(t.n)}</div><h2>${esc(r.nome)}</h2>
+    <div class="v8res"><span class="chip">${(tm.m/1000).toFixed(2).replace('.',',')} km</span><span class="chip">${tm.txt}</span><span class="chip">Risco ${'●'.repeat(r.risco||1)}${'○'.repeat(5-(r.risco||1))}</span></div>${r.mestre?'<span class="chip" style="color:var(--amber)">Escondida dos jogadores</span>':''}<p>${esc(r.desc||'')}</p>`;
+  if(!pview()&&r.segredo)h+=`<div class="secret"><b>Só o mestre</b>${esc(r.segredo)}</div>`;
+  if(masterNow())h+=`<h3>Editar (mestre)</h3><label class="f">Nome</label><input class="inp" data-k8="nome" value="${esc(r.nome)}">
+    <label class="f">Tipo</label><select class="inp" data-k8="tipo">${Object.entries(ROTA_T).map(([k,v])=>`<option value="${k}" ${k===r.tipo?'selected':''}>${v.n}</option>`).join('')}</select>
+    <label class="f">Risco (1 a 5)</label><select class="inp" data-k8="risco">${[1,2,3,4,5].map(n=>`<option ${n===(r.risco||1)?'selected':''}>${n}</option>`).join('')}</select>
+    <label class="f">Descrição (jogadores veem)</label><textarea class="inp" data-k8="desc">${esc(r.desc||'')}</textarea>
+    <label class="f">Notas do mestre</label><textarea class="inp" data-k8="segredo">${esc(r.segredo||'')}</textarea>
+    <label class="row"><input type="checkbox" data-k8="mestre" ${r.mestre?'checked':''}> Esconder dos jogadores</label>
+    <div class="btns" style="margin-top:10px"><button class="btn acc" data-v8a="redraw">Redesenhar</button>${delBtn('delrota','Remover rota')}</div>`;
+  info.innerHTML=h;info.classList.remove('hidden');info.dataset.kind='rota';info.dataset.ref=id;v8Mobile();
+  if(fly){const mid=r.pts[Math.floor(r.pts.length/2)];const [x,z]=W(...mid);flyTo(x,z,Math.min(4000,tm.m*1.2+400))}
+}
+function rotaTmpRender(){if(rotaTmp){rotaTmp.geometry.dispose();scene.remove(rotaTmp);rotaTmp=null}if(rotaPts.length>1){rotaTmp=tubeFor(rotaPts,'#ffffff',3,.9);if(rotaTmp)scene.add(rotaTmp)}$('rotaN').textContent=rotaPts.length+' pontos';needsFrame=true}
+function v8RotaCancel(){rotaPts=[];rotaEdit=null;rotaTmpRender()}
+$('rotaOk').onclick=()=>{if(rotaPts.length<2){toast('Marque pelo menos 2 pontos');return}let id=rotaEdit;
+  if(id){const r=DATA.rotas.find(q=>q.id===id);if(r)r.pts=rotaPts.slice()}else{id=uid8('rota');DATA.rotas.push({id,nome:'Nova rota',tipo:'trilha',pts:rotaPts.slice(),risco:2,desc:'',segredo:'',mestre:true})}
+  rotaPts=[];rotaEdit=null;setTool(null);rotaKey='';renderRotas();save();renderV8Lists();selectRota(id,false);toast('Rota salva (escondida até você mostrar)')};
+$('rotaUndo').onclick=()=>{rotaPts.pop();rotaTmpRender()};$('rotaOff').onclick=()=>setTool(null);
+$('btnNovaRota').onclick=()=>{if(!masterNow())return;rotaEdit=null;rotaPts=[];setTool('rota');toast('Toque nos pontos da rota, em ordem')};
+
+/* ---------- ferramentas no mapa ---------- */
+function v8Tool(r){
+  if(st.placing&&(st.placing.kind==='npc'||st.placing.kind==='nmove')&&r.p&&masterNow()){const [px,py]=P(r.p.x,r.p.z).map(v=>Math.round(v));let id=st.placing.id;
+    if(st.placing.kind==='nmove'){const n=DATA.npcs.find(q=>q.id===id);if(n){n.px=px;n.py=py}}else{id=uid8('npc');DATA.npcs.push({id,nome:'Novo NPC',fac:'nen',px,py,desc:'',segredo:'',mestre:true})}
+    cancelPlacement();npcKey='';save();renderV8Lists();selectNpc(id,false);toast('NPC salvo (escondido até você mostrar)');return true}
+  if(st.tool==='rota'&&r.p&&masterNow()){rotaPts.push(P(r.p.x,r.p.z).map(v=>Math.round(v)));rotaTmpRender();return true}
+  return false;
+}
+$('btnNovoNpc').onclick=()=>{if(!masterNow())return;if(st.tool)setTool(null);st.placing={kind:'npc'};document.body.classList.add('placing');$('side').classList.remove('open');toast('Toque no mapa onde está o NPC')};
+
+/* ---------- linha do tempo e diário ---------- */
+function aplicaEvento(ev,forca){
+  if(ev.feito&&!forca)return;
+  if(ev.clima){const b=document.querySelector(`#segClima [data-v="${ev.clima}"]`);if(b)b.click()}
+  const zr=(DATA.zonas||[]).find(z=>z.id===ev.revela);if(zr)zr.mestre=false;
+  const ze=(DATA.zonas||[]).find(z=>z.id===ev.esconde);if(ze)ze.mestre=true;
+  ev.feito=true;zoneKey='';v7Refresh(true);renderLists();toast('Dia '+ev.dia+': '+ev.titulo);
+}
+function setDia(n){
+  n=Math.max(1,Math.round(n));const old=DATA.dia;DATA.dia=n;
+  for(const ev of DATA.eventos){if(ev.dia>n)ev.feito=false}
+  if(n>old)DATA.eventos.filter(ev=>!ev.feito&&ev.dia<=n).sort((a,b)=>a.dia-b.dia).forEach(ev=>aplicaEvento(ev));
+  save();renderTempo();
+}
+function renderTempo(){
+  $('diaN').textContent='Dia '+(DATA.dia||1);
+  const evs=DATA.eventos.filter(e=>masterNow()||(e.dia<=DATA.dia&&!e.mestre)).map(e=>({k:'e',d:e.dia,o:e})),di=(DATA.diario||[]).map(d=>({k:'d',d:d.dia,o:d}));
+  const all=[...evs,...di].sort((a,b)=>b.d-a.d||(a.k<b.k?-1:1));
+  $('tempoList').innerHTML=all.map(x=>x.k==='e'?`<div class="it ${x.o.dia>DATA.dia?'fut':''}" data-ev="${esc(x.o.id)}"><b class="dd">D${x.o.dia}</b>${esc(x.o.titulo)}${x.o.mestre?'<span class="tag-m">mestre</span>':''}${x.o.dia>DATA.dia?'<span class="tag-m" style="background:#2b2f36;color:#9aa1ab">futuro</span>':''}</div>`
+    :`<div class="it diario"><b class="dd">D${x.o.dia}</b><span>${esc(x.o.texto)}</span>${masterNow()?`<span class="x" data-dx="${esc(x.o.id)}">×</span>`:''}</div>`).join('')||'<div class="it fog">Nada registrado ainda</div>';
+}
+$('tempoList').addEventListener('click',e=>{const x=e.target.closest('[data-dx]');if(x&&masterNow()){DATA.diario=DATA.diario.filter(d=>d.id!==x.dataset.dx);save();renderTempo();return}const it=e.target.closest('[data-ev]');if(it)selectEvento(it.dataset.ev)});
+function selectEvento(id){
+  const ev=DATA.eventos.find(q=>q.id===id);if(!ev)return;
+  const zop=v=>`<option value="">Nenhuma</option>`+(DATA.zonas||[]).map(z=>`<option value="${esc(z.id)}" ${z.id===v?'selected':''}>${esc(z.nome)}</option>`).join('');
+  let h=`<button class="close" data-x>×</button><div class="kicker">Linha do tempo · dia ${ev.dia}</div><h2>${esc(ev.titulo)}</h2><p style="white-space:pre-wrap">${esc(ev.desc||'')}</p>`;
+  if(masterNow())h+=`<h3>Editar (mestre)</h3><label class="f">Dia em que acontece</label><input class="inp" type="number" min="1" data-k8="dia" value="${ev.dia}">
+    <label class="f">Título</label><input class="inp" data-k8="titulo" value="${esc(ev.titulo)}">
+    <label class="f">O que aconteceu (jogadores veem depois do dia)</label><textarea class="inp" data-k8="desc">${esc(ev.desc||'')}</textarea>
+    <label class="f">Muda o clima para</label><select class="inp" data-k8="clima"><option value="">Não muda</option>${Object.entries(CLIMAS).map(([k,v])=>`<option value="${k}" ${k===ev.clima?'selected':''}>${v}</option>`).join('')}</select>
+    <label class="f">Mostra a zona</label><select class="inp" data-k8="revela">${zop(ev.revela)}</select>
+    <label class="f">Esconde a zona</label><select class="inp" data-k8="esconde">${zop(ev.esconde)}</select>
+    <label class="row"><input type="checkbox" data-k8="mestre" ${ev.mestre?'checked':''}> Nunca mostrar aos jogadores</label>
+    <p style="font-size:12px;color:var(--mut)">${ev.feito?'Já aplicado.':'Será aplicado quando o dia chegar.'} Voltar o dia não desfaz mudanças de clima e zonas.</p>
+    <div class="btns" style="margin-top:8px"><button class="btn" data-v8a="evnow">Aplicar agora</button>${delBtn('delev','Remover evento')}</div>`;
+  info.innerHTML=h;info.classList.remove('hidden');info.dataset.kind='ev';info.dataset.ref=id;v8Mobile();
+}
+$('diaMenos').onclick=()=>{if(masterNow())setDia((DATA.dia||1)-1)};$('diaMais').onclick=()=>{if(masterNow())setDia((DATA.dia||1)+1)};
+$('btnNovoEvento').onclick=()=>{if(!masterNow())return;const id=uid8('ev');DATA.eventos.push({id,dia:(DATA.dia||1)+1,titulo:'Novo evento',desc:'',clima:'',revela:'',esconde:'',mestre:false,feito:false});save();renderTempo();selectEvento(id)};
+$('btnDiario').onclick=()=>{if(!masterNow())return;modal('Diário da sessão · dia '+(DATA.dia||1),'',t=>{t=String(t).trim();if(t){DATA.diario.push({id:uid8('di'),dia:DATA.dia||1,texto:t.slice(0,2000)});save();renderTempo()}$('modal').style.display='none'})};
+
+/* ---------- listas do painel ---------- */
+function renderV8Lists(){
+  $('npcList').innerHTML=DATA.npcs.filter(n=>!(pview()&&n.mestre)).map(n=>`<div class="it" data-npc="${esc(n.id)}"><span class="dot" style="background:${(FACCOES[n.fac]||FACCOES.nen).cor}"></span>${esc(n.nome)}${n.mestre?'<span class="tag-m">mestre</span>':''}</div>`).join('')||'<div class="it fog">Nenhum NPC no mapa</div>';
+  $('rotaList').innerHTML=DATA.rotas.filter(r=>!(pview()&&r.mestre)).map(r=>`<div class="it" data-rota="${esc(r.id)}"><span class="dot" style="background:${(ROTA_T[r.tipo]||ROTA_T.outro).c}"></span>${esc(r.nome)}${r.mestre?'<span class="tag-m">mestre</span>':''}</div>`).join('')||'<div class="it fog">Nenhuma rota</div>';
+  renderTempo();
+}
+$('npcList').addEventListener('click',e=>{const it=e.target.closest('[data-npc]');if(it)selectNpc(it.dataset.npc,true)});
+$('rotaList').addEventListener('click',e=>{const it=e.target.closest('[data-rota]');if(it)selectRota(it.dataset.rota,true)});
+for(const id of ['lyNpcs','lyRotas'])$(id).addEventListener('change',()=>{npcKey='';rotaKey='';renderRotas()});
+
+/* ---------- busca com filtros ---------- */
+const v8FiltroAtivo=()=>!!($('buscaTipo').value||$('buscaFac').value);
+function facDoPonto(px,py){let best='nen',bd=1e9;for(const z of DATA.zonas||[]){if(z.tipo!=='faccao'||(pview()&&z.mestre))continue;const d=Math.hypot((z.px-px)*4,(z.py-py)*5);if(d<z.r&&d<bd){bd=d;best=z.fac}}if(best==='nen'){const d=distAt(...W(px,py));if(d>=0&&!(pview()&&!DATA.distritos[d].descoberto))best=DATA.distritos[d].faccao||'nen'}return best}
+function v8SearchExtra(hits,sc){
+  DATA.npcs.forEach(n=>{if(!npcVisible(n))return;const [x,z]=W(n.px,n.py);if(fogHide(x,z))return;const s=Math.max(sc(n.nome,n.desc),masterNow()?sc('',n.segredo):0);if(s)hits.push({s,k:'n',id:n.id,t:n.nome,sub:'NPC',fac:n.fac})});
+  DATA.rotas.forEach(r=>{if(!rotaVisible(r))return;const s=Math.max(sc(r.nome,r.desc),sc((ROTA_T[r.tipo]||{}).n||'',''));if(s)hits.push({s,k:'ro',id:r.id,t:r.nome,sub:'Rota'})});
+  const tipo=$('buscaTipo').value,fac=$('buscaFac').value;
+  for(const h of hits){if(h.k==='p'){const p=DATA.locais.find(l=>l.id===h.id);h.com=!!(p&&p.com&&p.com.on);h.fac=p?(p.com&&p.com.on&&p.com.fac&&p.com.fac!=='nen'?p.com.fac:facDoPonto(p.px,p.py)):'nen'}
+    else if(h.k==='d')h.fac=DATA.distritos[h.id].faccao;else if(h.k==='z'){const z=DATA.zonas.find(q=>q.id===h.id);h.fac=z&&z.tipo==='faccao'?z.fac:'nen'}}
+  const keep=h=>(!tipo||(tipo==='com'?h.com:h.k===tipo))&&(!fac||h.fac===fac);
+  for(let i=hits.length-1;i>=0;i--)if(!keep(hits[i]))hits.splice(i,1);
+}
+$('buscaFac').innerHTML='<option value="">Todas as facções</option>'+Object.entries(FACCOES).filter(([k])=>k!=='nen').map(([k,f])=>`<option value="${k}">${f.nome}</option>`).join('');
+for(const id of ['buscaTipo','buscaFac'])$(id).addEventListener('change',()=>runSearch($('busca').value));
+
+/* ---------- exportar imagem / enviar para a mesa ---------- */
+async function capturaPNG(k){
+  const w=innerWidth,h=innerHeight,max=Math.min(8192,(renderer.capabilities&&renderer.capabilities.maxTextureSize)||8192);k=Math.max(1,Math.min(k,Math.floor(max/Math.max(w,h))));
+  const pr=renderer.getPixelRatio();renderer.setPixelRatio(1);renderer.setSize(w*k,h*k,false);renderer.render(scene,camera);
+  const blob=await new Promise(r=>renderer.domElement.toBlob(r,'image/png'));
+  renderer.setPixelRatio(pr);renderer.setSize(w,h,false);resize();needsFrame=true;return {blob,k,w:w*k,h:h*k};
+}
+async function exportar(k){toast('Gerando imagem…');await new Promise(r=>setTimeout(r,60));
+  try{const {blob,w,h}=await capturaPNG(k);if(!blob)throw new Error('vazio');const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download=`cidade-dia${DATA.dia||1}-${w}x${h}.png`;document.body.appendChild(a);a.click();setTimeout(()=>{URL.revokeObjectURL(a.href);a.remove()},4000);toast(`Imagem ${w}×${h} baixada`)}catch(e){toast('Não consegui gerar a imagem')}}
+async function enviarMesa(){
+  const ms=OR.mesas||[];if(!ms.length){toast('Esta campanha ainda não tem mesa');return}
+  const mesa=ms.length===1?ms[0]:ms.find(m=>m.id===$('expMesa').value);if(!mesa){toast('Escolha a mesa');return}
+  toast('Gerando e enviando…');await new Promise(r=>setTimeout(r,60));
+  try{let {blob}=await capturaPNG(3);let mime='image/png',ext='png';if(blob.size>45e6){const c=await capturaPNG(2);blob=c.blob}
+    const id=crypto.randomUUID(),path=mesa.id+'/'+id+'.'+ext,nome='Cidade · dia '+(DATA.dia||1)+' · '+new Date().toLocaleDateString('pt-BR');
+    let a=await OR.db.from('arquivos').insert({id,mesa_id:mesa.id,tipo:'mapa',nome,path,mime,tamanho:blob.size,criado_por:OR.uid});if(a.error)throw a.error;
+    const u=await OR.db.storage.from('mesa-arquivos').upload(path,blob,{contentType:mime,upsert:false});if(u.error){await OR.db.from('arquivos').delete().eq('id',id);throw u.error}
+    toast('Enviado para a biblioteca de mapas de "'+mesa.nome+'"')}catch(e){console.error(e);toast('Não consegui enviar: '+((e&&e.message)||e))}}
+$('btnExp2').onclick=()=>exportar(2);$('btnExp4').onclick=()=>exportar(4);$('btnExpMesa').onclick=enviarMesa;
+if(OR.ger&&(OR.mesas||[]).length>1)$('expMesa').innerHTML=OR.mesas.map(m=>`<option value="${m.id}">${esc(m.nome)}</option>`).join('');else $('expMesa').style.display='none';
+
+/* ---------- cenários salvos (mestre) ---------- */
+let cenariosOk=true;
+async function listaCenarios(){
+  if(!OR.ger)return;const r=await OR.db.from('cidade_cenarios').select('id,nome,criado_em').eq('campanha_id',CID).order('criado_em',{ascending:false});
+  if(r.error){cenariosOk=false;$('cenList').innerHTML='<div class="it fog">Para usar, rode o arquivo schema_etapa19_cidade_cenarios.sql no Supabase.</div>';return}
+  $('cenList').innerHTML=(r.data||[]).map(c=>`<div class="it" data-cen="${c.id}"><span style="flex:1">${esc(c.nome)}<small style="display:block;color:var(--mut)">${new Date(c.criado_em).toLocaleString('pt-BR')}</small></span><button class="btn" data-ca="load">Carregar</button><button class="btn danger" data-ca="del">×</button></div>`).join('')||'<div class="it fog">Nenhum cenário salvo</div>';
+}
+$('btnSalvaCen').onclick=()=>{if(!masterNow())return;modal('Nome do cenário','Dia '+(DATA.dia||1),async t=>{$('modal').style.display='none';await ORflush();
+  const r=await OR.db.from('cidade_cenarios').insert({campanha_id:CID,nome:String(t).trim().slice(0,80)||'Cenário',dados:JSON.parse(JSON.stringify(DATA))});
+  if(r.error)toast(cenariosOk?'Não consegui salvar: '+r.error.message:'Rode o SQL da etapa 19 primeiro');else{toast('Cenário salvo');listaCenarios()}})};
+$('cenList').addEventListener('click',async e=>{const b=e.target.closest('[data-ca]');if(!b||!masterNow())return;const id=b.closest('[data-cen]').dataset.cen;
+  if(!b.dataset.conf){b.dataset.conf=1;b.textContent=b.dataset.ca==='load'?'Trocar o mapa atual?':'Apagar?';setTimeout(()=>{delete b.dataset.conf;b.textContent=b.dataset.ca==='load'?'Carregar':'×'},3500);return}
+  if(b.dataset.ca==='del'){await OR.db.from('cidade_cenarios').delete().eq('id',id);listaCenarios();return}
+  const r=await OR.db.from('cidade_cenarios').select('dados').eq('id',id).maybeSingle();if(r.error||!r.data){toast('Não consegui carregar');return}
+  DATA=migrateCity(r.data.dados);$('cityName').textContent=DATA.cidade||'Cidade-Fronteira';buildLabels();refresh();applyMonorailState();fogLoadData();v8AfterReload();info.classList.add('hidden');save();toast('Cenário carregado e publicado')});
+
+/* ---------- clima e hora da campanha ---------- */
+function v8AfterReload(){
+  if(DATA.clima&&DATA.clima!==st.clima){const b=document.querySelector(`#segClima [data-v="${DATA.clima}"]`);if(b)b.click()}
+  if(DATA.hora!=null&&Math.abs(DATA.hora-st.hora)>.05){setHora(+DATA.hora,true)}
+  npcKey='';rotaKey='';renderV8Lists();
+}
+$('segClima').addEventListener('click',()=>{if(masterNow())setTimeout(save,30)});
+$('segHora').addEventListener('click',()=>{if(masterNow())setTimeout(save,2200)});
+$('horaRange').addEventListener('change',()=>{if(masterNow())save()});
+
+/* ---------- som ambiente (gerado, sem arquivos) ---------- */
+const SND={ctx:null,on:false,t:0,next:{sir:0,cor:0,fogo:0,cao:0}};
+function sndStart(){
+  const C=SND.ctx=new (window.AudioContext||window.webkitAudioContext)(),out=SND.out=C.createGain();out.gain.value=+$('sndVol').value;out.connect(C.destination);
+  const buf=C.createBuffer(1,C.sampleRate*4,C.sampleRate),d=buf.getChannelData(0);let b=0;for(let i=0;i<d.length;i++){const w=Math.random()*2-1;b=(b+.02*w)/1.02;d[i]=i%2?w:b*3.2}SND.buf=buf;
+  const noise=()=>{const s=C.createBufferSource();s.buffer=buf;s.loop=true;s.start(0,Math.random()*3);return s};
+  const chain=(lp,hp,g)=>{const s=noise(),f1=C.createBiquadFilter();f1.type='lowpass';f1.frequency.value=lp;const f2=C.createBiquadFilter();f2.type='highpass';f2.frequency.value=hp;const gn=C.createGain();gn.gain.value=g;s.connect(f2);f2.connect(f1);f1.connect(gn);gn.connect(out);return {gn,f1}};
+  SND.vento=chain(420,60,.0);SND.chuva=chain(7000,900,0);SND.cidade=chain(140,30,.05);
+  const dl=SND.eco=C.createDelay(1.5);dl.delayTime.value=.42;const fb=C.createGain();fb.gain.value=.35;const lp=C.createBiquadFilter();lp.type='lowpass';lp.frequency.value=1400;dl.connect(fb);fb.connect(lp);lp.connect(dl);dl.connect(out);
+}
+function sndBurst(f,q,dur,g,when=0){const C=SND.ctx,s=C.createBufferSource();s.buffer=SND.buf;const bp=C.createBiquadFilter();bp.type='bandpass';bp.frequency.value=f;bp.Q.value=q;const gn=C.createGain(),t=C.currentTime+when;gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(g,t+.005);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);s.connect(bp);bp.connect(gn);gn.connect(SND.out);s.start(t,Math.random()*3);s.stop(t+dur+.05)}
+function sndTone(type,f0,f1,dur,g,dest,when=0){const C=SND.ctx,o=C.createOscillator(),gn=C.createGain(),lp=C.createBiquadFilter(),t=C.currentTime+when;o.type=type;o.frequency.setValueAtTime(f0,t);o.frequency.exponentialRampToValueAtTime(f1,t+dur);lp.type='lowpass';lp.frequency.value=1600;gn.gain.setValueAtTime(0,t);gn.gain.linearRampToValueAtTime(g,t+.03);gn.gain.exponentialRampToValueAtTime(.0001,t+dur);o.connect(lp);lp.connect(gn);gn.connect(dest||SND.out);o.start(t);o.stop(t+dur+.05)}
+function sndFrame(now){
+  if(!SND.on||!SND.ctx||now-SND.t<250)return;SND.t=now;const C=SND.ctx,T=C.currentTime,dist=camera.position.distanceTo(controls.target),alto=THREE.MathUtils.clamp(dist/4000,0,1);
+  const vento=.05+.1*alto+(st.clima==='neve'?.12:st.clima==='nublado'?.05:0)+.04*Math.sin(now/3700)+.03*Math.sin(now/1300);
+  SND.vento.gn.gain.setTargetAtTime(Math.max(0,vento),T,.8);SND.vento.f1.frequency.setTargetAtTime(300+400*alto+120*Math.sin(now/2100),T,.8);
+  SND.chuva.gn.gain.setTargetAtTime(.28*Math.min(1,wx.rain),T,.6);SND.cidade.gn.gain.setTargetAtTime(.05*(1-alto),T,1);
+  const N=SND.next,tg=controls.target;
+  if(now>N.sir){N.sir=now+40000+Math.random()*70000;if(N.sir>0&&Math.random()<.8)for(let i=0;i<3;i++){sndTone('triangle',520,760,1.1,.035,SND.eco,i*2.2);sndTone('triangle',760,520,1.1,.035,SND.eco,i*2.2+1.1)}}
+  if(now>N.cor){N.cor=now+6000+Math.random()*16000;const perto=v8Fx.corvos.some(([x,z])=>Math.hypot(x-tg.x,z-tg.z)<500)&&dist<1500;if(perto||Math.random()<.25){const n=2+Math.floor(Math.random()*3),g=perto?.06:.02;for(let i=0;i<n;i++)sndTone('sawtooth',720,430,.22,g,null,i*.32)}}
+  if(dist<450&&now>N.fogo){N.fogo=now+120;const perto=v8Fx.fogos.some(([x,z])=>Math.hypot(x-tg.x,z-tg.z)<160);if(perto)for(let i=0;i<3;i++)if(Math.random()<.6)sndBurst(1800+Math.random()*2600,3,.04+Math.random()*.05,.08*Math.random(),Math.random()*.25)}
+  if(dn>.6&&now>N.cao){N.cao=now+25000+Math.random()*40000;if(Math.random()<.5)for(let i=0;i<2+Math.floor(Math.random()*3);i++)sndTone('square',340,210,.13,.03,SND.eco,i*.35)}
+}
+$('btnSom').onclick=async()=>{SND.on=!SND.on;if(SND.on&&!SND.ctx)sndStart();if(SND.ctx)SND.on?await SND.ctx.resume():await SND.ctx.suspend();$('btnSom').textContent=SND.on?'Som ambiente: ligado':'Som ambiente: desligado';$('btnSom').classList.toggle('acc',SND.on)};
+$('sndVol').addEventListener('input',e=>{if(SND.out)SND.out.gain.value=+e.target.value});
+
+/* ---------- corvos ---------- */
+let corvos=null;
+function corvosBuild(){const n=v8Fx.corvos.length*14,pos=new Float32Array(n*3);const g=new THREE.BufferGeometry();g.setAttribute('position',new THREE.BufferAttribute(pos,3));
+  corvos=new THREE.Points(g,new THREE.PointsMaterial({color:0x0b0b0c,size:2.4,sizeAttenuation:true}));corvos.frustumCulled=false;scene.add(corvos)}
+function corvosFrame(now){if(!corvos)corvosBuild();const pos=corvos.geometry.attributes.position.array,t=now/1000;let i=0;
+  v8Fx.corvos.forEach(([x,z],f)=>{const y0=Math.max(0,H(x,z))+48+f*4;for(let k=0;k<14;k++){const a=t*(.32+k*.013)+k*.45+f,r=22+(k%5)*6;pos[i++]=x+Math.cos(a)*r;pos[i++]=y0+Math.sin(t*1.7+k)*3;pos[i++]=z+Math.sin(a)*r*.8}});
+  corvos.geometry.attributes.position.needsUpdate=true}
+
+/* ---------- quadro a quadro ---------- */
+let v8T=0;
+let sitiosOk=false;
+function v8Sitios(){sitiosOk=true;let n=0;for(const [id,[ox,oy,nx,ny]] of Object.entries(v8Fx.sitios)){const p=DATA.locais.find(l=>l.id===id);if(p&&p.px===ox&&p.py===oy){p.px=nx;p.py=ny;n++}}if(n){buildLabels();refresh()}}
+function v8Frame(now){
+  if(!sitiosOk)v8Sitios();renderNpcs();renderRotas();sndFrame(now);
+  if(now-v8T>90){v8T=now;const dist=camera.position.distanceTo(controls.target);if(dist<2600){corvosFrame(now);if(corvos)corvos.visible=true;needsFrame=true}else if(corvos)corvos.visible=false}
+}
+function v8Place(){
+  const w=innerWidth,h=innerHeight,dist=camera.position.distanceTo(controls.target);
+  for(const N of npcEls){if(dist>4200||fogHide(N.x,N.z)){N.el.style.display='none';continue}v3.set(N.x,Math.max(0,H(N.x,N.z))+10,N.z).project(camera);if(v3.z>1){N.el.style.display='none';continue}N.el.style.display='';N.el.style.transform=`translate(${(v3.x+1)/2*w}px,${(1-v3.y)/2*h}px) translate(-50%,-100%)`}
+  for(const R of rotaEls){if(dist>6500||fogHide(R.x,R.z)){R.el.style.display='none';continue}v3.set(R.x,Math.max(0,H(R.x,R.z))+12,R.z).project(camera);if(v3.z>1){R.el.style.display='none';continue}R.el.style.display='';R.el.style.transform=`translate(${(v3.x+1)/2*w}px,${(1-v3.y)/2*h}px) translate(-50%,-50%)`}
+}
+
+/* ---------- celular ---------- */
+function v8Mobile(){if(innerWidth<=760)$('side').classList.remove('open')}
+new MutationObserver(()=>{if(!info.classList.contains('hidden'))v8Mobile()}).observe(info,{attributes:true,attributeFilter:['class']});
+$('qGrupo').onclick=()=>$('btnVerGrupo').click();$('qBusca').onclick=()=>{$('side').classList.add('open');info.classList.add('hidden');$('side').scrollTop=0;setTimeout(()=>$('busca').focus(),50)};
+$('qVolta').onclick=()=>{location.href=$('orBack').href};$('qCamadas').onclick=()=>{$('side').classList.toggle('open');if($('side').classList.contains('open'))info.classList.add('hidden')};
+
+/* ---------- atalhos ---------- */
+const ATALHOS=[['/','Buscar'],['G','Ir ao grupo'],['M','Mover o grupo (mestre)'],['T','Régua e tempo de viagem'],['N','Alternar dia e noite'],['C','Abrir/fechar o painel'],['E','Exportar imagem (2x)'],['[ e ]','Voltar/avançar o dia (mestre)'],['R','Voltar à vista inicial'],['Esc','Fechar e cancelar'],['?','Esta ajuda']];
+$('v8help').innerHTML=`<h2>Atalhos de teclado</h2>${ATALHOS.map(([k,t])=>`<div class="hk"><kbd>${k}</kbd><span>${t}</span></div>`).join('')}<div class="btns" style="margin-top:12px"><button class="btn" onclick="this.closest('#v8help').style.display='none'">Fechar</button></div>`;
+$('btnAjuda').onclick=()=>{$('v8help').style.display='block'};
+addEventListener('keydown',e=>{if(e.target.matches('input,textarea,select')||e.ctrlKey||e.metaKey||e.altKey)return;const k=e.key;
+  if(k==='g'||k==='G')$('btnVerGrupo').click();
+  else if((k==='m'||k==='M')&&masterNow())setTool('grupo');
+  else if(k==='t'||k==='T')setTool('regua');
+  else if(k==='n'||k==='N')setHora(st.hora>6.5&&st.hora<19?HORAS.noite:HORAS.dia);
+  else if(k==='c'||k==='C')$('side').classList.toggle('open');
+  else if(k==='e'||k==='E')exportar(2);
+  else if(k==='['&&masterNow())setDia((DATA.dia||1)-1);else if(k===']'&&masterNow())setDia((DATA.dia||1)+1);
+  else if(k==='?'||k==='h'||k==='H'){const h=$('v8help');h.style.display=h.style.display==='block'?'none':'block'}
+  else if(k==='Escape'){$('v8help').style.display='none';if(st.tool==='rota')setTool(null)}});
+
+renderV8Lists();listaCenarios();v8AfterReload();
 
 const loadText=$('loading').querySelector('div');
 if(loadText)loadText.firstChild.textContent='Construindo a cidade expandida';
