@@ -15,3 +15,17 @@ No editor de um local (mestre) o campo "Interior (cena da mesa)" lista as cenas 
 
 ## Como é gerado
 `cidade.html` é o mapa original (sfl2-mapa-cidade) + trechos do Open RPG (dados em `ORinit/save`, grupo, interiores, realtime). Não há gerador no repositório: edite o `cidade.html` direto (blocos marcados com "Open RPG"). Mudou? Teste com mestre e jogador (o mapa leva ~10 s para montar).
+
+## Pacote v8 (18/11/2026)
+- **Linha do tempo**: `DATA.dia`, `DATA.eventos` `{id,dia,titulo,desc,clima,revela,esconde,mestre,feito}`. Avançar o dia aplica os eventos (clima, mostrar/esconder zona). Voltar o dia não desfaz. Teclas `[` `]`. Jogador vê só eventos já ocorridos e não secretos (filtro em `ORpublico`). `DATA.diario` `{id,dia,texto}`: notas da sessão.
+- **NPCs**: `DATA.npcs` `{id,nome,fac,px,py,desc,segredo,mestre}`; nascem escondidos. Rótulos HTML (`.nlabel`).
+- **Rotas**: `DATA.rotas` `{id,nome,tipo,pts:[[px,py]],risco,desc,segredo,mestre}`; tipos em `ROTA_T` (velocidade para o tempo). Tubo 3D sempre visível + rótulo.
+- **Comércio**: `local.com` `{on,fac,agua,comida,comb,mun,rem,preco}`; filtro "Comércio" na busca. `local.visitado`: marcado à mão ou quando o grupo passa a menos de 130 m.
+- **Anotações pessoais**: `localStorage['or-cidade-notas-<camp>']` (só no aparelho, para qualquer papel).
+- **Clima e hora** da campanha vão em `DATA.clima/DATA.hora` e o jogador recebe.
+- **Imagem**: baixa a vista em 2x/4x; mestre envia para a biblioteca de mapas de uma mesa (`arquivos` + bucket `mesa-arquivos`, tipo `mapa`). Rótulos HTML não saem na imagem.
+- **Cenários**: tabela `cidade_cenarios` (`schema_etapa19_cidade_cenarios.sql`, só mestre).
+- **Som ambiente**: Web Audio gerado (vento, chuva, sirene, corvos, fogueira, cães à noite). Desligado por padrão.
+- **Atalhos**: `?` mostra a lista. Celular: barra inferior Grupo/Buscar/Painel/Campanha.
+- **Locais novos** (`V8_POIS`, migração `locaisV8`) com adereços 3D em `genV8()`; o marcador é movido para onde o adereço coube (`v8Fx.sitios`). `genV8` também faz acampamentos, gente, hordas, poças, vidro, passarelas caídas, canais bloqueados, entulho por bairro e corvos.
+- Fonte: `cidade.html` é montado fora do repo (v7 + camadas Open RPG + v8). Para mudanças pequenas, editar o `cidade.html` direto.
