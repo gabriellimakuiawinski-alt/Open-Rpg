@@ -62,3 +62,5 @@ Sincronia ficha↔token: `token_para_ficha, ficha_para_tokens, stats_aplica, bar
 - `cenas.interiores` (etapa 16): lista jsonb de interiores da cena (ver docs/mesa.md). `arquivo_em_uso` também libera arquivos usados em interiores de cena visível.
 
 - `cenas.luzes` (etapa 17): luzes fixas da cena (jsonb array; ver docs/mesa.md).
+
+- Etapa 18 (`schema_etapa18_cidade.sql`, depende só da etapa 3): mapa da cidade (`cidade.html`). Três tabelas por campanha (PK `campanha_id`): `cidade_mapa` (mapa completo com segredos; só `c_gerir`), `cidade_jogador` (versão pública + `nevoa` = PNG do que já foi explorado; membros leem, `c_gerir` grava) e `cidade_grupo` (`px,py,nome,trilha`; membros leem, `c_gerir` grava). Realtime em `cidade_jogador` e `cidade_grupo`.

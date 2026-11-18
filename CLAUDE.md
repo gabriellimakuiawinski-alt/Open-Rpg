@@ -13,6 +13,7 @@ Site: https://gabriellimakuiawinski-alt.github.io/Open-Rpg/ (GitHub Pages, branc
 | sons e trilha | docs/som.md |
 | testes | docs/testes.md |
 | dados do livro (habilidades, rituais) | tools/livro/ + docs/banco.md |
+| mapa da cidade (grupo no mapa, interiores, névoa) | docs/cidade.md |
 | sistema Search For Light (SFL 2) | docs/inicio-ficha.md (seção SFL) + docs/sfl/ |
 | o que falta / ideias | docs/pendencias.md |
 
@@ -37,4 +38,4 @@ Não dá para conferir o deploy do Pages daqui; avise o usuário para abrir em a
 Antes de publicar: `python3 tools/build/build.py` e rode os testes (docs/testes.md).
 
 ## Estado atual
-Ver docs/pendencias.md. Todos os SQLs até a etapa 17 estão rodados (04/11/2026). SQL grande não cola no editor do celular: rode pelo MCP do Supabase (escrita funcionou; a extensão `http` está instalada e dá para baixar o arquivo do GitHub conferindo o md5).
+Ver docs/pendencias.md. Todos os SQLs até a etapa 17 estão rodados (04/11/2026). Etapa 18 (mapa da cidade) criada em 18/11/2026: conferir se está rodada. SQL grande não cola no editor do celular: rode pelo MCP do Supabase (escrita funcionou; a extensão `http` está instalada e dá para baixar o arquivo do GitHub conferindo o md5).
