@@ -39,7 +39,7 @@ input:focus,select:focus{outline:0;border-bottom:2px solid var(--carimbo)}select
 <main id="app"><p>Carregando…</p></main><div id="toast"></div>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2.118.0/dist/umd/supabase.js"></script>
 <script src="comum.js?v=2"></script>
-<script src="sfl-dados.js?v=1"></script><script src="sistemas.js?v=10"></script><script src="sfl-regras.js?v=1"></script>
+<script src="sfl-dados.js?v=2"></script><script src="sistemas.js?v=10"></script><script src="sfl-regras.js?v=2"></script>
 <script>
 if(!window.Mesa||!Mesa.db){document.body.innerHTML='<p style="padding:24px">Não consegui carregar o login. Confira a internet.</p>';throw new Error('Mesa indisponível')}
 const db=Mesa.db,$=s=>document.querySelector(s),esc=s=>String(s??'').replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c])),n0=SIS.n0;
@@ -47,7 +47,7 @@ const Q=new URLSearchParams(location.search),CID=Q.get('camp');let FSEL=Q.get('f
 let ME=null,C=null,PAPEL=null,FICHAS=[],LOJAS=[],ITENS=[],CAT=[],COMPRAS=[],SEMSQL=false,tt;
 const mestre=()=>PAPEL=='mestre',moeda=()=>SIS.moedaDe(C),din=v=>moeda()+' '+n0(v).toLocaleString('pt-BR',{maximumFractionDigits:2});
 function toast(h){const t=$('#toast');t.innerHTML=h;t.classList.add('show');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('show'),5000)}
-const desc=it=>[SIS.TIPOS_ITEM.find(t=>t[0]==it.tipo)?.[1],it.catg?'Cat. '+SIS.ROMANO[it.catg]:'',it.esp!==undefined?it.esp+' esp.':'',it.def?'Defesa +'+it.def:'',it.luz?(it.luz.t=='c'?'Lanterna ':'Lampião ')+it.luz.m+' m':'',it.arma&&it.arma.dano].filter(Boolean).join(' · ');
+const desc=it=>[SIS.TIPOS_ITEM.find(t=>t[0]==it.tipo)?.[1],it.catg?'Cat. '+SIS.ROMANO[it.catg]:'',it.esp!==undefined?it.esp+' esp.':'',it.def?'Defesa +'+it.def:'',it.luz?(it.luz.t=='c'?'Lanterna ':'Lampião ')+it.luz.m+' m':'',it.arma&&it.arma.dano,it.pilha?'pilha de '+it.pilha:'',it.rar||'',it.preco?'preço do livro '+it.preco.toLocaleString('pt-BR')+(it.lote?' a pilha':''):''].filter(Boolean).join(' · ');
 
 async function carregar(){
   const[c,cm]=await Promise.all([db.from('campanhas').select('*').eq('id',CID).maybeSingle(),db.from('campanha_membros').select('user_id,papel').eq('campanha_id',CID)]);
@@ -147,7 +147,7 @@ document.addEventListener('click',async e=>{const b=e.target.closest('[data-a]')
     if(a=='editLoja'){const l=LOJAS.find(x=>x.id==d.l);return formLoja(l,async(n,ds)=>{chk(await db.from('lojas').update({nome:n,descricao:ds}).eq('id',l.id).select('id'));await recarregar()})}
     if(a=='delLoja'){if(!confirm('Excluir esta loja e seus itens?'))return;chk(await db.from('lojas').delete().eq('id',d.l).select('id'));return recarregar()}
     if(a=='abrir'){const l=LOJAS.find(x=>x.id==d.l);chk(await db.from('lojas').update({aberta:!l.aberta}).eq('id',l.id).select('id'));toast(l.aberta?'Loja fechada.':'Loja aberta para os jogadores.');return recarregar()}
-    if(a=='itemCat')return escolherCatalogo(async it=>{chk(await db.from('loja_itens').insert({loja_id:d.l,item:it,preco:0,ordem:ITENS.length}).select('id'));await recarregar();toast('Item na loja. Defina o preço.')});
+    if(a=='itemCat')return escolherCatalogo(async it=>{const pr=+it.preco||0;chk(await db.from('loja_itens').insert({loja_id:d.l,item:it,preco:pr,ordem:ITENS.length}).select('id'));await recarregar();toast(pr?'Item na loja com o preço do livro ('+din(pr)+'). Dá para mudar.':'Item na loja. Defina o preço.')});
     if(a=='itemNovo')return formItem(null,async it=>{chk(await db.from('loja_itens').insert({loja_id:d.l,item:it,preco:0,ordem:ITENS.length}).select('id'));await recarregar()});
     if(a=='editItem'){const i=ITENS.find(x=>x.id==d.i);return formItem(i.item,async it=>{chk(await db.from('loja_itens').update({item:it}).eq('id',i.id).select('id'));await recarregar()})}
     if(a=='delItem'){chk(await db.from('loja_itens').delete().eq('id',d.i).select('id'));return recarregar()}
