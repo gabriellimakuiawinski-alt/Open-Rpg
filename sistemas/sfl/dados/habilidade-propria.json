@@ -1,0 +1,128 @@
+{
+  "versao": "1.2",
+  "moldes": [
+    {
+      "id": "ataque",
+      "n": "Ataque",
+      "d": "Ataque de alcance curto, 1d8 de dano"
+    },
+    {
+      "id": "defesa",
+      "n": "Defesa",
+      "d": "+2 de armadura por uma cena"
+    },
+    {
+      "id": "movimento",
+      "n": "Movimento",
+      "d": "+3 m de movimento ou escalar sem teste"
+    },
+    {
+      "id": "sentido",
+      "n": "Sentido",
+      "d": "Vantagem em um tipo de percepção (cheiro, vibração, visão no escuro)"
+    },
+    {
+      "id": "controle",
+      "n": "Controle",
+      "d": "Teste contra o alvo: se vencer, derruba ou atordoa por 1 rodada"
+    },
+    {
+      "id": "utilidade",
+      "n": "Utilidade",
+      "d": "Efeito fora de combate aprovado pelo mestre (abrir passagem, esconder rastro)"
+    }
+  ],
+  "mutacoes": [
+    {
+      "id": "alcance",
+      "n": "Alcance",
+      "d": "Chega a 10 m"
+    },
+    {
+      "id": "area",
+      "n": "Área",
+      "d": "Afeta uma área de 3 m"
+    },
+    {
+      "id": "estado",
+      "n": "Estado",
+      "d": "Causa sangramento, atordoa ou derruba num acerto"
+    },
+    {
+      "id": "perfurante",
+      "n": "Perfurante",
+      "d": "Ignora armadura leve"
+    },
+    {
+      "id": "furtiva",
+      "n": "Furtiva",
+      "d": "Silenciosa: não sobe o Alerta"
+    },
+    {
+      "id": "dupla",
+      "n": "Dupla",
+      "d": "Afeta 2 alvos"
+    },
+    {
+      "id": "duradoura",
+      "n": "Duradoura",
+      "d": "Dura uma cena inteira"
+    }
+  ],
+  "fraquezas": [
+    {
+      "id": "luz-uv",
+      "n": "Luz UV",
+      "d": "Desvantagem e 1d4 de dano por rodada sob UV"
+    },
+    {
+      "id": "fome",
+      "n": "Fome",
+      "d": "Cada uso gasta 1 Suprimento de comida"
+    },
+    {
+      "id": "barulho",
+      "n": "Barulho",
+      "d": "Alerta +1 a cada uso"
+    },
+    {
+      "id": "medo",
+      "n": "Medo",
+      "d": "Medo +1 a cada uso"
+    },
+    {
+      "id": "dor",
+      "n": "Dor",
+      "d": "Você sofre 1d4 de dano a cada uso"
+    },
+    {
+      "id": "limite",
+      "n": "Limite",
+      "d": "Só funciona 1 vez por cena"
+    }
+  ],
+  "graus": [
+    {
+      "grau": 1,
+      "quando": "Criação",
+      "mutacoes": "1",
+      "molde": "Dano 1d8, +3 m, etc.",
+      "custo": 2
+    },
+    {
+      "grau": 2,
+      "quando": "Marco 6",
+      "mutacoes": "2",
+      "molde": "Sobe um degrau (dano 1d10, +4,5 m)",
+      "custo": 3
+    },
+    {
+      "grau": 3,
+      "quando": "Marco 8",
+      "mutacoes": "2 (você pode trocar uma)",
+      "molde": "Sobe outro degrau (dano 2d6, +6 m)",
+      "custo": 3
+    }
+  ],
+  "custo": "1 + número de mutações; a fraqueza não dá desconto"
+}

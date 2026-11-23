@@ -1,0 +1,313 @@
+{
+  "versao": "1.2",
+  "origens": [
+    {
+      "id": "enfermeiro",
+      "n": "Enfermeiro",
+      "pericias": [
+        "medicina",
+        "vontade"
+      ],
+      "traco": "Lida com sangue e dor sem desvantagem",
+      "peso": "Medo +1 ao abandonar um ferido"
+    },
+    {
+      "id": "militar",
+      "n": "Militar",
+      "pericias": [
+        "tiro",
+        "atletismo"
+      ],
+      "traco": "Começa com 1 arma especial extra treinada",
+      "peso": "Medo +1 quando perde o controle de uma situação",
+      "efeitos": [
+        {
+          "soma": "armasEspeciais",
+          "valor": 1
+        }
+      ]
+    },
+    {
+      "id": "cacador-rural",
+      "n": "Caçador rural",
+      "pericias": [
+        "sobrevivencia",
+        "furtividade"
+      ],
+      "traco": "Segue rastros e acha comida e abrigo",
+      "peso": "Desvantagem em Persuasão em grandes cidades"
+    },
+    {
+      "id": "mecanico-ou-operario",
+      "n": "Mecânico ou operário",
+      "pericias": [
+        "tecnica",
+        "contundente"
+      ],
+      "traco": "Conserta armas e equipamentos com sucata",
+      "peso": "Medo +1 na primeira cena de horror (cheiro de sangue)"
+    },
+    {
+      "id": "pesquisador",
+      "n": "Pesquisador",
+      "pericias": [
+        "investigacao",
+        "tecnica"
+      ],
+      "traco": "Entende documentos e laboratórios",
+      "peso": "Começa sem o item de Suprimento",
+      "semSuprimento": true
+    },
+    {
+      "id": "atleta",
+      "n": "Atleta",
+      "pericias": [
+        "atletismo",
+        "parkour"
+      ],
+      "traco": "Recupera 1 Fôlego a mais no descanso curto",
+      "peso": "Desvantagem em Vontade com Fôlego 0"
+    },
+    {
+      "id": "seguranca-ou-policial",
+      "n": "Segurança ou policial",
+      "pericias": [
+        "intimidacao",
+        "percepcao"
+      ],
+      "traco": "Conhece procedimentos e armas",
+      "peso": "Medo +1 diante de ordens que não pode cumprir"
+    },
+    {
+      "id": "golpista",
+      "n": "Golpista",
+      "pericias": [
+        "persuasao",
+        "furtividade"
+      ],
+      "traco": "Contatos nas facções (um favor por sessão)",
+      "peso": "Começa com −1 de reputação numa facção, escolhida pelo mestre"
+    },
+    {
+      "id": "artista",
+      "n": "Artista",
+      "pericias": [
+        "percepcao",
+        "persuasao"
+      ],
+      "traco": "Vantagem em acalmar pessoas",
+      "peso": "Medo +1 em silêncio total e escuridão"
+    },
+    {
+      "id": "cuidador-ou-professor",
+      "n": "Cuidador ou professor",
+      "pericias": [
+        "vontade",
+        "medicina"
+      ],
+      "traco": "O Medo sobe menos ao proteger alguém",
+      "peso": "Se um protegido cair, Medo +2"
+    },
+    {
+      "id": "contrabandista-de-fronteira-estonia",
+      "n": "Contrabandista de fronteira (Estônia)",
+      "pericias": [
+        "furtividade",
+        "persuasao"
+      ],
+      "traco": "Conhece rotas e passagens escondidas na região",
+      "peso": "Desvantagem em Persuasão com forças de ordem"
+    },
+    {
+      "id": "pescador-do-baltico-estonia",
+      "n": "Pescador do Báltico (Estônia)",
+      "pericias": [
+        "sobrevivencia",
+        "atletismo"
+      ],
+      "traco": "Vantagem para nadar e achar comida na água",
+      "peso": "Medo +1 em espaços apertados"
+    },
+    {
+      "id": "mineiro-de-kola",
+      "n": "Mineiro de Kola",
+      "pericias": [
+        "atletismo",
+        "tecnica"
+      ],
+      "traco": "Aguenta escuridão e espaços apertados sem desvantagem",
+      "peso": "Medo +1 ao ouvir sons vindos de baixo da terra"
+    },
+    {
+      "id": "radioamador",
+      "n": "Radioamador",
+      "pericias": [
+        "tecnica",
+        "percepcao"
+      ],
+      "traco": "Vantagem para captar e entender transmissões",
+      "peso": "Desvantagem em Persuasão com estranhos"
+    },
+    {
+      "id": "motorista-ou-piloto",
+      "n": "Motorista ou piloto",
+      "pericias": [
+        "parkour",
+        "tecnica"
+      ],
+      "traco": "Conhece rotas e veículos",
+      "peso": "Medo +1 sem rota de fuga"
+    },
+    {
+      "id": "cozinheiro-ou-comerciante",
+      "n": "Cozinheiro ou comerciante",
+      "pericias": [
+        "persuasao",
+        "sobrevivencia"
+      ],
+      "traco": "Estica Suprimentos de comida: 1 vez por sessão",
+      "peso": "Desvantagem em Intimidação"
+    },
+    {
+      "id": "bombeiro-ou-resgatista",
+      "n": "Bombeiro ou resgatista",
+      "pericias": [
+        "atletismo",
+        "medicina"
+      ],
+      "traco": "Carrega um aliado ferido sem desvantagem",
+      "peso": "Medo +1 ao deixar alguém sem resgate"
+    },
+    {
+      "id": "jornalista",
+      "n": "Jornalista",
+      "pericias": [
+        "investigacao",
+        "persuasao"
+      ],
+      "traco": "Acha fontes e pistas com facilidade",
+      "peso": "Desvantagem em Furtividade, porque chama atenção"
+    },
+    {
+      "id": "acougueiro-ou-frigorifico",
+      "n": "Açougueiro ou frigorífico",
+      "pericias": [
+        "cortante",
+        "vontade"
+      ],
+      "traco": "Não sofre Medo ao ver corpos e vísceras (não anula o Medo de habilidades); ao abater um animal, tira 1 Suprimento de comida a mais",
+      "peso": "Desvantagem em Furtividade na cena em que lutou com lâmina"
+    },
+    {
+      "id": "lenhador",
+      "n": "Lenhador",
+      "pericias": [
+        "cortante",
+        "sobrevivencia"
+      ],
+      "traco": "Machados não quebram com 1 natural; mata fechada não é terreno difícil",
+      "peso": "Medo +1 em túneis e subsolo"
+    },
+    {
+      "id": "atleta-de-lancamento-dardo",
+      "n": "Atleta de lançamento (dardo)",
+      "pericias": [
+        "arremesso",
+        "atletismo"
+      ],
+      "traco": "+1 dado no primeiro arremesso de cada cena",
+      "peso": "Desvantagem em Atletismo para nadar"
+    },
+    {
+      "id": "lutador-clandestino",
+      "n": "Lutador clandestino",
+      "pericias": [
+        "contundente",
+        "intimidacao"
+      ],
+      "traco": "Punhos causam 1d6; o primeiro acerto desarmado da cena derruba o alvo",
+      "peso": "Desvantagem em Vontade quando é provocado"
+    },
+    {
+      "id": "biatleta",
+      "n": "Biatleta",
+      "pericias": [
+        "tiro",
+        "sobrevivencia"
+      ],
+      "traco": "Atirar depois de correr não dá desvantagem",
+      "peso": "Medo +1 quando o Fôlego chega a 0"
+    },
+    {
+      "id": "funcionario-do-laboratorio",
+      "n": "Funcionário do laboratório",
+      "pericias": [
+        "medicina",
+        "investigacao"
+      ],
+      "traco": "Vantagem para reconhecer equipamentos, códigos e salas do laboratório ligado à AMC",
+      "peso": "Alguém da AMC pode reconhecê-lo (o mestre decide quando)"
+    },
+    {
+      "id": "morador-de-rua",
+      "n": "Morador de rua",
+      "pericias": [
+        "percepcao",
+        "sobrevivencia"
+      ],
+      "traco": "Descanso longo em lugar improvisado conta como seguro para o Medo (não para a Infecção)",
+      "peso": "Começa sem o item de Suprimento",
+      "semSuprimento": true
+    },
+    {
+      "id": "religioso",
+      "n": "Religioso",
+      "pericias": [
+        "vontade",
+        "persuasao"
+      ],
+      "traco": "1 vez por cena, gastando a ação, baixa 1 de Medo de um aliado a até 9 m (não vale para Medo de habilidade)",
+      "peso": "Medo +1 ao matar um humano"
+    },
+    {
+      "id": "programador-ou-tecnico-de-ti",
+      "n": "Programador ou técnico de TI",
+      "pericias": [
+        "tecnica",
+        "investigacao"
+      ],
+      "traco": "Com energia, vantagem para abrir portas eletrônicas e recuperar dados",
+      "peso": "Desvantagem em Atletismo"
+    },
+    {
+      "id": "veterinario",
+      "n": "Veterinário",
+      "pericias": [
+        "medicina",
+        "sobrevivencia"
+      ],
+      "traco": "Vantagem em Percepção para prever o comportamento de animais e infectados comuns",
+      "peso": "A bandagem em humanos cura 1 a menos"
+    },
+    {
+      "id": "artista-de-circo",
+      "n": "Artista de circo",
+      "pericias": [
+        "arremesso",
+        "parkour"
+      ],
+      "traco": "Vantagem em equilíbrio (vigas, cordas, beirais); 1 vez por cena, agarra um objeto arremessado contra você usando a reação",
+      "peso": "Desvantagem em Intimidação"
+    },
+    {
+      "id": "agente-penitenciario",
+      "n": "Agente penitenciário",
+      "pericias": [
+        "intimidacao",
+        "percepcao"
+      ],
+      "traco": "Vantagem para conter, amarrar ou desarmar um humano rendido; 1 vez por sessão, ao interrogar um preso, o mestre responde uma pergunta com a verdade",
+      "peso": "Desvantagem em Persuasão com Anárquicos e ex-presos"
+    }
+  ]
+}

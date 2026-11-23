@@ -14,7 +14,7 @@ Site: https://gabriellimakuiawinski-alt.github.io/Open-Rpg/ (GitHub Pages, branc
 | testes | docs/testes.md |
 | dados do livro (habilidades, rituais) | tools/livro/ + docs/banco.md |
 | mapa da cidade (grupo no mapa, interiores, névoa) | docs/cidade.md |
-| sistema Search For Light (SFL 2) | docs/inicio-ficha.md (seção SFL) + docs/sfl/ |
+| sistema Search For Light (SFL 2) | **sistemas/sfl/LEIA-ME.md** (regras V1.2, dados JSON, plano e ficha automática) + docs/inicio-ficha.md (seção SFL). `docs/sfl/` é a versão antiga (v0.6) |
 | o que falta / ideias | docs/pendencias.md |
 
 ## Regras que não mudam

@@ -1,0 +1,621 @@
+{
+  "versao": "1.2",
+  "regra": "Marcos 1, 3, 5, 7: próxima habilidade da trilha (escolhida no marco 1). Marcos 2, 4, 6, 8: uma habilidade da classe ou um benefício geral.",
+  "classes": [
+    {
+      "id": "combatente",
+      "n": "Combatente",
+      "atributo": "corpo",
+      "pericias": [
+        "contundente",
+        "cortante",
+        "tiro",
+        "atletismo"
+      ],
+      "bonus": "+4 PV",
+      "efeitos": [
+        {
+          "soma": "vidaMax",
+          "valor": 4
+        }
+      ],
+      "inicial": {
+        "n": "Aguentar",
+        "d": "uma vez por cena, ignora 1 de dano de um ataque."
+      },
+      "habilidades": [
+        {
+          "id": "pancada-pesada",
+          "n": "Pancada pesada",
+          "d": "gasta 1 Fôlego, +1d6 de dano no corpo a corpo."
+        },
+        {
+          "id": "maos-de-ferro",
+          "n": "Mãos de ferro",
+          "d": "o bloqueio com a mão usa ÷3, como se fosse com arma."
+        },
+        {
+          "id": "segurar-a-linha",
+          "n": "Segurar a linha",
+          "d": "ao bloquear, protege também um aliado ao lado."
+        },
+        {
+          "id": "pele-grossa",
+          "n": "Pele grossa",
+          "d": "reduz em 2 o dano de queda, fogo e explosão e em 1 o sangramento."
+        },
+        {
+          "id": "folego-de-aco",
+          "n": "Fôlego de aço",
+          "d": "+1 Fôlego, e recupera 1 ao derrubar um inimigo (1 vez por rodada).",
+          "efeitos": [
+            {
+              "soma": "folegoMax",
+              "valor": 1
+            }
+          ]
+        },
+        {
+          "id": "peso-morto",
+          "n": "Peso morto",
+          "d": "vantagem ao derrubar ou agarrar."
+        },
+        {
+          "id": "sangue-quente",
+          "n": "Sangue quente",
+          "d": "em 0 PV, uma vez por sessão, fica com 1 PV (Medo +1)."
+        },
+        {
+          "id": "golpe-sujo",
+          "n": "Golpe sujo",
+          "d": "uma vez por cena, o efeito da arma acontece num acerto normal."
+        },
+        {
+          "id": "grito-de-guerra",
+          "n": "Grito de guerra",
+          "d": "usa Corpo em vez de Presença em Intimidação e, uma vez por cena, comuns e virais a até 3 m ficam com desvantagem no próximo ataque."
+        }
+      ],
+      "trilhas": [
+        {
+          "id": "acougueiro",
+          "n": "Açougueiro",
+          "foco": "corpo a corpo",
+          "habilidades": [
+            {
+              "n": "Corte limpo",
+              "d": "+1 de dano com arma de duas mãos",
+              "id": "corte-limpo"
+            },
+            {
+              "n": "Sangue na água",
+              "d": "sangramento de 2 em qualquer alvo; contra comuns e virais, todo acerto com arma cortante sangra (uma vez por cena por alvo)",
+              "id": "sangue-na-agua"
+            },
+            {
+              "n": "Contra-ataque brutal",
+              "d": "contra-ataque que vence soma +1d6",
+              "id": "contra-ataque-brutal"
+            },
+            {
+              "n": "Onda de golpes",
+              "d": "1 vez por cena, gasta 2 Fôlego e ataca todos ao alcance, −1 dado",
+              "id": "onda-de-golpes"
+            }
+          ]
+        },
+        {
+          "id": "atirador",
+          "n": "Atirador",
+          "foco": "armas de fogo",
+          "habilidades": [
+            {
+              "n": "Mão firme",
+              "d": "o primeiro tiro da cena não aumenta o Alerta e causa +1d6",
+              "id": "mao-firme"
+            },
+            {
+              "n": "Recarga rápida",
+              "d": "recarrega como ação de movimento, e a recarga lenta de revólveres e da escopeta de cano duplo passa a ser normal",
+              "id": "recarga-rapida"
+            },
+            {
+              "n": "Tiro certeiro",
+              "d": "mirar vira ação de movimento para você e dá +1 dado; não acumula com a mira do rifle de precisão",
+              "id": "tiro-certeiro"
+            },
+            {
+              "n": "Fogo de cobertura",
+              "d": "1 Suprimento; inimigos numa área de 5 m ficam com desvantagem por uma rodada (1 vez por cena)",
+              "id": "fogo-de-cobertura"
+            }
+          ]
+        },
+        {
+          "id": "muralha",
+          "n": "Muralha",
+          "foco": "bloqueio e armadura",
+          "habilidades": [
+            {
+              "n": "Escudo vivo",
+              "d": "bloqueio com escudo usa ÷2 e o escudo não quebra em 1 natural",
+              "id": "escudo-vivo"
+            },
+            {
+              "n": "Armadura de campo",
+              "d": "armadura pesada não impõe desvantagem",
+              "id": "armadura-de-campo"
+            },
+            {
+              "n": "Resistir",
+              "d": "−1 só nos ataques corpo a corpo de infectados (depois da armadura, mín. 1)",
+              "id": "resistir"
+            },
+            {
+              "n": "Inabalável",
+              "d": "1 vez por sessão, por uma cena, ignora os efeitos do Medo e ganha +2 de armadura",
+              "id": "inabalavel"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "batedor",
+      "n": "Batedor",
+      "atributo": "reflexo",
+      "pericias": [
+        "furtividade",
+        "parkour",
+        "percepcao",
+        "arremesso",
+        "sobrevivencia"
+      ],
+      "bonus": "+2 Fôlego",
+      "efeitos": [
+        {
+          "soma": "folegoMax",
+          "valor": 2
+        }
+      ],
+      "inicial": {
+        "n": "Primeiro a se mexer",
+        "d": "vantagem na iniciativa."
+      },
+      "habilidades": [
+        {
+          "id": "pe-leve",
+          "n": "Pé leve",
+          "d": "as três primeiras esquivas de cada cena não gastam Fôlego."
+        },
+        {
+          "id": "olho-vivo",
+          "n": "Olho vivo",
+          "d": "1 vez por cena, antes de entrar num lugar, gasta 1 Fôlego e pergunta ao mestre uma coisa sobre o perigo ali; ele responde com sim, não ou uma frase curta."
+        },
+        {
+          "id": "rota-de-fuga",
+          "n": "Rota de fuga",
+          "d": "1 vez por cena, ao fugir, o mestre diz onde fica a saída mais próxima, sem custo, e você ganha +3 m de movimento."
+        },
+        {
+          "id": "mao-rapida",
+          "n": "Mão rápida",
+          "d": "1 vez por rodada, sacar ou trocar de arma, ou usar um item, é ação livre."
+        },
+        {
+          "id": "tiro-em-movimento",
+          "n": "Tiro em movimento",
+          "d": "ataque à distância depois de correr não sofre desvantagem, e você anda 3 m depois de atirar."
+        },
+        {
+          "id": "passo-a-dois",
+          "n": "Passo a dois",
+          "d": "ao se mover furtivamente, leva até 2 aliados junto, com o mesmo teste."
+        },
+        {
+          "id": "salto-de-fe",
+          "n": "Salto de fé",
+          "d": "1 vez por cena, cai até 9 m sem dano ou atravessa um vão de até 6 m."
+        },
+        {
+          "id": "abafar",
+          "n": "Abafar",
+          "d": "1 vez por cena, reduz o Alerta em 1."
+        },
+        {
+          "id": "respirar-fundo",
+          "n": "Respirar fundo",
+          "d": "1 vez por cena, recupera 3 Fôlego como ação de movimento."
+        }
+      ],
+      "trilhas": [
+        {
+          "id": "fantasma",
+          "n": "Fantasma",
+          "foco": "furtividade",
+          "habilidades": [
+            {
+              "n": "Parado como pedra",
+              "d": "1 vez por cena, se ficar imóvel, comuns não te notam a mais de 3 m até você agir; vantagem em Furtividade enquanto parado",
+              "id": "parado-como-pedra"
+            },
+            {
+              "n": "Faca nas costas",
+              "d": "o primeiro ataque furtivo da cena causa +2d6 (não acumula com a Faca de combate nem com Vulto: vale o maior)",
+              "id": "faca-nas-costas"
+            },
+            {
+              "n": "Sumiço",
+              "d": "gasta 1 Fôlego e uma ação de movimento; teste de Furtividade contra a Percepção de quem te vê, com cobertura ou sombra a até 3 m",
+              "id": "sumico"
+            },
+            {
+              "n": "Fantasma de verdade",
+              "d": "1 vez por sessão, exige cobertura: some de toda a cena e o Alerta cai em 2. Não funciona contra infectados únicos nem contra quem está agarrando você",
+              "id": "fantasma-de-verdade"
+            }
+          ]
+        },
+        {
+          "id": "corredor",
+          "n": "Corredor",
+          "foco": "parkour e fuga",
+          "habilidades": [
+            {
+              "n": "Pé na estrada",
+              "d": "+3 m de movimento (12 m); não acumula com Pernas fortes, do Veloz (vale o maior)",
+              "id": "pe-na-estrada",
+              "efeitos": [
+                {
+                  "soma": "metros",
+                  "valor": 3
+                }
+              ]
+            },
+            {
+              "n": "Passo de parkour",
+              "d": "ignora terreno difícil e escala até 3 m sem teste",
+              "id": "passo-de-parkour"
+            },
+            {
+              "n": "Escapa por pouco",
+              "d": "1 vez por cena, gasta 2 Fôlego e a sua reação, no lugar de rolar esquiva ou bloqueio: o ataque acerta, mas o dano cai pela metade (arredonde para cima)",
+              "id": "escapa-por-pouco"
+            },
+            {
+              "n": "Corre que dá",
+              "d": "1 vez por sessão, gasta 2 Fôlego e leva até 2 aliados na fuga: comuns e virais não os alcançam por 3 rodadas, desde que eles continuem fugindo",
+              "id": "corre-que-da"
+            }
+          ]
+        },
+        {
+          "id": "cacador",
+          "n": "Caçador",
+          "foco": "rastro, arco e armadilhas",
+          "habilidades": [
+            {
+              "n": "Rastreador",
+              "d": "vantagem em rastros; pelas pegadas, sabe o tipo e o número de infectados; seus ataques com arco, besta e arremesso causam +1 de dano",
+              "id": "rastreador"
+            },
+            {
+              "n": "Armadilha de campo",
+              "d": "com 1 Suprimento e uma ação de movimento, monta até 2 armadilhas (arame, latas); quem cruzar sofre 2d6 e fica lento por 1 rodada, e o grupo é avisado",
+              "id": "armadilha-de-campo"
+            },
+            {
+              "n": "Ponta certa",
+              "d": "com arco, besta e armas de arremesso, a margem de crítico aumenta em 1 (20 vira 19–20; 19–20 vira 18–20)",
+              "id": "ponta-certa"
+            },
+            {
+              "n": "Presa marcada",
+              "d": "1 vez por cena, marca um infectado: o grupo ganha +2 nos ataques contra ele e os seus ataques à distância causam +1d6 nele",
+              "id": "presa-marcada"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "tecnico",
+      "n": "Técnico",
+      "atributo": "mente",
+      "pericias": [
+        "tecnica",
+        "medicina",
+        "investigacao",
+        "sobrevivencia"
+      ],
+      "bonus": "+2 espaços de inventário",
+      "efeitos": [
+        {
+          "soma": "espacos",
+          "valor": 2
+        }
+      ],
+      "inicial": {
+        "n": "Improvisar",
+        "d": "1 vez por cena, monta ou conserta algo com sucata (Técnica, DT do mestre); o item dura uma cena (barricada, alarme, lanterna)."
+      },
+      "habilidades": [
+        {
+          "id": "sinal",
+          "n": "Sinal",
+          "d": "vantagem com rádios e eletrônicos; pode captar chamadas de facções (o mestre dá uma pista); 1 vez por sessão acha a posição de um transmissor ativo a até 1 km."
+        },
+        {
+          "id": "remendo",
+          "n": "Remendo",
+          "d": "a bandagem recupera 1d6 em vez de 1d4 e estanca o sangramento."
+        },
+        {
+          "id": "sucata-util",
+          "n": "Sucata útil",
+          "d": "no início de cada sessão, recebe 1 Suprimento à escolha."
+        },
+        {
+          "id": "maos-de-chave",
+          "n": "Mãos de chave",
+          "d": "vantagem para abrir trancas e desarmar alarmes, sem fazer barulho."
+        },
+        {
+          "id": "ler-o-inimigo",
+          "n": "Ler o inimigo",
+          "d": "1 vez por cena, depois de observar um infectado por uma rodada, o mestre revela os PV dele ou uma fraqueza, à sua escolha."
+        },
+        {
+          "id": "reparo-rapido",
+          "n": "Reparo rápido",
+          "d": "consertar uma arma quebrada é ação de movimento e não pede teste; também conserta armadura."
+        },
+        {
+          "id": "lampada-viva",
+          "n": "Lâmpada viva",
+          "d": "as pilhas UV duram o dobro e as lâmpadas portáteis ganham +2 m de raio."
+        },
+        {
+          "id": "recarga-de-oficina",
+          "n": "Recarga de oficina",
+          "d": "1 vez por descanso longo, transforma 1 Suprimento em 3 munições."
+        },
+        {
+          "id": "plano-b",
+          "n": "Plano B",
+          "d": "1 vez por cena, rerrola um teste de Mente e fica com o novo resultado."
+        }
+      ],
+      "trilhas": [
+        {
+          "id": "engenheiro",
+          "n": "Engenheiro",
+          "foco": "energia, UV e base",
+          "habilidades": [
+            {
+              "n": "Eletricista",
+              "d": "vantagem para religar energia e luzes UV; a Energia da base sobe 1 a cada sessão (máx. 5)",
+              "id": "eletricista"
+            },
+            {
+              "n": "Refletor",
+              "d": "com 1 pilha UV, lâmpada portátil de 5 m por 3 rodadas; voláteis sofrem 1d6 por rodada",
+              "id": "refletor"
+            },
+            {
+              "n": "Cerca viva",
+              "d": "com 1 Suprimento, armadilha elétrica: 2d6 e atordoa",
+              "id": "cerca-viva"
+            },
+            {
+              "n": "Curto-circuito",
+              "d": "1 vez por sessão, estoura um gerador: 3d6 em área, apaga a luz e Alerta +2",
+              "id": "curto-circuito"
+            }
+          ]
+        },
+        {
+          "id": "medico",
+          "n": "Médico",
+          "foco": "cura e estabilização",
+          "habilidades": [
+            {
+              "n": "Triagem",
+              "d": "estabilizar é ação de movimento e dá vantagem",
+              "id": "triagem"
+            },
+            {
+              "n": "Sutura",
+              "d": "1 vez por aliado por descanso longo, +1d6 PV",
+              "id": "sutura"
+            },
+            {
+              "n": "Antídoto improvisado",
+              "d": "1 vez por sessão, com 1 Suprimento e Medicina, baixa 1 de Infecção de alguém",
+              "id": "antidoto-improvisado"
+            },
+            {
+              "n": "Voltar atrás",
+              "d": "1 vez por sessão, aliado em 0 PV volta com 1d6 PV (Medicina)",
+              "id": "voltar-atras"
+            }
+          ]
+        },
+        {
+          "id": "investigador",
+          "n": "Investigador",
+          "foco": "pistas e segredos",
+          "habilidades": [
+            {
+              "n": "Fio da meada",
+              "d": "1 vez por cena, pergunta ao mestre uma pista do mistério em andamento",
+              "id": "fio-da-meada"
+            },
+            {
+              "n": "Memória de arquivo",
+              "d": "ao ler um diário ou documento, o mestre dá uma informação extra, e você tem vantagem em Investigação com ele",
+              "id": "memoria-de-arquivo"
+            },
+            {
+              "n": "Cruzar dados",
+              "d": "com duas pistas, deduz uma terceira",
+              "id": "cruzar-dados"
+            },
+            {
+              "n": "Verdade nua",
+              "d": "1 vez por sessão, descobre uma mentira ou segredo de um NPC",
+              "id": "verdade-nua"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "voz",
+      "n": "Voz",
+      "atributo": "presenca",
+      "pericias": [
+        "persuasao",
+        "intimidacao",
+        "vontade",
+        "percepcao"
+      ],
+      "bonus": "1 vez por cena, ignora 1 ponto de Medo ganho",
+      "inicial": {
+        "n": "Palavra firme",
+        "d": "ação; um aliado que te ouve baixa 1 de Medo (1 vez por aliado por cena)."
+      },
+      "habilidades": [
+        {
+          "id": "voz-de-comando",
+          "n": "Voz de comando",
+          "d": "1 vez por cena, um aliado ganha vantagem no próximo teste."
+        },
+        {
+          "id": "presenca-de-ferro",
+          "n": "Presença de ferro",
+          "d": "vantagem em Intimidação e em Vontade contra o Medo."
+        },
+        {
+          "id": "conversa-mansa",
+          "n": "Conversa mansa",
+          "d": "vantagem em Persuasão com NPC humano que não esteja hostil; 1 vez por sessão repete um teste de Persuasão falho."
+        },
+        {
+          "id": "rosto-conhecido",
+          "n": "Rosto conhecido",
+          "d": "1 vez por sessão, um NPC conhecido (inventado na hora com o mestre) faz um favor pequeno."
+        },
+        {
+          "id": "cara-de-poquer",
+          "n": "Cara de pôquer",
+          "d": "a desvantagem do Medo só começa no Medo 4."
+        },
+        {
+          "id": "faro-de-mentira",
+          "n": "Faro de mentira",
+          "d": "vantagem em Percepção para notar mentira, e em Investigação ao interrogar."
+        },
+        {
+          "id": "atencao",
+          "n": "Atenção!",
+          "d": "1 vez por cena, aliados ganham +3 na iniciativa."
+        },
+        {
+          "id": "promessa",
+          "n": "Promessa",
+          "d": "ao jurar proteger algo ou alguém, ganha vantagem em Vontade enquanto cumpre; quebrar a promessa dá Medo +2."
+        },
+        {
+          "id": "chamar-atencao",
+          "n": "Chamar atenção",
+          "d": "gasta 1 Fôlego; infectados comuns e virais próximos atacam você em vez de um aliado por uma rodada."
+        }
+      ],
+      "trilhas": [
+        {
+          "id": "lider",
+          "n": "Líder",
+          "foco": "ajuda aos aliados",
+          "habilidades": [
+            {
+              "n": "Plano de ataque",
+              "d": "aliados ganham +1 nos ataques contra um alvo apontado",
+              "id": "plano-de-ataque"
+            },
+            {
+              "n": "Mão estendida",
+              "d": "ajudar dá +2 ao teste do aliado",
+              "id": "mao-estendida"
+            },
+            {
+              "n": "Moral alta",
+              "d": "a Moral da base sobe 1 a cada descanso (máx. 5); com Moral 4 ou mais, o grupo tem vantagem em Vontade na base",
+              "id": "moral-alta"
+            },
+            {
+              "n": "Hora decisiva",
+              "d": "1 vez por sessão, todos os aliados rerrolam um teste",
+              "id": "hora-decisiva"
+            }
+          ]
+        },
+        {
+          "id": "negociador",
+          "n": "Negociador",
+          "foco": "facções",
+          "habilidades": [
+            {
+              "n": "Passe livre",
+              "d": "começa com +1 de reputação em duas facções",
+              "id": "passe-livre"
+            },
+            {
+              "n": "Boa fama",
+              "d": "1 vez por sessão, o grupo ganha +1 extra de reputação e vantagem em Persuasão com essa facção",
+              "id": "boa-fama"
+            },
+            {
+              "n": "Salvo-conduto",
+              "d": "1 vez por sessão, evita um combate com facção que não seja inimiga",
+              "id": "salvo-conduto"
+            },
+            {
+              "n": "Armístício",
+              "d": "1 vez na campanha, suspende o conflito entre duas facções por uma sessão",
+              "id": "armisticio"
+            }
+          ]
+        },
+        {
+          "id": "ancora",
+          "n": "Âncora",
+          "foco": "Medo e Infecção",
+          "habilidades": [
+            {
+              "n": "Ombro amigo",
+              "d": "no descanso longo, um aliado baixa 2 de Medo extra",
+              "id": "ombro-amigo"
+            },
+            {
+              "n": "Laço forte",
+              "d": "o laço humano que baixa Infecção funciona 2 vezes por sessão",
+              "id": "laco-forte"
+            },
+            {
+              "n": "Voz que traz de volta",
+              "d": "aliado em Instável ao seu lado ganha +3 no teste de Vontade",
+              "id": "voz-que-traz-de-volta"
+            },
+            {
+              "n": "Segurar a mão",
+              "d": "1 vez por sessão, ao lado de um aliado no Limiar, baixa a Infecção dele em 2",
+              "id": "segurar-a-mao"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

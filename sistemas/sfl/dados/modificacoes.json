@@ -1,0 +1,283 @@
+{
+  "versao": "1.2",
+  "regras": [
+    "Instalar: Técnica DT 15, os materiais e 1 hora; na oficina da base sem teste; fora dela precisa do kit de ferramentas",
+    "Cada modificação só entra uma vez por arma; tirar devolve metade dos materiais",
+    "Bônus do mesmo tipo não acumulam (dados, dano, margem)",
+    "Arma quebrada mantém as modificações"
+  ],
+  "limites": "campo limiteMods em armas.json",
+  "modificacoes": [
+    {
+      "id": "pregos-e-arame",
+      "n": "Pregos e arame",
+      "para": {
+        "categorias": [
+          "contundente"
+        ]
+      },
+      "efeito": "Sangramento vira efeito do crítico, além do efeito da arma",
+      "materiais": {
+        "sucata": 2
+      }
+    },
+    {
+      "id": "lamina-soldada",
+      "n": "Lâmina soldada",
+      "para": {
+        "categorias": [
+          "contundente"
+        ]
+      },
+      "efeito": "Pode atacar com Cortante ou Contundente, o que for melhor",
+      "materiais": {
+        "sucata": 2,
+        "pecas": 1
+      }
+    },
+    {
+      "id": "fio-afiado",
+      "n": "Fio afiado",
+      "para": {
+        "categorias": [
+          "cortante"
+        ]
+      },
+      "efeito": "Margem de crítico +1",
+      "materiais": {
+        "sucata": 1,
+        "pecas": 1
+      },
+      "efeitos": [
+        {
+          "soma": "margemCritico",
+          "valor": 1
+        }
+      ]
+    },
+    {
+      "id": "empunhadura-de-fita",
+      "n": "Empunhadura de fita",
+      "para": {
+        "categorias": [
+          "contundente",
+          "cortante"
+        ]
+      },
+      "efeito": "+1 dado no bloqueio com essa arma",
+      "materiais": {
+        "tecido": 1
+      }
+    },
+    {
+      "id": "contrapeso",
+      "n": "Contrapeso",
+      "para": {
+        "duasMaos": true,
+        "categorias": [
+          "contundente",
+          "cortante"
+        ]
+      },
+      "efeito": "Derruba vira efeito do crítico",
+      "materiais": {
+        "sucata": 3
+      }
+    },
+    {
+      "id": "eletrificada",
+      "n": "Eletrificada",
+      "para": {
+        "categorias": [
+          "contundente",
+          "cortante"
+        ],
+        "metal": true
+      },
+      "efeito": "No crítico, atordoa 1 rodada; gasta 1 pilha por cena de uso",
+      "materiais": {
+        "pecas": 2,
+        "pilha-uv": 1
+      }
+    },
+    {
+      "id": "pano-em-chamas",
+      "n": "Pano em chamas",
+      "para": {
+        "categorias": [
+          "contundente",
+          "cortante"
+        ],
+        "exceto": [
+          "motosserra-2-maos"
+        ]
+      },
+      "efeito": "Por uma cena, o crítico deixa o alvo queimando; Alerta +1",
+      "materiais": {
+        "tecido": 1,
+        "combustivel": 1
+      }
+    },
+    {
+      "id": "alca-leve",
+      "n": "Alça leve",
+      "para": {
+        "espacosMin": 2
+      },
+      "efeito": "Ocupa 1 espaço a menos",
+      "materiais": {
+        "tecido": 1,
+        "sucata": 1
+      },
+      "efeitos": [
+        {
+          "soma": "espacosArma",
+          "valor": -1
+        }
+      ]
+    },
+    {
+      "id": "silenciador-improvisado",
+      "n": "Silenciador improvisado",
+      "para": {
+        "ids": [
+          "pistola-9-mm",
+          "pistola-45",
+          "submetralhadora",
+          "rifle-de-caca",
+          "fuzil-de-assalto"
+        ]
+      },
+      "efeito": "O tiro não sobe o Alerta (armas de Alerta +2 sobem só 1); −1 de dano",
+      "materiais": {
+        "sucata": 2,
+        "pecas": 1
+      }
+    },
+    {
+      "id": "mira",
+      "n": "Mira (luneta ou ponto vermelho)",
+      "para": {
+        "categorias": [
+          "tiro",
+          "especial"
+        ],
+        "exceto": [
+          "lanca-chamas-improvisado"
+        ]
+      },
+      "efeito": "Depois de mirar, +1 dado no ataque",
+      "materiais": {
+        "pecas": 2
+      }
+    },
+    {
+      "id": "carregador-estendido",
+      "n": "Carregador estendido",
+      "para": {
+        "ids": [
+          "pistola-9-mm",
+          "pistola-45",
+          "submetralhadora",
+          "fuzil-de-assalto",
+          "escopeta-pump"
+        ]
+      },
+      "efeito": "+50% de munição no pente",
+      "materiais": {
+        "pecas": 2
+      }
+    },
+    {
+      "id": "carregador-rapido",
+      "n": "Carregador rápido",
+      "para": {
+        "ids": [
+          "revolver-38",
+          "revolver-357",
+          "escopeta-de-cano-duplo"
+        ]
+      },
+      "efeito": "Recarga lenta vira recarga normal",
+      "materiais": {
+        "pecas": 1,
+        "sucata": 1
+      }
+    },
+    {
+      "id": "lanterna-acoplada",
+      "n": "Lanterna acoplada",
+      "para": {
+        "categorias": [
+          "tiro"
+        ],
+        "ids": [
+          "submetralhadora",
+          "escopeta-pump",
+          "rifle-de-precisao",
+          "fuzil-de-assalto"
+        ]
+      },
+      "efeito": "Ilumina 10 m sem ocupar a outra mão; aceita lanterna UV",
+      "materiais": {
+        "lanterna": 1
+      }
+    },
+    {
+      "id": "cano-serrado",
+      "n": "Cano serrado",
+      "para": {
+        "ids": [
+          "escopeta-de-cano-duplo",
+          "escopeta-pump"
+        ]
+      },
+      "efeito": "+1 dado de dano a até 5 m; alcance cai para 5 m",
+      "materiais": {
+        "sucata": 1
+      }
+    },
+    {
+      "id": "corda-reforcada",
+      "n": "Corda reforçada",
+      "para": {
+        "familias": [
+          "arco",
+          "besta"
+        ]
+      },
+      "efeito": "+1 de dano",
+      "materiais": {
+        "pecas": 1,
+        "tecido": 1
+      }
+    },
+    {
+      "id": "aljava-de-cinto",
+      "n": "Aljava de cinto",
+      "para": {
+        "familias": [
+          "arco",
+          "besta"
+        ]
+      },
+      "efeito": "A pilha de flechas conta como pronta",
+      "materiais": {
+        "tecido": 1
+      }
+    },
+    {
+      "id": "bocal-largo",
+      "n": "Bocal largo",
+      "para": {
+        "ids": [
+          "lanca-chamas-improvisado"
+        ]
+      },
+      "efeito": "O cone vai de curto para médio (6 m)",
+      "materiais": {
+        "pecas": 2
+      }
+    }
+  ]
+}

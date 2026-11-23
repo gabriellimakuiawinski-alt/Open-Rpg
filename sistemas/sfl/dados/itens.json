@@ -1,0 +1,550 @@
+{
+  "versao": "1.2",
+  "nota": "preco (euro) só para a loja do Open RPG; o livro não mostra preços. pilha = quantos cabem em 1 espaço.",
+  "itens": [
+    {
+      "id": "balas-de-pistola-ou-revolver",
+      "n": "Balas de pistola ou revólver",
+      "tipo": "municao",
+      "espacos": 1,
+      "pilha": 20,
+      "efeito": "Munição de pistolas e revólveres",
+      "raridade": "Incomum",
+      "preco": 40,
+      "municao": "pistola"
+    },
+    {
+      "id": "balas-de-rifle-ou-fuzil",
+      "n": "Balas de rifle ou fuzil",
+      "tipo": "municao",
+      "espacos": 1,
+      "pilha": 15,
+      "efeito": "Munição de rifles e fuzil",
+      "raridade": "Raro",
+      "preco": 60,
+      "municao": "rifle"
+    },
+    {
+      "id": "cartuchos-de-escopeta",
+      "n": "Cartuchos de escopeta",
+      "tipo": "municao",
+      "espacos": 1,
+      "pilha": 10,
+      "efeito": "Munição de escopetas",
+      "raridade": "Incomum",
+      "preco": 40,
+      "municao": "escopeta"
+    },
+    {
+      "id": "flechas-ou-virotes",
+      "n": "Flechas ou virotes",
+      "tipo": "municao",
+      "espacos": 1,
+      "pilha": 10,
+      "efeito": "Munição de arcos e bestas",
+      "raridade": "Comum",
+      "preco": 20,
+      "municao": "flecha",
+      "fabricavel": true
+    },
+    {
+      "id": "flechas-de-fogo",
+      "n": "Flechas de fogo",
+      "tipo": "municao",
+      "espacos": 1,
+      "pilha": 5,
+      "efeito": "O acerto deixa o alvo queimando",
+      "raridade": "Incomum",
+      "preco": 40,
+      "municao": "flecha",
+      "fabricavel": true
+    },
+    {
+      "id": "flechas-uv",
+      "n": "Flechas UV",
+      "tipo": "municao",
+      "espacos": 1,
+      "pilha": 5,
+      "efeito": "Ao acertar um volátil, +1d6 de UV",
+      "raridade": "Raro",
+      "preco": 60,
+      "municao": "flecha"
+    },
+    {
+      "id": "combustivel-galao-pequeno",
+      "n": "Combustível (galão pequeno)",
+      "tipo": "municao",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "Motosserra, lança-chamas, molotov e veículos",
+      "raridade": "Incomum",
+      "preco": 30
+    },
+    {
+      "id": "jaqueta-de-couro",
+      "n": "Jaqueta de couro",
+      "tipo": "armadura",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "Leve, reduz 1",
+      "raridade": "Comum",
+      "preco": 40,
+      "armadura": {
+        "tipo": "leve",
+        "reducao": 1
+      }
+    },
+    {
+      "id": "roupa-de-motociclista-com-protecoes",
+      "n": "Roupa de motociclista com proteções",
+      "tipo": "armadura",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "Leve, reduz 1; vantagem para não sofrer dano de queda até 6 m",
+      "raridade": "Incomum",
+      "preco": 90,
+      "armadura": {
+        "tipo": "leve",
+        "reducao": 1
+      }
+    },
+    {
+      "id": "colete-balistico",
+      "n": "Colete balístico",
+      "tipo": "armadura",
+      "espacos": 2,
+      "pilha": 1,
+      "efeito": "Média, reduz 2; contra tiro, reduz 3",
+      "raridade": "Raro",
+      "preco": 300,
+      "armadura": {
+        "tipo": "media",
+        "reducao": 2,
+        "reducaoTiro": 3
+      }
+    },
+    {
+      "id": "armadura-de-sucata",
+      "n": "Armadura de sucata",
+      "tipo": "armadura",
+      "espacos": 2,
+      "pilha": 1,
+      "efeito": "Média, reduz 2; desvantagem em Furtividade",
+      "raridade": "Fabricável",
+      "preco": null,
+      "armadura": {
+        "tipo": "media",
+        "reducao": 2,
+        "desvantagem": [
+          "furtividade"
+        ]
+      },
+      "fabricavel": true
+    },
+    {
+      "id": "roupa-de-choque-policia",
+      "n": "Roupa de choque (polícia)",
+      "tipo": "armadura",
+      "espacos": 3,
+      "pilha": 1,
+      "efeito": "Pesada, reduz 3; desvantagem em Parkour e Furtividade",
+      "raridade": "Raro",
+      "preco": 600,
+      "armadura": {
+        "tipo": "pesada",
+        "reducao": 3,
+        "desvantagem": [
+          "parkour",
+          "furtividade"
+        ]
+      }
+    },
+    {
+      "id": "mochila-escolar",
+      "n": "Mochila escolar",
+      "tipo": "mochila",
+      "espacos": null,
+      "pilha": 1,
+      "efeito": "+2 espaços",
+      "raridade": "Comum",
+      "preco": 15,
+      "efeitos": [
+        {
+          "soma": "espacos",
+          "valor": 2
+        }
+      ]
+    },
+    {
+      "id": "mochila-de-trilha",
+      "n": "Mochila de trilha",
+      "tipo": "mochila",
+      "espacos": null,
+      "pilha": 1,
+      "efeito": "+4 espaços",
+      "raridade": "Incomum",
+      "preco": 60,
+      "efeitos": [
+        {
+          "soma": "espacos",
+          "valor": 4
+        }
+      ]
+    },
+    {
+      "id": "mochila-militar",
+      "n": "Mochila militar",
+      "tipo": "mochila",
+      "espacos": null,
+      "pilha": 1,
+      "efeito": "+5 espaços e +1 item pronto",
+      "raridade": "Raro",
+      "preco": 150,
+      "efeitos": [
+        {
+          "soma": "espacos",
+          "valor": 5
+        },
+        {
+          "soma": "prontos",
+          "valor": 1
+        }
+      ]
+    },
+    {
+      "id": "bolsa-de-cintura",
+      "n": "Bolsa de cintura",
+      "tipo": "carregar",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "+1 item pronto",
+      "raridade": "Comum",
+      "preco": 20,
+      "efeitos": [
+        {
+          "soma": "prontos",
+          "valor": 1
+        }
+      ]
+    },
+    {
+      "id": "coldre-ou-bainha",
+      "n": "Coldre ou bainha",
+      "tipo": "carregar",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "+1 item pronto (só pistola, revólver ou faca)",
+      "raridade": "Comum",
+      "preco": 25,
+      "efeitos": [
+        {
+          "soma": "prontos",
+          "valor": 1,
+          "so": [
+            "pistola",
+            "revolver",
+            "faca"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "bandoleira",
+      "n": "Bandoleira",
+      "tipo": "carregar",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "Uma pilha de munição conta como pronta",
+      "raridade": "Incomum",
+      "preco": 30
+    },
+    {
+      "id": "isqueiro",
+      "n": "Isqueiro",
+      "tipo": "exploracao",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "Acende fogo, molotov e flechas de fogo",
+      "raridade": "Comum",
+      "preco": 5
+    },
+    {
+      "id": "lanterna",
+      "n": "Lanterna",
+      "tipo": "exploracao",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "Ilumina 10 m e tira a desvantagem do escuro",
+      "raridade": "Comum",
+      "preco": 20
+    },
+    {
+      "id": "lanterna-uv",
+      "n": "Lanterna UV",
+      "tipo": "exploracao",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "Gasta 1 pilha UV por cena; voláteis num cone de 6 m sofrem 1d6 por rodada e não avançam",
+      "raridade": "Raro",
+      "preco": 150
+    },
+    {
+      "id": "pilha-uv",
+      "n": "Pilha UV",
+      "tipo": "exploracao",
+      "espacos": 0,
+      "pilha": 4,
+      "efeito": "Alimenta uma lanterna ou lâmpada UV por uma cena",
+      "raridade": "Incomum",
+      "preco": 25
+    },
+    {
+      "id": "corda-15-m",
+      "n": "Corda (15 m)",
+      "tipo": "exploracao",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "Subir e descer paredes lisas sem teste; vantagem em escaladas",
+      "raridade": "Comum",
+      "preco": 15
+    },
+    {
+      "id": "gancho-com-corda",
+      "n": "Gancho com corda",
+      "tipo": "exploracao",
+      "espacos": 2,
+      "pilha": 1,
+      "efeito": "Prende num beiral a até 12 m; subir pela corda é parkour livre",
+      "raridade": "Incomum",
+      "preco": 60
+    },
+    {
+      "id": "kit-de-arrombamento",
+      "n": "Kit de arrombamento",
+      "tipo": "exploracao",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "Vantagem em Técnica para fechaduras e cadeados",
+      "raridade": "Incomum",
+      "preco": 50
+    },
+    {
+      "id": "mascara-de-gas",
+      "n": "Máscara de gás",
+      "tipo": "exploracao",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "Vantagem contra gás, fumaça e esporos; sem desvantagem dentro de fumaça",
+      "raridade": "Raro",
+      "preco": 120
+    },
+    {
+      "id": "binoculo",
+      "n": "Binóculo",
+      "tipo": "exploracao",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "Detalhes a até 500 m; vantagem em Percepção à distância",
+      "raridade": "Incomum",
+      "preco": 60
+    },
+    {
+      "id": "radio-portatil",
+      "n": "Rádio portátil",
+      "tipo": "exploracao",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "Capta transmissões das facções",
+      "raridade": "Incomum",
+      "preco": 80
+    },
+    {
+      "id": "par-de-walkie-talkies",
+      "n": "Par de walkie-talkies",
+      "tipo": "exploracao",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "O grupo se fala a até 2 km",
+      "raridade": "Incomum",
+      "preco": 100
+    },
+    {
+      "id": "apito",
+      "n": "Apito",
+      "tipo": "exploracao",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "Atrai infectados comuns para onde você está (sobe 1 de Alerta ali)",
+      "raridade": "Comum",
+      "preco": 5
+    },
+    {
+      "id": "mapa-da-regiao",
+      "n": "Mapa da região",
+      "tipo": "exploracao",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "Vantagem em Sobrevivência para achar rota numa área conhecida",
+      "raridade": "Comum",
+      "preco": 20
+    },
+    {
+      "id": "saco-de-dormir",
+      "n": "Saco de dormir",
+      "tipo": "exploracao",
+      "espacos": 2,
+      "pilha": 1,
+      "efeito": "Descanso longo no frio sem perder 1d4 PV",
+      "raridade": "Comum",
+      "preco": 40
+    },
+    {
+      "id": "bandagem",
+      "n": "Bandagem",
+      "tipo": "medico",
+      "espacos": 1,
+      "pilha": 3,
+      "efeito": "Medicina DT 15: recupera 1d4 PV, uma vez por ferimento; para o sangramento",
+      "raridade": "Comum",
+      "preco": 10,
+      "fabricavel": true
+    },
+    {
+      "id": "kit-medico",
+      "n": "Kit médico",
+      "tipo": "medico",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "5 usos; cada uso é uma bandagem com vantagem que para qualquer sangramento",
+      "raridade": "Incomum",
+      "preco": 120,
+      "usos": 5
+    },
+    {
+      "id": "analgesico",
+      "n": "Analgésico",
+      "tipo": "medico",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "Por uma cena, ignora desvantagens de dor e ganha 2 PV temporários",
+      "raridade": "Comum",
+      "preco": 20
+    },
+    {
+      "id": "antibiotico",
+      "n": "Antibiótico",
+      "tipo": "medico",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "Cura uma ferida infeccionada ou doença comum; não baixa a Infecção",
+      "raridade": "Incomum",
+      "preco": 60
+    },
+    {
+      "id": "adrenalina",
+      "n": "Adrenalina",
+      "tipo": "medico",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "Recupera 3 Fôlego; −1 de Fôlego máximo até o descanso longo",
+      "raridade": "Raro",
+      "preco": 80
+    },
+    {
+      "id": "estabilizador",
+      "n": "Estabilizador",
+      "tipo": "medico",
+      "espacos": 0,
+      "pilha": 1,
+      "efeito": "Baixa 2 de Infecção. Só 1 por dia",
+      "raridade": "Raro",
+      "preco": 500,
+      "efeitos": [
+        {
+          "soma": "infeccao",
+          "valor": -2
+        }
+      ]
+    },
+    {
+      "id": "racao",
+      "n": "Ração",
+      "tipo": "comida",
+      "espacos": 1,
+      "pilha": 2,
+      "efeito": "Comida para um dia",
+      "raridade": "Comum",
+      "preco": 8
+    },
+    {
+      "id": "agua-garrafa",
+      "n": "Água (garrafa)",
+      "tipo": "comida",
+      "espacos": 1,
+      "pilha": 2,
+      "efeito": "Água para um dia",
+      "raridade": "Comum",
+      "preco": 5
+    },
+    {
+      "id": "sucata",
+      "n": "Sucata",
+      "tipo": "material",
+      "espacos": 1,
+      "pilha": 5,
+      "efeito": "Material de receitas e modificações",
+      "raridade": "Comum",
+      "preco": 2
+    },
+    {
+      "id": "tecido",
+      "n": "Tecido",
+      "tipo": "material",
+      "espacos": 1,
+      "pilha": 5,
+      "efeito": "Material de receitas e modificações",
+      "raridade": "Comum",
+      "preco": 3
+    },
+    {
+      "id": "pecas",
+      "n": "Peças",
+      "tipo": "material",
+      "espacos": 1,
+      "pilha": 5,
+      "efeito": "Material de receitas e modificações",
+      "raridade": "Incomum",
+      "preco": 10
+    },
+    {
+      "id": "quimicos",
+      "n": "Químicos",
+      "tipo": "material",
+      "espacos": 1,
+      "pilha": 5,
+      "efeito": "Material de receitas e modificações",
+      "raridade": "Incomum",
+      "preco": 10
+    },
+    {
+      "id": "kit-de-ferramentas",
+      "n": "Kit de ferramentas",
+      "tipo": "ferramenta",
+      "espacos": 1,
+      "pilha": 1,
+      "efeito": "Necessário para instalar modificações fora da base",
+      "raridade": "Incomum",
+      "preco": 60
+    },
+    {
+      "id": "kit-de-quimica",
+      "n": "Kit de química",
+      "tipo": "ferramenta",
+      "espacos": 2,
+      "pilha": 1,
+      "efeito": "Necessário para receitas químicas fora da base",
+      "raridade": "Incomum",
+      "preco": 100
+    }
+  ]
+}

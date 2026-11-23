@@ -1,0 +1,106 @@
+{
+  "versao": "1.2",
+  "movimentos": [
+    {
+      "n": "Passar por um obstáculo baixo",
+      "dt": null,
+      "folego": 0
+    },
+    {
+      "n": "Deslizar por baixo de um obstáculo",
+      "dt": 10,
+      "folego": 0
+    },
+    {
+      "n": "Escalar um muro de 2 m",
+      "dt": 12,
+      "folego": 1
+    },
+    {
+      "n": "Saltar entre telhados próximos",
+      "dt": 15,
+      "folego": 1
+    },
+    {
+      "n": "Correr alguns passos pela parede",
+      "dt": 18,
+      "folego": 1
+    },
+    {
+      "n": "Escalar uma fachada difícil",
+      "dt": 20,
+      "folego": 2
+    },
+    {
+      "n": "Saltar entre prédios distantes",
+      "dt": 22,
+      "folego": 2
+    }
+  ],
+  "falha": [
+    {
+      "margem": "1-4",
+      "n": "Consegue, mas perde tempo ou gasta 1 Fôlego a mais"
+    },
+    {
+      "margem": "5-9",
+      "n": "Não completa: fica preso ou pendurado, faz barulho ou muda de rota"
+    },
+    {
+      "margem": "10+",
+      "n": "Complicação grave: queda, ferimento, equipamento perdido"
+    }
+  ],
+  "sequencia": {
+    "dt": "maior DT entre os obstáculos",
+    "complexa": 2,
+    "folego": "maior custo, +1 se especialmente exigente"
+  },
+  "impulso": {
+    "max": 3,
+    "metros": [
+      0,
+      2,
+      4,
+      4
+    ],
+    "vantagemNoNivel": 3,
+    "ganho": "+1 ao superar obstáculo relevante, máximo 1 por rodada",
+    "perde": "parado uma rodada, falha importante, queda ou fim da perseguição",
+    "naoAcumula": "metros de outras fontes: vale o maior"
+  },
+  "estagios": [
+    {
+      "n": 1,
+      "id": "alcancado",
+      "nome": "Alcançado"
+    },
+    {
+      "n": 2,
+      "id": "muito-perto",
+      "nome": "Muito perto"
+    },
+    {
+      "n": 3,
+      "id": "perto",
+      "nome": "Perto",
+      "inicio": true
+    },
+    {
+      "n": 4,
+      "id": "media",
+      "nome": "Distância média"
+    },
+    {
+      "n": 5,
+      "id": "longe",
+      "nome": "Longe"
+    },
+    {
+      "n": 6,
+      "id": "escapou",
+      "nome": "Escapou",
+      "exige": "romper o contato"
+    }
+  ]
+}
