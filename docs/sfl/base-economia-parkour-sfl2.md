@@ -62,7 +62,7 @@ A base é uma "ficha do grupo". Ela tem **cômodos** (módulos) que o grupo cons
 - [PENDENTE] Faixa de preços (balanceamento): para segurar o poder, itens fortes devem ser raros e caros.
 
 ## 4. Parkour
-[CONFIRMADO 28/10] Sem mecânica única de parkour. A perícia Parkour continua valendo para esquiva e fuga. As três direções que o Claude tinha proposto (trilha, manobras, Ímpeto) ficam descartadas.
+[CONFIRMADO 22/11/2026] O mestre adotou o sistema de parkour do livro V1.0 (cap. 12): parkour livre, de risco e de perseguição, com Impulso. Substitui a decisão de 28/10. Regras em `parkour-sfl2.md`.
 
 ## 5. Colocar o sistema no Open RPG
 - [CONFIRMADO] Todo o sistema vai para o Open RPG.

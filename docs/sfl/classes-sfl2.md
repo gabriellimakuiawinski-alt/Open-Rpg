@@ -105,7 +105,7 @@ Cada classe: 2 perícias treinadas à escolha (entre as indicadas), 1 bônus, 1 
 - **Sucata útil:** no início de cada sessão, recebe 1 Suprimento à escolha.
 - **Mãos de chave:** vantagem para abrir trancas e desarmar alarmes.
 - **Ler o inimigo:** uma vez por cena, depois de observar um infectado por uma rodada, o mestre revela os PV dele e uma fraqueza.
-- **Reparo rápido:** reparar uma arma é ação de movimento e dá +5 usos de durabilidade.
+- **Reparo rápido:** consertar uma arma quebrada é ação de movimento e não pede teste; também conserta armadura (livro V1.1, 23/11/2026).
 - **Lâmpada viva:** as pilhas UV duram o dobro.
 - **Recarga de oficina:** transforma 1 Suprimento em 2 munições.
 - **Plano B:** uma vez por cena, rerrola um teste de Mente e fica com o segundo resultado.
@@ -161,22 +161,42 @@ Cada classe: 2 perícias treinadas à escolha (entre as indicadas), 1 bônus, 1 
   4. **Segurar a mão:** uma vez por sessão, fica uma rodada ao lado de um aliado no Limiar (Infecção 9 ou 10) e baixa a Infecção dele em 2.
 
 ## 5. Origens
-A vida normal até os 25 anos. Cada origem dá 2 perícias treinadas, 1 traço e 1 **peso** (um custo pequeno que gera história e tensão). País, família adotiva e a Estônia continuam livres. Se uma perícia repetir a da classe, escolhe outra.
+O que o personagem fazia antes (livro V1.1, tabela 9.1: 30 origens; as 12 últimas aprovadas pelo mestre em 23/11/2026, regras em teste). Cada origem dá 2 perícias treinadas, 1 traço e 1 **peso** (um custo pequeno que gera história e tensão). País, família adotiva e a Estônia continuam livres. Se uma perícia repetir a da classe, escolhe outra.
 
 | # | Origem | Perícias | Traço | Peso |
 |---|---|---|---|---|
-| 1 | Enfermeiro | Medicina, Vontade | Lida com sangue e dor sem desvantagem. | Medo +1 ao abandonar um ferido. |
-| 2 | Militar | Tiro, Atletismo | Começa com 1 arma especial extra treinada. | Medo +1 quando perde o controle de uma situação. |
-| 3 | Caçador rural | Sobrevivência, Furtividade | Segue rastros e encontra comida e abrigo. | Desvantagem em Persuasão em grandes cidades. |
-| 4 | Mecânico ou operário | Técnica, Contundente | Conserta armas e equipamentos com sucata. | Sofre com cheiro de sangue: Medo +1 na primeira cena de horror. |
-| 5 | Pesquisador | Investigação, Técnica | Entende documentos e laboratórios. | Sem Suprimento extra: começa sem o item de Suprimento. |
-| 6 | Atleta | Atletismo, Parkour | Recupera 1 Fôlego a mais no descanso curto. | Desvantagem em Vontade quando exausto (Fôlego 0). |
-| 7 | Segurança ou policial | Intimidação, Percepção | Conhece procedimentos e armas. | Medo +1 diante de ordens que não pode cumprir. |
-| 8 | Golpista | Persuasão, Furtividade | Tem contatos nas facções (um favor por sessão). | Reputação: começa com −1 em uma facção à escolha do mestre. |
-| 9 | Artista | Percepção, Persuasão | Vantagem em acalmar pessoas. | Medo +1 em silêncio total e escuridão. |
-| 10 | Cuidador ou professor | Vontade, Medicina | O Medo sobe menos ao proteger alguém. | Se um protegido cair, Medo +2. |
+| 1 | Enfermeiro | Medicina, Vontade | Lida com sangue e dor sem desvantagem | Medo +1 ao abandonar um ferido |
+| 2 | Militar | Tiro, Atletismo | Começa com 1 arma especial extra treinada | Medo +1 quando perde o controle de uma situação |
+| 3 | Caçador rural | Sobrevivência, Furtividade | Segue rastros e encontra comida e abrigo | Desvantagem em Persuasão em grandes cidades |
+| 4 | Mecânico ou operário | Técnica, Contundente | Conserta armas e equipamentos com sucata | Sofre com o cheiro de sangue: Medo +1 na primeira cena de horror |
+| 5 | Pesquisador | Investigação, Técnica | Entende documentos e laboratórios | Começa sem o item de Suprimento |
+| 6 | Atleta | Atletismo, Parkour | Recupera 1 Fôlego a mais no descanso curto | Desvantagem em Vontade quando exausto (Fôlego 0) |
+| 7 | Segurança ou policial | Intimidação, Percepção | Conhece procedimentos e armas | Medo +1 diante de ordens que não pode cumprir |
+| 8 | Golpista | Persuasão, Furtividade | Tem contatos nas facções (um favor por sessão) | Começa com −1 de reputação em uma facção, à escolha do mestre |
+| 9 | Artista | Percepção, Persuasão | Vantagem em acalmar pessoas | Medo +1 em silêncio total e escuridão |
+| 10 | Cuidador ou professor | Vontade, Medicina | O Medo sobe menos ao proteger alguém | Se um protegido cair, Medo +2 |
+| 11 | Contrabandista de fronteira (Estônia) | Furtividade, Persuasão | Conhece rotas e passagens escondidas na região | Desvantagem em Persuasão com forças de ordem |
+| 12 | Pescador do Báltico (Estônia) | Sobrevivência, Atletismo | Vantagem para nadar e achar comida na água | Medo +1 em espaços apertados |
+| 13 | Mineiro de Kola | Atletismo, Técnica | Aguenta escuridão e espaços apertados sem desvantagem | Medo +1 ao ouvir sons vindos de baixo da terra |
+| 14 | Radioamador | Técnica, Percepção | Vantagem para captar e entender transmissões | Desvantagem em Persuasão com estranhos |
+| 15 | Motorista ou piloto | Parkour, Técnica | Conhece rotas e veículos | Medo +1 sem rota de fuga |
+| 16 | Cozinheiro ou comerciante | Persuasão, Sobrevivência | Estica Suprimentos de comida: 1 vez por sessão | Desvantagem em Intimidação |
+| 17 | Bombeiro ou resgatista | Atletismo, Medicina | Carrega um aliado ferido sem desvantagem | Medo +1 ao deixar alguém sem resgate |
+| 18 | Jornalista | Investigação, Persuasão | Acha fontes e pistas com facilidade | Desvantagem em Furtividade, porque chama atenção |
+| 19 | Açougueiro ou frigorífico | Cortante, Vontade | Não sofre Medo ao ver corpos e vísceras (não anula o Medo de habilidades); ao abater um animal, tira 1 Suprimento de comida a mais | Desvantagem em Furtividade na cena em que lutou com lâmina |
+| 20 | Lenhador | Cortante, Sobrevivência | Machados não quebram com 1 natural; mata fechada não é terreno difícil | Medo +1 em túneis e subsolo |
+| 21 | Atleta de lançamento (dardo) | Arremesso, Atletismo | +1 dado no primeiro arremesso de cada cena | Desvantagem em Atletismo para nadar |
+| 22 | Lutador clandestino | Contundente, Intimidação | Punhos causam 1d6; o primeiro acerto desarmado da cena derruba o alvo | Desvantagem em Vontade quando é provocado |
+| 23 | Biatleta | Tiro, Sobrevivência | Atirar depois de correr não dá desvantagem | Medo +1 quando o Fôlego chega a 0 |
+| 24 | Funcionário do laboratório | Medicina, Investigação | Vantagem para reconhecer equipamentos, códigos e salas do laboratório ligado à [[AMC]] | Alguém da AMC pode reconhecê-lo (o mestre decide quando) |
+| 25 | Morador de rua | Percepção, Sobrevivência | Descanso longo em lugar improvisado conta como seguro para o Medo (não para a Infecção) | Começa sem o item de Suprimento |
+| 26 | Religioso | Vontade, Persuasão | 1 vez por cena, gastando a ação, baixa 1 de Medo de um aliado a até 9 m (não vale para Medo de habilidade) | Medo +1 ao matar um humano |
+| 27 | Programador ou técnico de TI | Técnica, Investigação | Com energia, vantagem para abrir portas eletrônicas e recuperar dados | Desvantagem em Atletismo |
+| 28 | Veterinário | Medicina, Sobrevivência | Vantagem em Percepção para prever o comportamento de animais e infectados comuns | A bandagem em humanos cura 1 a menos |
+| 29 | Artista de circo | Arremesso, Parkour | Vantagem em equilíbrio (vigas, cordas, beirais); 1 vez por cena, agarra um objeto arremessado contra você usando a reação | Desvantagem em Intimidação |
+| 30 | Agente penitenciário | Intimidação, Percepção | Vantagem para conter, amarrar ou desarmar um humano rendido; 1 vez por sessão, ao interrogar um preso, o mestre responde uma pergunta com a verdade | Desvantagem em Persuasão com Anárquicos e ex-presos |
 
-[PENDENTE] Origens ligadas à Estônia (contrabandista de fronteira, nascido na região de Kola?) e se o mestre quer mais ou menos origens.
+Automático na ficha: perícias treinadas; Militar com 2 armas especiais iniciais; Lutador clandestino com punhos de 1d6; Lenhador com machados que não quebram com 1 natural; Atleta recupera 1 Fôlego a mais no descanso curto (já recupera tudo); Morador de rua no descanso longo improvisado. O resto é narrativo (o mestre aplica).
 
 ## 6. Pendências
 - Ritmo de marcos e poder geral: testar numa sessão e ajustar.

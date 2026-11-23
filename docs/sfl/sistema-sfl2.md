@@ -2,7 +2,7 @@
 
 Feito para o mestre Gabriel. Marcas: [CONFIRMADO] = decisão do mestre; [PROPOSTA] = ideia do Claude, não vale até aprovar; [PENDENTE] = falta decidir. Tudo abaixo que não está como [CONFIRMADO] é [PROPOSTA].
 
-Classes, trilhas e origens estão em `classes-sfl2.md` (v0.1). Melhoria de base, economia e parkour (rascunhos) estão em `base-economia-parkour-sfl2.md`.
+Classes, trilhas e origens estão em `classes-sfl2.md` (v0.1). Melhoria de base e economia (rascunhos) estão em `base-economia-parkour-sfl2.md`. Equipamento e inventário (livro V1.2, cap. 13) em `equipamento-sfl2.md`. Parkour (livro V1.0, cap. 12) em `parkour-sfl2.md`.
 
 ## 1. Decisões confirmadas (27/10/2026)
 - [CONFIRMADO] Foco em sobrevivência e tensão.
@@ -47,8 +47,8 @@ Classes, trilhas e origens estão em `classes-sfl2.md` (v0.1). Melhoria de base,
 - **Vida (PV)**: 10 + Corpo × 2. Em 0 PV fica caído e sangrando; morre em 3 rodadas sem socorro (teste de Medicina DT 15 estabiliza).
 - **Fôlego**: 5 + Reflexo. Gasta 1 para correr uma rodada, esquivar, escalar ou atacar com força. Sem Fôlego: desvantagem em tudo que exige esforço. Recupera todo em descanso curto (10 minutos seguros).
 - **Medo** (0 a 5): sobe com sustos, perdas, noite e cenas de horror. Medo 3+: desvantagem em Vontade e em ataques à distância. Medo 5: congela ou foge por uma rodada. Baixa com descanso seguro, companhia e um momento de calma.
-- **Suprimentos**: itens contáveis (munição, bandagens, comida, pilhas UV). Inventário em espaços: 5 + Corpo.
-- **Durabilidade**: arma corpo a corpo quebra em 1 natural ou depois de 10 usos. Reparo com Técnica DT 15.
+- **Suprimentos**: itens contáveis (munição, bandagens, comida, pilhas UV). [CONFIRMADO 23/11/2026] Inventário em espaços: **5 + 3 por ponto de Corpo a partir do 2** (Corpo 2 = 8, 3 = 11, 4 = 14, 5 = 17). Tamanhos, pilhas, itens prontos, sobrecarga, modificações e fabricação em `equipamento-sfl2.md`.
+- **Durabilidade**: [CONFIRMADO 23/11/2026] arma corpo a corpo **só quebra com 1 natural** (num teste que falhou); não existe mais a contagem de 10 usos. Reparo com Técnica DT 15.
 
 ## 6. Infecção (o custo dos poderes)
 - Marcador de 0 a 10 por personagem. Todo uso de poder custa Infecção (cada poder diz quanto).
@@ -115,7 +115,7 @@ Cada jogador escolhe uma linha na criação e começa com o Nível 1. [PROPOSTA]
 ### 8.2 Reações (esquiva, bloqueio e contra-ataque)
 - [CONFIRMADO] Quem é atacado rola os dados para se defender, escolhendo uma reação. Só dá para fazer **uma reação por rodada** [PROPOSTA]. Na esquiva e no contra-ataque, o atacante rola o ataque, o defensor rola a reação e vence o maior total (empate para o defensor). O bloqueio funciona diferente, como descrito abaixo.
 - **Esquiva**: reserva de Reflexo + treino de Parkour ou Atletismo, a critério do mestre. Gasta 1 Fôlego. Serve contra ataques corpo a corpo e à distância. Sucesso: não sofre o ataque. [PROPOSTA]
-- [CONFIRMADO] **Bloqueio**: pode ser feito **com a mão** ou com arma/escudo, só contra corpo a corpo. Não evita o golpe: **a pessoa leva parte do dano, e quanto maior o resultado do teste, mais dano ela bloqueia**. Teste: reserva de Corpo + treino de Contundente ou Cortante. [PROPOSTA] Dano bloqueado = resultado do teste ÷ 5 (arredondado para baixo) na mão, ou ÷ 3 com arma ou escudo; a armadura reduz o que sobrar. A arma ou escudo usado perde 1 de durabilidade (seção 5).
+- [CONFIRMADO] **Bloqueio**: pode ser feito **com a mão** ou com arma/escudo, só contra corpo a corpo. Não evita o golpe: **a pessoa leva parte do dano, e quanto maior o resultado do teste, mais dano ela bloqueia**. Teste: reserva de Corpo + treino de Contundente ou Cortante. [PROPOSTA] Dano bloqueado = resultado do teste ÷ 5 (arredondado para baixo) na mão, ou ÷ 3 com arma ou escudo; a armadura reduz o que sobrar. Desde 23/11/2026 não há contagem de durabilidade: a arma ou o escudo só quebra com 1 natural num bloqueio que falhou.
 - **Contra-ataque**: ataque corpo a corpo (reserva de Corpo + treino da arma). Só contra corpo a corpo, com arma na mão. [PROPOSTA] Se vencer, evita o ataque **e** causa dano ao atacante (o contra-ataque também pode ser crítico); se perder, sofre o dano normalmente e não ataca.
 - [CONFIRMADO] Infectados: o mestre rola a reação deles, com um bônus simples por tipo (valores [PROPOSTA] na seção 9). Hordas e infectados comuns podem não reagir.
 - [PENDENTE] Reação contra poderes.
@@ -252,7 +252,7 @@ Valores base [PROPOSTA], **recalibrados em 28/10** porque o atributo não soma m
 
 ## 15. Criação de ficha
 [PROPOSTA] na ordem abaixo (origem, classe, atributos). Detalhes em `classes-sfl2.md`.
-1. **Origem**: escolhe uma das 10 origens (2 perícias, 1 traço, 1 peso). País, se nasceu na Estônia ou se mudou, família adotiva e se conhece algum dos outros continuam livres.
+1. **Origem**: escolhe uma das 30 origens (2 perícias, 1 traço, 1 peso). País, se nasceu na Estônia ou se mudou, família adotiva e se conhece algum dos outros continuam livres.
 2. **Classe**: Combatente, Batedor, Técnico ou Voz. Dá 2 perícias, 1 bônus e a habilidade inicial.
 3. Atributos: 10 pontos, máximo 4 (a classe costuma pedir o atributo dela).
 4. As 4 perícias treinadas são as 2 da origem + as 2 da classe.

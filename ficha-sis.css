@@ -105,3 +105,6 @@ body.carimbo-mod,.carimbo-mod{display:none}body.sis-modular .carimbo-mod{display
 /* etiqueta de complemento (SaH etc.) */
 .compt{display:inline-block;margin-left:6px;padding:1px 6px;border:1.5px solid var(--a,#7a705d);border-radius:3px;font:700 10px var(--maq);letter-spacing:.06em;text-transform:uppercase;vertical-align:middle;opacity:.85;white-space:nowrap}
 .compt+.eqb{margin-left:6px}
+
+/* Search For Light: armas com botões que quebram linha e o Atacar inteiro */
+.sis-sfl .arma{flex-wrap:wrap}.sis-sfl .arma .ar-n{min-width:60%}.sis-sfl .arma .roll{width:auto;padding:0 12px;font-size:15px}

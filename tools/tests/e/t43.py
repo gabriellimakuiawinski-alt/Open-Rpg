@@ -22,7 +22,7 @@ with sync_playwright() as p:
     # sobe Corpo para 3: Vida 10+6+4=20
     pg.evaluate("setP(curF(),'attrs.0.v',3);touch(curF());render()");pg.wait_for_timeout(300)
     chk("Corpo 3 => Vida 20",pg.evaluate("curF().stats[0].max")==20,pg.evaluate("curF().stats[0].max"))
-    chk("Espaços 5+Corpo=8",pg.evaluate("SIS.sfl.derivar(curF()).slots")==8)
+    chk("Espaços 5+3 por Corpo a partir do 2 (Corpo 3 = 11)",pg.evaluate("SIS.sfl.derivar(curF()).slots")==11)
     # marcos: jogador (não mestre) não vê botões de marco; usa a função direto
     pg.evaluate("curF().sfl.marco=2;SFL.calc(curF());render()");pg.wait_for_timeout(300)
     D="SIS.sfl.derivar(curF())"
@@ -66,7 +66,7 @@ with sync_playwright() as p:
     chk("armadura equipada reduz 2",pg.evaluate(D+".armadura")==2)
     # ataque
     pg.click('[data-tab=c]');pg.wait_for_timeout(300)
-    chk("3 armas na aba Combate",pg.locator('[data-act="sfl-atk"]').count()==3,pg.locator('[data-act="sfl-atk"]').count())
+    chk("Punhos + 3 armas na aba Combate",pg.locator('[data-act="sfl-atk"]:not([data-mira])').count()==4,pg.locator('[data-act="sfl-atk"]').count())
     A="SIS.sfl.ataque(curF(),curF().inv.items[%d])"
     chk("Machado: Corpo 3 dados, bônus Contundente/Cortante, crítico 20×3",pg.evaluate(A%0+".dados")==3 and pg.evaluate(A%0+".crit")=={'m':20,'x':3},pg.evaluate(A%0))
     chk("Arco curto treinado: Reflexo 2 dados, bônus 3, crítico 19×2",pg.evaluate(A%1+".dados")==2 and pg.evaluate(A%1+".bonus")==3 and pg.evaluate(A%1+".crit")=={'m':19,'x':2},pg.evaluate(A%1))

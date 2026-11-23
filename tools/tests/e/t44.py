@@ -18,6 +18,6 @@ with sync_playwright() as p:
     chk("loja usa € como moeda",pg2.evaluate("moeda()")=='€',pg2.evaluate("moeda()"))
     chk("sem erros na loja",not pg2.errs,pg2.errs)
     n=pg2.evaluate("SIS.CATALOGO.sfl.length")
-    chk("catálogo SFL com 58 itens",n==58,n)
+    chk("catálogo SFL com 95 itens (livro V1.2)",n==95,n)
     b.close()
 report()
