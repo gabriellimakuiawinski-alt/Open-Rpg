@@ -1,0 +1,90 @@
+{
+  "versao": "1.2",
+  "regras": "1 hora, materiais e teste; falhar perde metade dos materiais. Receitas químicas fora da base precisam do kit de química. Habilidades de Técnico e Toxina continuam valendo.",
+  "receitas": [
+    {
+      "n": "Bandagem",
+      "quantidade": 3,
+      "materiais": {
+        "tecido": 2
+      },
+      "teste": "Medicina DT 12"
+    },
+    {
+      "n": "Molotov",
+      "quantidade": 2,
+      "materiais": {
+        "sucata": 2,
+        "tecido": 1,
+        "combustivel": 1
+      },
+      "teste": "Técnica DT 12"
+    },
+    {
+      "n": "Flechas ou virotes",
+      "quantidade": 10,
+      "materiais": {
+        "sucata": 2,
+        "tecido": 1
+      },
+      "teste": "Técnica DT 12"
+    },
+    {
+      "n": "Flechas de fogo",
+      "quantidade": 5,
+      "materiais": {
+        "flechas": 5,
+        "tecido": 1,
+        "combustivel": 1
+      },
+      "teste": "Técnica DT 15"
+    },
+    {
+      "n": "Granada de fumaça",
+      "quantidade": 2,
+      "materiais": {
+        "quimicos": 2,
+        "sucata": 1
+      },
+      "teste": "Técnica ou Sobrevivência DT 15"
+    },
+    {
+      "n": "Bomba caseira",
+      "quantidade": 2,
+      "materiais": {
+        "quimicos": 2,
+        "sucata": 2,
+        "pecas": 1
+      },
+      "teste": "Técnica DT 18; falhar por 5 ou mais: explode na mão (1d6)"
+    },
+    {
+      "n": "Armadura de sucata",
+      "quantidade": 1,
+      "materiais": {
+        "sucata": 6,
+        "tecido": 2
+      },
+      "teste": "Técnica DT 15"
+    },
+    {
+      "n": "Lança-chamas improvisado",
+      "quantidade": 1,
+      "materiais": {
+        "pecas": 4,
+        "sucata": 3,
+        "combustivel": 1
+      },
+      "teste": "Técnica DT 20"
+    },
+    {
+      "n": "Lança caseira",
+      "quantidade": 1,
+      "materiais": {
+        "sucata": 1,
+        "tecido": 1
+      },
+      "teste": "Sem teste"
+    }
+  ]
+}

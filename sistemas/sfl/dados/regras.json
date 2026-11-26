@@ -1,0 +1,343 @@
+{
+  "versao": "1.2",
+  "atributos": [
+    {
+      "id": "corpo",
+      "n": "Corpo"
+    },
+    {
+      "id": "reflexo",
+      "n": "Reflexo"
+    },
+    {
+      "id": "mente",
+      "n": "Mente"
+    },
+    {
+      "id": "presenca",
+      "n": "Presença"
+    }
+  ],
+  "criacao": {
+    "pontosAtributo": 10,
+    "maxAtributoCriacao": 4,
+    "maxAtributo": 5,
+    "periciasOrigem": 2,
+    "periciasClasse": 2,
+    "armasEspeciais": 1,
+    "equipamentoInicial": "1 arma simples ou a arma especial treinada (com a munição que ela já carrega) e 1 item de Suprimento"
+  },
+  "teste": {
+    "dados": "d20 em quantidade igual ao atributo; fica o maior",
+    "atributoSoma": false,
+    "atributoZero": "rola 2 e fica com o menor",
+    "reservaMinima": "abaixo de 1: rola 2 e fica com o menor",
+    "vantagem": 1,
+    "desvantagem": -1,
+    "vantagemNaoAcumula": true,
+    "dt": {
+      "facil": 10,
+      "normal": 15,
+      "dificil": 20,
+      "extremo": 25
+    },
+    "foraDeCombate": {
+      "20": "sucesso excepcional se passar na DT",
+      "1": "qualquer dado mostrando 1 num teste que falhou é complicação"
+    },
+    "grupo": "passa se metade ou mais passar"
+  },
+  "treino": [
+    {
+      "id": "leigo",
+      "n": "Leigo",
+      "bonus": 0
+    },
+    {
+      "id": "treinado",
+      "n": "Treinado",
+      "bonus": 3
+    },
+    {
+      "id": "veterano",
+      "n": "Veterano",
+      "bonus": 6
+    },
+    {
+      "id": "expert",
+      "n": "Expert",
+      "bonus": 9
+    }
+  ],
+  "recursos": {
+    "vidaMax": {
+      "base": 10,
+      "porCorpo": 2,
+      "nota": "+ bônus de classe e benefícios"
+    },
+    "folegoMax": {
+      "base": 5,
+      "porReflexo": 1,
+      "nota": "+ bônus de classe e habilidades"
+    },
+    "espacos": {
+      "base": 5,
+      "porCorpoAPartirDe": 2,
+      "porPonto": 3,
+      "tabela": {
+        "0": 5,
+        "1": 5,
+        "2": 8,
+        "3": 11,
+        "4": 14,
+        "5": 17
+      },
+      "nota": "+ bônus de classe (Técnico +2) e mochila"
+    },
+    "medo": {
+      "min": 0,
+      "max": 5,
+      "efeitos": {
+        "3": "desvantagem em Vontade e em ataques à distância",
+        "5": "congela ou foge por uma rodada"
+      }
+    },
+    "infeccao": {
+      "min": 0,
+      "max": 10
+    }
+  },
+  "infeccao": {
+    "faixas": [
+      {
+        "de": 0,
+        "ate": 2,
+        "n": "Controlado",
+        "efeito": "Nenhum"
+      },
+      {
+        "de": 3,
+        "ate": 5,
+        "n": "Inquieto",
+        "efeito": "Sintomas leves; poderes +2 no teste (quando há teste)",
+        "bonusPoder": 2
+      },
+      {
+        "de": 6,
+        "ate": 8,
+        "n": "Instável",
+        "efeito": "Ao usar um poder, o mestre rola o dado de descontrole; valor máximo = perde a rodada",
+        "descontrole": {
+          "6": "d12",
+          "7": "d10",
+          "8": "d8"
+        }
+      },
+      {
+        "de": 9,
+        "ate": 10,
+        "n": "Limiar",
+        "efeito": "No 9 o dado de descontrole é d6. No 10 começa a transformação: Vontade DT 15 do jogador e Persuasão em grupo DT 15",
+        "descontrole": {
+          "9": "d6"
+        }
+      }
+    ],
+    "reducao": [
+      {
+        "n": "Descanso longo seguro",
+        "valor": -1
+      },
+      {
+        "n": "Estabilizador",
+        "valor": -2
+      },
+      {
+        "n": "Laço humano marcante (1 vez por sessão)",
+        "valor": -1
+      }
+    ]
+  },
+  "descanso": {
+    "curto": {
+      "duracao": "10 minutos seguros",
+      "folego": "tudo"
+    },
+    "longo": {
+      "duracao": "uma noite em local seguro",
+      "vida": "1d6 + Corpo",
+      "medo": -2,
+      "infeccao": -1
+    },
+    "bandagem": {
+      "teste": "Medicina DT 15",
+      "vida": "1d4",
+      "vezes": "uma por ferimento"
+    }
+  },
+  "combate": {
+    "turno": {
+      "acao": 1,
+      "movimento": 1,
+      "metrosMovimento": 9,
+      "reacao": 1,
+      "acoesLivres": 2
+    },
+    "iniciativa": "teste de Reflexo",
+    "ataque": {
+      "corpoACorpo": "corpo",
+      "distancia": "reflexo",
+      "arremesso": "reflexo",
+      "bonus": "treino da arma",
+      "acerta": "total maior que o da reação; empate favorece quem se defende"
+    },
+    "dano": "dados da arma, + Corpo no corpo a corpo",
+    "critico": "dado que ficou na margem da arma e acerto: multiplica os dados de dano e o efeito acontece",
+    "reacoes": [
+      {
+        "id": "esquiva",
+        "teste": "Reflexo + Parkour ou Atletismo",
+        "custoFolego": 1,
+        "contra": [
+          "corpo a corpo",
+          "distância"
+        ]
+      },
+      {
+        "id": "bloqueio",
+        "teste": "Corpo + Contundente ou Cortante",
+        "contra": [
+          "corpo a corpo"
+        ],
+        "divisor": {
+          "mao": 5,
+          "arma": 3,
+          "escudo": 3
+        }
+      },
+      {
+        "id": "contra-ataque",
+        "teste": "Corpo + treino da arma",
+        "contra": [
+          "corpo a corpo"
+        ]
+      }
+    ],
+    "variosAtaques": "a reação vale contra um ataque à escolha; os demais contra reação 10",
+    "comuns": "não rolam reação: acerta com total 10 ou mais",
+    "armadura": {
+      "leve": 1,
+      "media": 2,
+      "pesada": 3,
+      "pesadaDesvantagem": [
+        "parkour",
+        "furtividade"
+      ]
+    },
+    "correr": {
+      "acima": 9,
+      "custoFolego": 1,
+      "tiroDepois": "desvantagem"
+    },
+    "alerta": {
+      "min": 0,
+      "max": 5,
+      "3": "chegam mais infectados",
+      "5": "horda",
+      "fechado": "sem marcador; o mestre decide"
+    },
+    "quebra": "arma corpo a corpo só quebra com 1 natural (num teste que falhou)"
+  },
+  "mesmoTipo": "Bônus do mesmo tipo não acumulam (vale o maior): armadura, dados, metros, dano de furtivo, redução de custo de Fôlego",
+  "marcos": {
+    "1": [
+      "trilha (escolhe) + habilidade 1"
+    ],
+    "2": [
+      "escolha"
+    ],
+    "3": [
+      "trilha habilidade 2"
+    ],
+    "4": [
+      "escolha",
+      "infectado nível 2"
+    ],
+    "5": [
+      "trilha habilidade 3"
+    ],
+    "6": [
+      "escolha (ou grau 2 da habilidade própria)"
+    ],
+    "7": [
+      "trilha habilidade 4"
+    ],
+    "8": [
+      "escolha (ou grau 3 da habilidade própria)",
+      "infectado nível 3"
+    ],
+    "beneficiosGerais": [
+      {
+        "id": "atributo",
+        "n": "+1 atributo (máximo 5)"
+      },
+      {
+        "id": "pericia",
+        "n": "Subir uma perícia de nível"
+      },
+      {
+        "id": "arma",
+        "n": "Treinar uma arma especial nova ou subir o treino de uma"
+      },
+      {
+        "id": "vida",
+        "n": "+1 de Vida máxima por ponto de Corpo que você tem ao escolher (não retroage)"
+      }
+    ],
+    "infectado": "Marcos de infectado são extras do mestre: o primeiro escolhe a trilha de infectado e dá a habilidade 1; os seguintes dão 2, 3 e 4"
+  },
+  "inventario": {
+    "prontos": 2,
+    "tamanhos": {
+      "0": "bolso: até 5 não ocupam espaço; do 6º em diante cada 5 ocupam 1",
+      "1": "uma mão",
+      "2": "grande ou duas mãos",
+      "3": "muito pesado"
+    },
+    "armaduraVestida": 0,
+    "armaduraNaMochila": {
+      "leve": 1,
+      "media": 2,
+      "pesada": 3
+    },
+    "sobrecarga": {
+      "ate": 3,
+      "metros": -3,
+      "desvantagem": [
+        "parkour",
+        "furtividade"
+      ],
+      "semImpulso": true
+    }
+  },
+  "base": {
+    "recursos": [
+      "Energia",
+      "Comida",
+      "Luz UV",
+      "Moral"
+    ],
+    "min": 0,
+    "max": 5
+  },
+  "reputacao": {
+    "min": -3,
+    "max": 3,
+    "precos": {
+      "3": 0.8,
+      "0": 1.0,
+      "-3": 1.4
+    },
+    "nota": "preços só na loja; -3 pode não vender"
+  }
+}

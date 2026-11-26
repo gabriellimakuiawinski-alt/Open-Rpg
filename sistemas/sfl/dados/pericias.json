@@ -1,0 +1,111 @@
+{
+  "versao": "1.2",
+  "nota": "atributoSugerido é só para a ficha mostrar; o mestre decide o atributo de cada teste. Contundente e Cortante usam Corpo; Arremesso e Tiro usam Reflexo.",
+  "pericias": [
+    {
+      "id": "atletismo",
+      "n": "Atletismo",
+      "atributoSugerido": "corpo",
+      "uso": "Correr, saltar, nadar, forçar",
+      "combate": false
+    },
+    {
+      "id": "furtividade",
+      "n": "Furtividade",
+      "atributoSugerido": "reflexo",
+      "uso": "Esconder-se, mover-se sem ser ouvido",
+      "combate": false
+    },
+    {
+      "id": "parkour",
+      "n": "Parkour",
+      "atributoSugerido": "reflexo",
+      "uso": "Escalar, atravessar obstáculos, fugir",
+      "combate": false
+    },
+    {
+      "id": "percepcao",
+      "n": "Percepção",
+      "atributoSugerido": "mente",
+      "uso": "Notar perigo, rastros, detalhes",
+      "combate": false
+    },
+    {
+      "id": "investigacao",
+      "n": "Investigação",
+      "atributoSugerido": "mente",
+      "uso": "Procurar pistas, ler documentos",
+      "combate": false
+    },
+    {
+      "id": "tecnica",
+      "n": "Técnica",
+      "atributoSugerido": "mente",
+      "uso": "Energia, rádio, mecânica, reparos",
+      "combate": false
+    },
+    {
+      "id": "medicina",
+      "n": "Medicina",
+      "atributoSugerido": "mente",
+      "uso": "Estabilizar e tratar ferimentos",
+      "combate": false
+    },
+    {
+      "id": "sobrevivencia",
+      "n": "Sobrevivência",
+      "atributoSugerido": "mente",
+      "uso": "Rastrear, achar comida e abrigo",
+      "combate": false
+    },
+    {
+      "id": "persuasao",
+      "n": "Persuasão",
+      "atributoSugerido": "presenca",
+      "uso": "Convencer, negociar, acalmar",
+      "combate": false
+    },
+    {
+      "id": "intimidacao",
+      "n": "Intimidação",
+      "atributoSugerido": "presenca",
+      "uso": "Ameaçar, impor respeito",
+      "combate": false
+    },
+    {
+      "id": "vontade",
+      "n": "Vontade",
+      "atributoSugerido": "presenca",
+      "uso": "Resistir ao medo e à pressão mental",
+      "combate": false
+    },
+    {
+      "id": "contundente",
+      "n": "Contundente",
+      "atributoSugerido": "corpo",
+      "uso": "Armas de impacto (punhos, taco, cano)",
+      "combate": true
+    },
+    {
+      "id": "cortante",
+      "n": "Cortante",
+      "atributoSugerido": "corpo",
+      "uso": "Armas de lâmina (faca, facão, machado)",
+      "combate": true
+    },
+    {
+      "id": "arremesso",
+      "n": "Arremesso",
+      "atributoSugerido": "reflexo",
+      "uso": "Facas, molotov, granadas, pedras",
+      "combate": true
+    },
+    {
+      "id": "tiro",
+      "n": "Tiro",
+      "atributoSugerido": "reflexo",
+      "uso": "Armas de fogo simples (pistolas, revólveres, escopeta de cano duplo, rifle de caça)",
+      "combate": true
+    }
+  ]
+}

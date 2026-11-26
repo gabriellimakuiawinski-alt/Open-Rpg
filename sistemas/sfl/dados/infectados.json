@@ -1,0 +1,1606 @@
+{
+  "versao": "1.2",
+  "regra": "Nível 1 na criação, Nível 2 no marco 4, Nível 3 no marco 8: em cada nível escolhe 1 entre 3. Trilha de infectado nos marcos de infectado (extras, do mestre). O número entre parênteses é o custo em Infecção.",
+  "classes": [
+    {
+      "id": "predador",
+      "n": "Predador",
+      "papel": "Bruto, corpo a corpo",
+      "fraquezaCurta": "Fome",
+      "paraQuem": "Quem quer força e presença",
+      "jeito": "você é a ponta de lança do grupo: garras, saltos e investidas. Fora de combate, caça, rastreia e intimida.",
+      "fraqueza": "Fome. No fim de uma cena em que usou poderes, gaste 1 Suprimento de comida; sem comer, você fica com desvantagem em Vontade até se alimentar.",
+      "niveis": {
+        "1": [
+          {
+            "n": "Garras",
+            "custo": 1,
+            "d": "desarmado vira 1d8 e ignora armadura leve",
+            "id": "garras"
+          },
+          {
+            "n": "Salto",
+            "custo": 1,
+            "d": "salta até 6 m, ignora terreno difícil e ataca ao pousar; o ataque do pouso causa +1d6",
+            "id": "salto"
+          },
+          {
+            "n": "Mandíbula",
+            "custo": 1,
+            "d": "ataque desarmado de 1d6 que agarra o alvo se acertar",
+            "id": "mandibula"
+          }
+        ],
+        "2": [
+          {
+            "n": "Investida",
+            "custo": 1,
+            "d": "move até o dobro e ataca, sem gastar Fôlego; se acertar, o alvo cai",
+            "id": "investida"
+          },
+          {
+            "n": "Reflexo felino",
+            "custo": 1,
+            "d": "uma vez por rodada, contra ataques corpo a corpo, a esquiva não gasta Fôlego e ganha +1 dado",
+            "id": "reflexo-felino"
+          },
+          {
+            "n": "Rugido",
+            "custo": 2,
+            "d": "Presença + Vontade; comuns e virais recuam por 2 rodadas; Medo +1",
+            "id": "rugido"
+          }
+        ],
+        "3": [
+          {
+            "n": "Frenesi",
+            "custo": 2,
+            "d": "duas ações de ataque por rodada, por 3 rodadas; Medo +1",
+            "id": "frenesi"
+          },
+          {
+            "n": "Dilacerar",
+            "custo": 2,
+            "d": "uma vez por cena, ataque com +2d6 de dano e sangramento de 2",
+            "id": "dilacerar"
+          },
+          {
+            "n": "Caçada",
+            "custo": 2,
+            "d": "rastreia uma presa a até 100 m e sabe a direção dela durante a cena; vantagem em Percepção e Atletismo ao persegui-la por uma cena",
+            "id": "cacada"
+          }
+        ]
+      },
+      "trilhas": [
+        {
+          "id": "fera",
+          "n": "Fera",
+          "foco": "corpo a corpo",
+          "habilidades": [
+            {
+              "n": "Garras afiadas",
+              "d": "+1 de dano desarmado",
+              "id": "garras-afiadas"
+            },
+            {
+              "n": "Pele de fera",
+              "d": "bloqueio com a mão usa ÷3",
+              "id": "pele-de-fera"
+            },
+            {
+              "n": "Despedaçar",
+              "d": "o crítico do ataque desarmado sempre causa sangramento de 2 e derruba",
+              "id": "despedacar"
+            },
+            {
+              "n": "Forma bestial",
+              "custo": 3,
+              "d": "uma vez por sessão, por uma cena: +1 dado nos ataques desarmados e +2 de armadura; Medo +1",
+              "id": "forma-bestial"
+            }
+          ]
+        },
+        {
+          "id": "perseguidor",
+          "n": "Perseguidor",
+          "foco": "velocidade",
+          "habilidades": [
+            {
+              "n": "Corrida",
+              "d": "+3 m de movimento e vantagem em Atletismo ao perseguir",
+              "id": "corrida",
+              "efeitos": [
+                {
+                  "soma": "metros",
+                  "valor": 3
+                }
+              ]
+            },
+            {
+              "n": "Salto longo",
+              "d": "o Salto vai a 9 m e o ataque do pouso ganha +1 dado",
+              "id": "salto-longo"
+            },
+            {
+              "n": "Emboscada",
+              "d": "o primeiro ataque da cena, vindo de surpresa, causa +1d6",
+              "id": "emboscada"
+            },
+            {
+              "n": "Marca de sangue",
+              "custo": 2,
+              "d": "uma vez por cena, marca um infectado; o grupo ganha +2 nos ataques contra ele",
+              "id": "marca-de-sangue"
+            }
+          ]
+        },
+        {
+          "id": "devorador",
+          "n": "Devorador",
+          "foco": "cura pela carne",
+          "habilidades": [
+            {
+              "n": "Estômago de ferro",
+              "d": "a Fome só cobra depois de três cenas e, depois de comer, recupera 1d4 PV",
+              "id": "estomago-de-ferro"
+            },
+            {
+              "n": "Sede de sangue",
+              "d": "ao derrubar um inimigo, recupera 1d6 PV",
+              "id": "sede-de-sangue"
+            },
+            {
+              "n": "Cheiro de sangue",
+              "d": "vantagem em Percepção para achar feridos e sabe os PV atuais de quem está a 10 m",
+              "id": "cheiro-de-sangue"
+            },
+            {
+              "n": "Banquete",
+              "custo": 2,
+              "d": "uma vez por sessão, ao devorar um inimigo caído, recupera 2d6 PV; Medo +2",
+              "id": "banquete"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sentidos",
+      "n": "Sentidos",
+      "papel": "Explorador",
+      "fraquezaCurta": "Barulho e luz forte",
+      "paraQuem": "Quem quer achar tudo primeiro",
+      "jeito": "você sente o que os outros não sentem: rastros, vibrações, perigo antes de ele chegar. É o olho do grupo, em combate e fora dele.",
+      "fraqueza": "Sobrecarga. Barulho alto (tiro, explosão) ou luz forte (UV, flash) perto de você dá desvantagem em testes até o fim da rodada seguinte.",
+      "niveis": {
+        "1": [
+          {
+            "n": "Faro",
+            "custo": 1,
+            "d": "vantagem em Percepção e Sobrevivência para achar infectados e rastro",
+            "id": "faro"
+          },
+          {
+            "n": "Olhos de breu",
+            "custo": 1,
+            "d": "enxerga no escuro até 15 m sem desvantagem e vê criaturas escondidas nele",
+            "id": "olhos-de-breu"
+          },
+          {
+            "n": "Ouvido fino",
+            "custo": 1,
+            "d": "não pode ser surpreendido e ganha +1 dado na iniciativa",
+            "id": "ouvido-fino"
+          }
+        ],
+        "2": [
+          {
+            "n": "Vibração",
+            "custo": 1,
+            "d": "sente criaturas num raio de 10 m",
+            "id": "vibracao"
+          },
+          {
+            "n": "Antecipar",
+            "custo": 1,
+            "d": "uma vez por rodada, +1 dado em esquiva ou contra-ataque",
+            "id": "antecipar"
+          },
+          {
+            "n": "Rastro quente",
+            "custo": 2,
+            "d": "vê por uma cena o caminho que uma criatura fez nas últimas horas e quantos eram",
+            "id": "rastro-quente"
+          }
+        ],
+        "3": [
+          {
+            "n": "Mapa",
+            "custo": 2,
+            "d": "uma vez por cena, o mestre descreve onde estão os infectados num raio de 20 m",
+            "id": "mapa"
+          },
+          {
+            "n": "Ponto fraco",
+            "custo": 2,
+            "d": "uma vez por cena, o mestre revela os PV e uma fraqueza de um alvo, e seu próximo ataque contra ele ganha +1 dado",
+            "id": "ponto-fraco"
+          },
+          {
+            "n": "Sentir o perigo",
+            "custo": 2,
+            "d": "uma vez por sessão, você evita uma emboscada ou armadilha; Medo +1",
+            "id": "sentir-o-perigo"
+          }
+        ]
+      },
+      "trilhas": [
+        {
+          "id": "vigia",
+          "n": "Vigia",
+          "foco": "grupo",
+          "habilidades": [
+            {
+              "n": "Olhos abertos",
+              "d": "o grupo ganha +2 de iniciativa",
+              "id": "olhos-abertos"
+            },
+            {
+              "n": "Aviso",
+              "d": "quando você sente perigo, os aliados não são surpreendidos",
+              "id": "aviso"
+            },
+            {
+              "n": "Contagem",
+              "d": "sabe o tipo, o número e a direção dos infectados num raio de 20 m",
+              "id": "contagem"
+            },
+            {
+              "n": "Sentinela",
+              "custo": 3,
+              "d": "uma vez por sessão, por uma cena, aliados a 10 m têm vantagem em Percepção e +1 dado nas reações; Medo +1",
+              "id": "sentinela"
+            }
+          ]
+        },
+        {
+          "id": "cacador-de-fraquezas",
+          "n": "Caçador de fraquezas",
+          "foco": "ataque",
+          "habilidades": [
+            {
+              "n": "Olho clínico",
+              "d": "+1 de dano em alvo que você observou por uma rodada",
+              "id": "olho-clinico"
+            },
+            {
+              "n": "Ponto cego",
+              "d": "vantagem contra alvos distraídos ou que não notaram você",
+              "id": "ponto-cego"
+            },
+            {
+              "n": "Golpe preciso",
+              "d": "o crítico causa +1d6",
+              "id": "golpe-preciso"
+            },
+            {
+              "n": "Alvo exposto",
+              "custo": 3,
+              "d": "uma vez por sessão, um alvo fica vulnerável por uma cena e todos causam +2 de dano nele",
+              "id": "alvo-exposto"
+            }
+          ]
+        },
+        {
+          "id": "farejador",
+          "n": "Farejador",
+          "foco": "exploração",
+          "habilidades": [
+            {
+              "n": "Rastro frio",
+              "d": "segue rastros de dias, mesmo com chuva, com vantagem em Sobrevivência",
+              "id": "rastro-frio"
+            },
+            {
+              "n": "Cheiro do medo",
+              "d": "percebe quem está infectado, mentindo ou com Medo 3 ou mais",
+              "id": "cheiro-do-medo"
+            },
+            {
+              "n": "Achados",
+              "d": "+1 Suprimento ao saquear um local",
+              "id": "achados"
+            },
+            {
+              "n": "Faro absoluto",
+              "custo": 2,
+              "d": "uma vez por sessão, o mestre indica o caminho mais seguro até um objetivo",
+              "id": "faro-absoluto"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "carne-viva",
+      "n": "Carne Viva",
+      "papel": "Resistente",
+      "fraquezaCurta": "Cada cura sobe a Infecção",
+      "paraQuem": "Quem quer aguentar e sobreviver",
+      "jeito": "você aguenta o que mataria os outros e se refaz depois. Fora de combate, atravessa ambientes duros e ajuda quem está ferido.",
+      "fraqueza": "a cura cobra. Quando um poder seu recupera PV, a carne volta errada e você ganha +1 de Infecção extra (no máximo +1 por cena).",
+      "niveis": {
+        "1": [
+          {
+            "n": "Fechar feridas",
+            "custo": 1,
+            "d": "recupera 1d6 PV como ação de movimento",
+            "id": "fechar-feridas"
+          },
+          {
+            "n": "Sangue lento",
+            "custo": 1,
+            "d": "ignora sangramento por uma cena",
+            "id": "sangue-lento"
+          },
+          {
+            "n": "Tolerância",
+            "custo": 1,
+            "d": "vantagem em Corpo contra veneno, doença e dor",
+            "id": "tolerancia"
+          }
+        ],
+        "2": [
+          {
+            "n": "Pele dura",
+            "custo": 1,
+            "d": "+2 de armadura por uma cena",
+            "id": "pele-dura"
+          },
+          {
+            "n": "Regeneração",
+            "custo": 2,
+            "d": "por uma cena, recupera 1 PV no início de cada rodada",
+            "id": "regeneracao"
+          },
+          {
+            "n": "Cura em outro",
+            "custo": 1,
+            "d": "toca um aliado e ele recupera 1d6 PV; a Infecção dele sobe 1",
+            "id": "cura-em-outro"
+          }
+        ],
+        "3": [
+          {
+            "n": "Não cair",
+            "custo": 2,
+            "d": "em 0 PV, volta com 1d6 PV, uma vez por sessão",
+            "id": "nao-cair"
+          },
+          {
+            "n": "Corpo sem dor",
+            "custo": 2,
+            "d": "por uma cena, ignora penalidades de ferimento e sofre −1 de dano",
+            "id": "corpo-sem-dor"
+          },
+          {
+            "n": "Carne remendada",
+            "custo": 2,
+            "d": "uma vez por cena, ao sofrer crítico, reduz o dano à metade",
+            "id": "carne-remendada"
+          }
+        ]
+      },
+      "trilhas": [
+        {
+          "id": "muralha-viva",
+          "n": "Muralha viva",
+          "foco": "defesa",
+          "habilidades": [
+            {
+              "n": "Couro grosso",
+              "d": "+1 de armadura",
+              "id": "couro-grosso"
+            },
+            {
+              "n": "Resistir",
+              "d": "−1 no dano de infectados (mín. 1)",
+              "id": "resistir"
+            },
+            {
+              "n": "Bloqueio vivo",
+              "d": "bloqueio com a mão usa ÷3",
+              "id": "bloqueio-vivo"
+            },
+            {
+              "n": "Corpo de ferro",
+              "custo": 3,
+              "d": "uma vez por sessão, por uma cena, +3 de armadura e imunidade a sangramento; Medo +1",
+              "id": "corpo-de-ferro"
+            }
+          ]
+        },
+        {
+          "id": "fonte",
+          "n": "Fonte",
+          "foco": "cura dos outros",
+          "habilidades": [
+            {
+              "n": "Mãos quentes",
+              "d": "Cura em outro vira ação de movimento",
+              "id": "maos-quentes"
+            },
+            {
+              "n": "Tônico",
+              "d": "o descanso curto cura 1d4 PV a mais em um aliado",
+              "id": "tonico"
+            },
+            {
+              "n": "Transferir",
+              "d": "assume parte da dor de um aliado (até 4 PV)",
+              "id": "transferir"
+            },
+            {
+              "n": "Parto da carne",
+              "custo": 2,
+              "d": "uma vez por sessão, um aliado em 0 PV volta com 1d6 PV",
+              "id": "parto-da-carne"
+            }
+          ]
+        },
+        {
+          "id": "insistente",
+          "n": "Insistente",
+          "foco": "sobrevivência",
+          "habilidades": [
+            {
+              "n": "Fôlego de lobo",
+              "d": "+2 de Fôlego máximo",
+              "id": "folego-de-lobo",
+              "efeitos": [
+                {
+                  "soma": "folegoMax",
+                  "valor": 2
+                }
+              ]
+            },
+            {
+              "n": "Cicatriz boa",
+              "d": "1 vez por sessão, ignora um efeito de ferimento",
+              "id": "cicatriz-boa"
+            },
+            {
+              "n": "Último suspiro",
+              "d": "ao cair, faz uma ação antes de desmaiar",
+              "id": "ultimo-suspiro"
+            },
+            {
+              "n": "Teimosia",
+              "custo": 2,
+              "d": "uma vez por sessão, repete um teste de Vontade falho",
+              "id": "teimosia"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "eco",
+      "n": "Eco",
+      "papel": "Controle de infectados",
+      "fraquezaCurta": "Atrai atenção (Alerta)",
+      "paraQuem": "Quem quer mandar nos infectados",
+      "jeito": "os infectados te ouvem. Você os atrai, afasta, desvia e, no fim, comanda. É a chave para atravessar uma cidade cheia deles.",
+      "fraqueza": "atrai atenção. O Alerta sobe +1 a cada uso (em ambiente fechado, o mestre decide quem ouve).",
+      "niveis": {
+        "1": [
+          {
+            "n": "Chamado",
+            "custo": 1,
+            "d": "atrai um grupo de infectados a um ponto, DT 15",
+            "id": "chamado"
+          },
+          {
+            "n": "Isca",
+            "custo": 1,
+            "d": "um infectado comum ou viral próximo ataca o alvo que você indicar por uma rodada",
+            "id": "isca"
+          },
+          {
+            "n": "Sussurro",
+            "custo": 1,
+            "d": "sabe a intenção de um infectado (atacar, fugir, ignorar); uma vez por cena, muda \"atacar\" para \"ignorar\" por uma rodada (Vontade DT 15)",
+            "id": "sussurro"
+          }
+        ],
+        "2": [
+          {
+            "n": "Calar",
+            "custo": 1,
+            "d": "infectados comuns e virais ignoram você por uma rodada",
+            "id": "calar"
+          },
+          {
+            "n": "Redirecionar",
+            "custo": 1,
+            "d": "faz um infectado atacar outro por uma rodada",
+            "id": "redirecionar"
+          },
+          {
+            "n": "Rebanho",
+            "custo": 2,
+            "d": "comuns a até 10 m seguem você sem atacar enquanto você andar devagar",
+            "id": "rebanho"
+          }
+        ],
+        "3": [
+          {
+            "n": "Comando",
+            "custo": 2,
+            "d": "controla 1 infectado comum por uma cena (não afeta voláteis nem únicos)",
+            "id": "comando"
+          },
+          {
+            "n": "Horda amiga",
+            "custo": 2,
+            "d": "um grupo de comuns ataca um alvo por 2 rodadas",
+            "id": "horda-amiga"
+          },
+          {
+            "n": "Voz do volátil",
+            "custo": 2,
+            "d": "controla 1 volátil por uma rodada; Medo +1",
+            "id": "voz-do-volatil"
+          }
+        ]
+      },
+      "trilhas": [
+        {
+          "id": "pastor",
+          "n": "Pastor",
+          "foco": "controle",
+          "habilidades": [
+            {
+              "n": "Voz firme",
+              "d": "+1 dado em Vontade e em Presença contra infectados",
+              "id": "voz-firme"
+            },
+            {
+              "n": "Passo do rebanho",
+              "d": "o Alerta sobe só +1 a cada 2 usos e nunca passa de 3 pelos seus poderes",
+              "id": "passo-do-rebanho"
+            },
+            {
+              "n": "Dispersar",
+              "d": "afasta uma horda por uma rodada",
+              "id": "dispersar"
+            },
+            {
+              "n": "Pastor",
+              "custo": 3,
+              "d": "uma vez por sessão, reduz o Alerta em 2 de uma vez; Medo +1",
+              "id": "pastor"
+            }
+          ]
+        },
+        {
+          "id": "maestro",
+          "n": "Maestro",
+          "foco": "apoio",
+          "habilidades": [
+            {
+              "n": "Compasso",
+              "d": "aliados ganham +2 em ataques contra infectados que você influenciou",
+              "id": "compasso"
+            },
+            {
+              "n": "Coro",
+              "d": "um aliado ganha vantagem na reação e +2 de armadura durante o seu poder",
+              "id": "coro"
+            },
+            {
+              "n": "Eco amigo",
+              "d": "o poder funciona também em quem você tocar",
+              "id": "eco-amigo"
+            },
+            {
+              "n": "Sinfonia",
+              "custo": 2,
+              "d": "uma vez por sessão, por uma cena, todos os comuns e virais próximos têm −2 nos ataques",
+              "id": "sinfonia"
+            }
+          ]
+        },
+        {
+          "id": "voz-da-fera",
+          "n": "Voz da fera",
+          "foco": "ligação",
+          "habilidades": [
+            {
+              "n": "Entende o inimigo",
+              "d": "sabe o tipo e os PV de qualquer infectado",
+              "id": "entende-o-inimigo"
+            },
+            {
+              "n": "Marca de voz",
+              "d": "marca 1 infectado que o grupo reconhece e sabe onde ele está na cena",
+              "id": "marca-de-voz"
+            },
+            {
+              "n": "Chamado único",
+              "d": "afeta um infectado único por uma rodada",
+              "id": "chamado-unico"
+            },
+            {
+              "n": "Elo",
+              "custo": 3,
+              "d": "uma vez por sessão, por uma cena, vê pelos olhos de um infectado e o faz parar por uma rodada; Medo +1",
+              "id": "elo"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "sombra",
+      "n": "Sombra",
+      "papel": "Silencioso",
+      "fraquezaCurta": "Luz UV",
+      "paraQuem": "Quem quer agir sem ser visto",
+      "jeito": "você não é visto, não é ouvido e não deixa rastro. Infiltra, rouba, abre caminho e mata sem alarde.",
+      "fraqueza": "sofre com UV. Sob luz UV você tem desvantagem e sofre 1d4 de dano por rodada.",
+      "niveis": {
+        "1": [
+          {
+            "n": "Passo leve",
+            "custo": 1,
+            "d": "vantagem em Furtividade no escuro; seu movimento não sobe o Alerta no escuro",
+            "id": "passo-leve"
+          },
+          {
+            "n": "Sumir",
+            "custo": 1,
+            "d": "esconde-se como ação de movimento, mesmo sob observação, por uma rodada",
+            "id": "sumir"
+          },
+          {
+            "n": "Mão fantasma",
+            "custo": 1,
+            "d": "vantagem em furto e fechaduras, sem barulho",
+            "id": "mao-fantasma"
+          }
+        ],
+        "2": [
+          {
+            "n": "Vulto",
+            "custo": 1,
+            "d": "some da vista de quem não te encara; ataque furtivo +1d6",
+            "id": "vulto"
+          },
+          {
+            "n": "Passos mudos",
+            "custo": 1,
+            "d": "seu movimento não sobe o Alerta por uma cena",
+            "id": "passos-mudos"
+          },
+          {
+            "n": "Salto de sombra",
+            "custo": 2,
+            "d": "atravessa até 9 m entre dois pontos escuros",
+            "id": "salto-de-sombra"
+          }
+        ],
+        "3": [
+          {
+            "n": "Névoa",
+            "custo": 2,
+            "d": "escurece uma área de 5 m por uma cena",
+            "id": "nevoa"
+          },
+          {
+            "n": "Fantasma",
+            "custo": 2,
+            "d": "por uma cena, comuns e virais só percebem você a menos de 3 m ou se você atacar",
+            "id": "fantasma"
+          },
+          {
+            "n": "Golpe da sombra",
+            "custo": 2,
+            "d": "ataque furtivo com +2d6; Medo +1",
+            "id": "golpe-da-sombra"
+          }
+        ]
+      },
+      "trilhas": [
+        {
+          "id": "assassino",
+          "n": "Assassino",
+          "foco": "ataque furtivo",
+          "habilidades": [
+            {
+              "n": "Lâmina silenciosa",
+              "d": "ataque furtivo com +1 dado, e o Alerta não sobe",
+              "id": "lamina-silenciosa"
+            },
+            {
+              "n": "Golpe de misericórdia",
+              "d": "o crítico furtivo mata comuns na hora",
+              "id": "golpe-de-misericordia"
+            },
+            {
+              "n": "Dupla surpresa",
+              "d": "após um abate furtivo, ataca de novo sem subir o Alerta",
+              "id": "dupla-surpresa"
+            },
+            {
+              "n": "Execução",
+              "custo": 3,
+              "d": "uma vez por sessão, um ataque furtivo contra um alvo que não notou você ignora a armadura",
+              "id": "execucao"
+            }
+          ]
+        },
+        {
+          "id": "infiltrador",
+          "n": "Infiltrador",
+          "foco": "acesso",
+          "habilidades": [
+            {
+              "n": "Sem rastros",
+              "d": "apaga os seus rastros e os do grupo; infectados não os seguem",
+              "id": "sem-rastros"
+            },
+            {
+              "n": "Pé na porta",
+              "d": "abre passagem sem barulho e sem teste em portas comuns",
+              "id": "pe-na-porta"
+            },
+            {
+              "n": "Disfarce de infectado",
+              "d": "comuns tratam você como um deles por 1 cena, e você anda à metade do movimento (1 por sessão)",
+              "id": "disfarce-de-infectado"
+            },
+            {
+              "n": "Passagem",
+              "custo": 2,
+              "d": "uma vez por sessão, o grupo cruza uma área vigiada sem teste",
+              "id": "passagem"
+            }
+          ]
+        },
+        {
+          "id": "esquivo",
+          "n": "Esquivo",
+          "foco": "sobrevivência",
+          "habilidades": [
+            {
+              "n": "Fuga",
+              "d": "+3 m de movimento ao fugir e vantagem em Furtividade ao fugir",
+              "id": "fuga"
+            },
+            {
+              "n": "Cobertura",
+              "d": "vantagem em esquiva no escuro e ataques à distância contra você têm desvantagem no escuro",
+              "id": "cobertura"
+            },
+            {
+              "n": "Sumir no escuro",
+              "d": "ao cair a 0 PV no escuro, some e reaparece com 1 PV a 6 m (1 por sessão)",
+              "id": "sumir-no-escuro"
+            },
+            {
+              "n": "Véu",
+              "custo": 3,
+              "d": "uma vez por sessão, por uma cena, ninguém pode mirar em você a mais de 5 m; Medo +1",
+              "id": "veu"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "espinho",
+      "n": "Espinho",
+      "papel": "Distância",
+      "fraquezaCurta": "O corpo paga: custa PV",
+      "paraQuem": "Quem quer atacar de longe",
+      "jeito": "o seu corpo é a munição. Você dispara ossos, ácido e fios de carne, de longe, e também sinaliza, prende e abre caminho. Os ataques usam Reflexo, como qualquer tiro.",
+      "fraqueza": "o corpo paga. Cada uso custa 1 PV, que a armadura não reduz.",
+      "niveis": {
+        "1": [
+          {
+            "n": "Espinho de osso",
+            "custo": 1,
+            "d": "ataque à distância, 1d8, alcance 12 m",
+            "id": "espinho-de-osso"
+          },
+          {
+            "n": "Cuspe de ácido",
+            "custo": 1,
+            "d": "alcance 6 m, 1d6, e o alvo perde 1 de armadura até o fim da cena",
+            "id": "cuspe-de-acido"
+          },
+          {
+            "n": "Espinho sinalizador",
+            "custo": 1,
+            "d": "dispara um espinho luminoso ou sonoro até 30 m para marcar um ponto, avisar o grupo ou distrair infectados, sem subir o Alerta",
+            "id": "espinho-sinalizador"
+          }
+        ],
+        "2": [
+          {
+            "n": "Rajada",
+            "custo": 2,
+            "d": "dois ataques de Espinho de osso na mesma ação; o segundo com desvantagem",
+            "id": "rajada"
+          },
+          {
+            "n": "Fio de osso",
+            "custo": 1,
+            "d": "dispara um fio de até 10 m que prende um alvo comum (DT 15 de Corpo), puxa um objeto leve ou serve de ponto de escalada",
+            "id": "fio-de-osso"
+          },
+          {
+            "n": "Mira de predador",
+            "custo": 1,
+            "d": "como ação de movimento, ganha vantagem no próximo ataque à distância e dobra o alcance dele",
+            "id": "mira-de-predador"
+          }
+        ],
+        "3": [
+          {
+            "n": "Chuva de agulhas",
+            "custo": 2,
+            "d": "área de 3 m a até 10 m; 1d6 em todos; Alerta +1",
+            "id": "chuva-de-agulhas"
+          },
+          {
+            "n": "Espinho perfurante",
+            "custo": 2,
+            "d": "2d6, ignora armadura; custa 2 PV em vez de 1",
+            "id": "espinho-perfurante"
+          },
+          {
+            "n": "Barreira de espinhos",
+            "custo": 2,
+            "d": "parede de 3 m que bloqueia a passagem de comuns por uma cena; Medo +1",
+            "id": "barreira-de-espinhos"
+          }
+        ]
+      },
+      "trilhas": [
+        {
+          "id": "franco-atirador",
+          "n": "Franco- atirador",
+          "foco": "precisão",
+          "habilidades": [
+            {
+              "n": "Olho firme",
+              "d": "+1 dado ao mirar com uma ação e +1 de dano",
+              "id": "olho-firme"
+            },
+            {
+              "n": "Longo alcance",
+              "d": "+50% de alcance em todos os espinhos e ignora cobertura leve",
+              "id": "longo-alcance"
+            },
+            {
+              "n": "Ponto fraco",
+              "d": "o crítico à distância ignora armadura",
+              "id": "ponto-fraco"
+            },
+            {
+              "n": "Disparo perfeito",
+              "custo": 3,
+              "d": "uma vez por sessão, um ataque com +2 dados e +2d6 de dano; Medo +1",
+              "id": "disparo-perfeito"
+            }
+          ]
+        },
+        {
+          "id": "cobertura",
+          "n": "Cobertura",
+          "foco": "apoio",
+          "habilidades": [
+            {
+              "n": "Tiro de cobertura",
+              "d": "um aliado ganha +1 dado em esquiva até a sua próxima ação (1 PV)",
+              "id": "tiro-de-cobertura"
+            },
+            {
+              "n": "Marca de espinho",
+              "d": "marca um alvo; aliados ganham +1 nos ataques contra ele",
+              "id": "marca-de-espinho"
+            },
+            {
+              "n": "Cortina",
+              "d": "o seu espinho faz barulho de propósito e afasta infectados comuns do grupo por 2 rodadas",
+              "id": "cortina"
+            },
+            {
+              "n": "Cobertura total",
+              "custo": 2,
+              "d": "uma vez por sessão, por uma cena, aliados que se movem ao seu lado não sofrem reação de ataque",
+              "id": "cobertura-total"
+            }
+          ]
+        },
+        {
+          "id": "armadilheiro",
+          "n": "Armadilheiro",
+          "foco": "controle",
+          "habilidades": [
+            {
+              "n": "Fio tenso",
+              "d": "arma até 2 fios que servem de alarme e causam 1d6 em quem os cruzar",
+              "id": "fio-tenso"
+            },
+            {
+              "n": "Campo de espinhos",
+              "d": "cria 3 armadilhas por 1 Suprimento",
+              "id": "campo-de-espinhos"
+            },
+            {
+              "n": "Presa",
+              "d": "um alvo preso fica com desvantagem em ataques",
+              "id": "presa"
+            },
+            {
+              "n": "Ninho",
+              "custo": 2,
+              "d": "uma vez por sessão, área de 6 m vira terreno difícil e causa 1d4 por rodada",
+              "id": "ninho"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "veloz",
+      "n": "Veloz",
+      "papel": "Rápido",
+      "fraquezaCurta": "Fôlego queimado",
+      "paraQuem": "Quem quer fugir, escalar e chegar antes",
+      "jeito": "você chega antes, escala o que os outros contornam e foge com o grupo quando tudo dá errado. É o parkour do jogo.",
+      "fraqueza": "fôlego queimado. Cada uso gasta 1 de Fôlego; com Fôlego 0 você não usa poderes e tem desvantagem em Corpo até descansar.",
+      "niveis": {
+        "1": [
+          {
+            "n": "Corrida",
+            "custo": 1,
+            "d": "dobra o seu movimento por uma cena",
+            "id": "corrida"
+          },
+          {
+            "n": "Escalada",
+            "custo": 1,
+            "d": "escala superfícies verticais sem teste por uma cena",
+            "id": "escalada"
+          },
+          {
+            "n": "Passo de gato",
+            "custo": 1,
+            "d": "cai até 9 m sem dano e escala até 3 m sem teste; vantagem em equilíbrio e parkour",
+            "id": "passo-de-gato"
+          }
+        ],
+        "2": [
+          {
+            "n": "Bater e sair",
+            "custo": 1,
+            "d": "ataca e se move sem sofrer reação do alvo",
+            "id": "bater-e-sair"
+          },
+          {
+            "n": "Aceleração",
+            "custo": 2,
+            "d": "ganha +1 ação de movimento por rodada, por 3 rodadas",
+            "id": "aceleracao"
+          },
+          {
+            "n": "Atalho",
+            "custo": 1,
+            "d": "vence um muro ou um vão de até 6 m sem teste e pode levar um aliado junto",
+            "id": "atalho"
+          }
+        ],
+        "3": [
+          {
+            "n": "Relâmpago",
+            "custo": 2,
+            "d": "por uma cena, +2 dados de iniciativa e uma ação extra na primeira rodada",
+            "id": "relampago"
+          },
+          {
+            "n": "Passo de vento",
+            "custo": 2,
+            "d": "o grupo a até 3 m foge junto com você sem teste; Medo +1",
+            "id": "passo-de-vento"
+          },
+          {
+            "n": "Esquiva total",
+            "custo": 2,
+            "d": "uma vez por cena, +3 dados numa esquiva",
+            "id": "esquiva-total"
+          }
+        ]
+      },
+      "trilhas": [
+        {
+          "id": "maratonista",
+          "n": "Maratonista",
+          "foco": "fuga e mensagem",
+          "habilidades": [
+            {
+              "n": "Pernas fortes",
+              "d": "+3 m de movimento e vantagem em Atletismo para correr (não acumula com Pé na estrada)",
+              "id": "pernas-fortes",
+              "efeitos": [
+                {
+                  "soma": "metros",
+                  "valor": 3
+                }
+              ]
+            },
+            {
+              "n": "Fôlego de maratonista",
+              "d": "+3 de Fôlego máximo",
+              "id": "folego-de-maratonista",
+              "efeitos": [
+                {
+                  "soma": "folegoMax",
+                  "valor": 3
+                }
+              ]
+            },
+            {
+              "n": "Atalhos",
+              "d": "vantagem em testes de perseguição e fuga",
+              "id": "atalhos"
+            },
+            {
+              "n": "Mensageiro",
+              "custo": 2,
+              "d": "uma vez por sessão, cruza uma área perigosa de até 100 m com 1 teste só",
+              "id": "mensageiro"
+            }
+          ]
+        },
+        {
+          "id": "escalador",
+          "n": "Escalador",
+          "foco": "parkour",
+          "habilidades": [
+            {
+              "n": "Mãos de aranha",
+              "d": "escala sem teste até 6 m e tem vantagem acima disso",
+              "id": "maos-de-aranha"
+            },
+            {
+              "n": "Salto de parede",
+              "d": "o Atalho vai a 9 m e pode ser usado 2 vezes por cena",
+              "id": "salto-de-parede"
+            },
+            {
+              "n": "Ladrão de telhados",
+              "d": "vantagem em Atletismo e Furtividade em alturas; em perseguição por telhados, o mestre diz a rota mais curta",
+              "id": "ladrao-de-telhados"
+            },
+            {
+              "n": "Planar",
+              "custo": 2,
+              "d": "uma vez por sessão, cai de qualquer altura sem dano e pousa onde quiser a até 10 m",
+              "id": "planar"
+            }
+          ]
+        },
+        {
+          "id": "duelista",
+          "n": "Duelista",
+          "foco": "combate",
+          "habilidades": [
+            {
+              "n": "Golpe rápido",
+              "d": "+1 dado e +1 de dano no primeiro ataque da cena",
+              "id": "golpe-rapido"
+            },
+            {
+              "n": "Evasão",
+              "d": "a esquiva custa 1 Fôlego a menos",
+              "id": "evasao"
+            },
+            {
+              "n": "Contra-ataque veloz",
+              "d": "o contra- ataque causa +1d6",
+              "id": "contra-ataque-veloz"
+            },
+            {
+              "n": "Golpe triplo",
+              "custo": 3,
+              "d": "uma vez por sessão, três ataques numa só ação, o terceiro com desvantagem; Medo +1",
+              "id": "golpe-triplo"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "vinculo",
+      "n": "Vínculo",
+      "papel": "Suporte",
+      "fraquezaCurta": "Dor compartilhada",
+      "paraQuem": "Quem quer cuidar do grupo",
+      "jeito": "o seu dom se divide. Você cuida do grupo, assume a dor dos outros e carrega a Infecção que eles não aguentam. Cada poder seu **liga** você a um aliado por uma cena: no Nível 1 você mantém 1 aliado ligado, no Nível 2, até 2, e no Nível 3, até 3.",
+      "fraqueza": "dor compartilhada. Quando um aliado ligado sofre 5 PV ou mais de dano de uma vez, você sofre 1d4 de dano.",
+      "niveis": {
+        "1": [
+          {
+            "n": "Elo",
+            "custo": 1,
+            "d": "liga você a um aliado a 10 m; os dois se ouvem e se sentem a qualquer distância durante a cena",
+            "id": "elo"
+          },
+          {
+            "n": "Cuidar",
+            "custo": 1,
+            "d": "toca um aliado e ele recupera 1d6 PV; a Infecção dele não sobe",
+            "id": "cuidar"
+          },
+          {
+            "n": "Calma contagiosa",
+            "custo": 1,
+            "d": "baixa 1 de Medo de um aliado a 5 m, sem teste",
+            "id": "calma-contagiosa"
+          }
+        ],
+        "2": [
+          {
+            "n": "Dividir o dom",
+            "custo": 2,
+            "d": "empresta a um aliado ligado um poder de Nível 1 seu por uma cena; a Infecção é paga por você",
+            "id": "dividir-o-dom"
+          },
+          {
+            "n": "Tomar a dor",
+            "custo": 1,
+            "d": "como reação, recebe metade do dano que atingiria um aliado ligado",
+            "id": "tomar-a-dor"
+          },
+          {
+            "n": "Segurar o dom",
+            "custo": 1,
+            "d": "baixa 1 de Infecção de um aliado ligado e sobe 1 a sua",
+            "id": "segurar-o-dom"
+          }
+        ],
+        "3": [
+          {
+            "n": "Coro",
+            "custo": 2,
+            "d": "liga até 3 aliados por uma cena; todos ganham +1 dado nas reações",
+            "id": "coro"
+          },
+          {
+            "n": "Trazer de volta",
+            "custo": 2,
+            "d": "um aliado ligado a 0 PV levanta com 1d6 PV; você sofre 1d4 de dano",
+            "id": "trazer-de-volta"
+          },
+          {
+            "n": "Carregar juntos",
+            "custo": 2,
+            "d": "passa até 3 pontos de Infecção de aliados ligados para você, com o consentimento deles; Medo +1",
+            "id": "carregar-juntos"
+          }
+        ]
+      },
+      "trilhas": [
+        {
+          "id": "curandeiro",
+          "n": "Curandeiro",
+          "foco": "cura",
+          "habilidades": [
+            {
+              "n": "Toque rápido",
+              "d": "Cuidar vira ação de movimento e cura 1d6+1",
+              "id": "toque-rapido"
+            },
+            {
+              "n": "Sutura viva",
+              "d": "+1d6 de cura quando você também usa Medicina",
+              "id": "sutura-viva"
+            },
+            {
+              "n": "Estancar",
+              "d": "o toque remove sangramento e veneno leve",
+              "id": "estancar"
+            },
+            {
+              "n": "Segunda chance",
+              "custo": 2,
+              "d": "uma vez por sessão, um aliado a 0 PV volta com 2d6 PV",
+              "id": "segunda-chance"
+            }
+          ]
+        },
+        {
+          "id": "guardiao",
+          "n": "Guardião",
+          "foco": "proteção",
+          "habilidades": [
+            {
+              "n": "Escudo de quem importa",
+              "d": "Tomar a dor funciona a até 20 m",
+              "id": "escudo-de-quem-importa"
+            },
+            {
+              "n": "Resistência partilhada",
+              "d": "aliados ligados têm +1 de armadura",
+              "id": "resistencia-partilhada"
+            },
+            {
+              "n": "Primeiro a levar o golpe",
+              "d": "aliados ligados têm +1 dado em esquiva quando você está a 3 m",
+              "id": "primeiro-a-levar-o-golpe"
+            },
+            {
+              "n": "Muralha de gente",
+              "custo": 3,
+              "d": "uma vez por sessão, por uma cena, aliados ligados reduzem o dano recebido em 1 e ignoram o sangramento",
+              "id": "muralha-de-gente"
+            }
+          ]
+        },
+        {
+          "id": "rede",
+          "n": "Rede",
+          "foco": "comunicação",
+          "habilidades": [
+            {
+              "n": "Fio invisível",
+              "d": "fala com aliados ligados a qualquer distância e todos sabem onde os outros estão",
+              "id": "fio-invisivel"
+            },
+            {
+              "n": "Ver pelo outro",
+              "d": "vê e ouve pelos sentidos de um aliado ligado por uma cena, e ele ganha +1 dado em Percepção",
+              "id": "ver-pelo-outro"
+            },
+            {
+              "n": "Aviso",
+              "d": "avisa todos os ligados de um perigo, e ninguém é surpreendido",
+              "id": "aviso"
+            },
+            {
+              "n": "Despertar",
+              "custo": 2,
+              "d": "um aliado Instável ao seu lado rola o dado de descontrole com uma face a mais",
+              "id": "despertar"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "mente",
+      "n": "Mente",
+      "papel": "Estrategista",
+      "fraquezaCurta": "Enxaqueca",
+      "paraQuem": "Quem quer planejar e coordenar",
+      "jeito": "você lê a cena antes de todo mundo, monta o plano e coloca cada aliado no lugar certo. É o cérebro do grupo, em combate, investigação e viagem.",
+      "fraqueza": "enxaqueca. Cada uso dá 1 ponto de Enxaqueca até o fim da cena; com 3 pontos você fica com desvantagem em Mente e Percepção até um descanso curto.",
+      "niveis": {
+        "1": [
+          {
+            "n": "Ler a cena",
+            "custo": 1,
+            "d": "o mestre responde com sim, não ou uma palavra a uma pergunta sobre o lugar (onde há perigo, qual saída é mais segura, o que está fora do lugar)",
+            "id": "ler-a-cena"
+          },
+          {
+            "n": "Plano",
+            "custo": 1,
+            "d": "como ação de movimento, um aliado ganha +1 dado no próximo teste dele",
+            "id": "plano"
+          },
+          {
+            "n": "Mapa mental",
+            "custo": 1,
+            "d": "lembra e desenha qualquer lugar que viu; vantagem em orientação e em achar rota; o grupo ganha +1 dado em fuga nesse lugar",
+            "id": "mapa-mental"
+          }
+        ],
+        "2": [
+          {
+            "n": "Antecipar o plano",
+            "custo": 2,
+            "d": "o grupo rola a iniciativa com +1 dado",
+            "id": "antecipar-o-plano"
+          },
+          {
+            "n": "Análise",
+            "custo": 1,
+            "d": "depois de observar um infectado por uma rodada, o mestre revela os PV e as fraquezas dele",
+            "id": "analise"
+          },
+          {
+            "n": "Plano reserva",
+            "custo": 1,
+            "d": "uma vez por cena, depois de um teste falho de um aliado, ele repete e fica com o novo resultado",
+            "id": "plano-reserva"
+          }
+        ],
+        "3": [
+          {
+            "n": "Cenário perfeito",
+            "custo": 2,
+            "d": "uma vez por cena, declara um plano; se o grupo o cumprir, todos têm vantagem nos testes dele",
+            "id": "cenario-perfeito"
+          },
+          {
+            "n": "Ordem de batalha",
+            "custo": 2,
+            "d": "aliados trocam de lugar e ganham +1 de armadura por uma cena",
+            "id": "ordem-de-batalha"
+          },
+          {
+            "n": "Previsão",
+            "custo": 2,
+            "d": "uma vez por sessão, o mestre avisa quando o grupo vai cair numa emboscada, armadilha ou traição; ninguém a até 5 m de você é surpreendido; Medo +1",
+            "id": "previsao"
+          }
+        ]
+      },
+      "trilhas": [
+        {
+          "id": "tatico",
+          "n": "Tático",
+          "foco": "combate",
+          "habilidades": [
+            {
+              "n": "Ordens curtas",
+              "d": "aliados a 5 m ganham +2 de iniciativa",
+              "id": "ordens-curtas"
+            },
+            {
+              "n": "Flanco",
+              "d": "ataques contra um alvo já atacado por um aliado ganham +1 dado e +1 de dano",
+              "id": "flanco"
+            },
+            {
+              "n": "Coordenação",
+              "d": "dois aliados que atacam o mesmo alvo na rodada causam +2 de dano",
+              "id": "coordenacao"
+            },
+            {
+              "n": "Ataque combinado",
+              "custo": 3,
+              "d": "uma vez por sessão, todos os aliados atacam o mesmo alvo como uma só ação, cada um com desvantagem",
+              "id": "ataque-combinado"
+            }
+          ]
+        },
+        {
+          "id": "analista",
+          "n": "Analista",
+          "foco": "informação",
+          "habilidades": [
+            {
+              "n": "Olho para detalhes",
+              "d": "vantagem em investigar um local e o mestre dá uma pista a mais",
+              "id": "olho-para-detalhes"
+            },
+            {
+              "n": "Dedução",
+              "d": "junta duas pistas e o mestre dá uma resposta",
+              "id": "deducao"
+            },
+            {
+              "n": "Interrogador",
+              "d": "vantagem em Persuasão e Intimidação com quem sabe mais do que diz, e você sabe quando ele mente",
+              "id": "interrogador"
+            },
+            {
+              "n": "Caso encerrado",
+              "custo": 2,
+              "d": "uma vez por sessão, o mestre explica um mistério ligado à cena",
+              "id": "caso-encerrado"
+            }
+          ]
+        },
+        {
+          "id": "logistico",
+          "n": "Logístico",
+          "foco": "recursos",
+          "habilidades": [
+            {
+              "n": "Inventário na cabeça",
+              "d": "o grupo ganha +3 espaços de inventário",
+              "id": "inventario-na-cabeca",
+              "efeitos": [
+                {
+                  "soma": "espacosGrupo",
+                  "valor": 3
+                }
+              ]
+            },
+            {
+              "n": "Rotas seguras",
+              "d": "vantagem em viagem e em achar abrigo, e +1 dado em fuga na primeira cena de perigo da viagem",
+              "id": "rotas-seguras"
+            },
+            {
+              "n": "Otimizar",
+              "d": "uma vez por descanso longo, 1 Suprimento rende o dobro",
+              "id": "otimizar"
+            },
+            {
+              "n": "Plano mestre",
+              "custo": 2,
+              "d": "uma vez por sessão, o grupo tem um plano pronto e ganha +1 dado em todos os testes da primeira cena",
+              "id": "plano-mestre"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "toxina",
+      "n": "Toxina",
+      "papel": "Química e utilidade",
+      "fraquezaCurta": "Intoxicação",
+      "paraQuem": "Quem quer fabricar, sabotar e tratar",
+      "jeito": "você transforma o próprio corpo em laboratório: venenos, ácidos, fumaças e antídotos. Fabrica, sabota e trata doenças, além de lutar sujo.",
+      "fraqueza": "intoxicação. No fim de uma cena em que usou poderes, você sofre 1d4 de dano que a armadura não reduz (1d6 se estiver com Infecção 6 ou mais).",
+      "niveis": {
+        "1": [
+          {
+            "n": "Veneno de lâmina",
+            "custo": 1,
+            "d": "a arma ganha veneno por uma cena; quem for ferido sofre +1d4 de dano e sangramento de 1",
+            "id": "veneno-de-lamina"
+          },
+          {
+            "n": "Fumaça",
+            "custo": 1,
+            "d": "nuvem de 3 m por uma cena que bloqueia a visão; vantagem em Furtividade e fuga dentro dela",
+            "id": "fumaca"
+          },
+          {
+            "n": "Antídoto vivo",
+            "custo": 1,
+            "d": "com um toque, remove um veneno ou doença leve de alguém, que ganha +2 em Corpo contra eles por uma cena",
+            "id": "antidoto-vivo"
+          }
+        ],
+        "2": [
+          {
+            "n": "Granada ácida",
+            "custo": 2,
+            "d": "arremesso em área de 3 m, 1d8; o ácido também dissolve uma fechadura ou corrente",
+            "id": "granada-acida"
+          },
+          {
+            "n": "Fabricar",
+            "custo": 1,
+            "d": "com 1 Suprimento e um descanso curto, cria 2 bandagens ou 1 isca de infectados",
+            "id": "fabricar"
+          },
+          {
+            "n": "Esporos",
+            "custo": 2,
+            "d": "área de 3 m; comuns e virais ficam desorientados e atacam com desvantagem por 1 rodada",
+            "id": "esporos"
+          }
+        ],
+        "3": [
+          {
+            "n": "Peste",
+            "custo": 2,
+            "d": "um ataque causa 2d6 e 1d4 por 3 rodadas; Medo +1",
+            "id": "peste"
+          },
+          {
+            "n": "Cura para tudo",
+            "custo": 2,
+            "d": "uma vez por sessão, com 1 Suprimento, cria um estabilizador que baixa 2 de Infecção de alguém",
+            "id": "cura-para-tudo"
+          },
+          {
+            "n": "Nuvem mortal",
+            "custo": 2,
+            "d": "área de 3 m por 3 rodadas; comuns e virais dentro sofrem 1d4 por rodada",
+            "id": "nuvem-mortal"
+          }
+        ]
+      },
+      "trilhas": [
+        {
+          "id": "envenenador",
+          "n": "Envenenador",
+          "foco": "combate",
+          "habilidades": [
+            {
+              "n": "Dose dupla",
+              "d": "o veneno causa +1 de dano",
+              "id": "dose-dupla"
+            },
+            {
+              "n": "Ferida aberta",
+              "d": "o sangramento do veneno sobe para 2 e dura 1 rodada a mais",
+              "id": "ferida-aberta"
+            },
+            {
+              "n": "Imunidade",
+              "d": "vantagem contra venenos e doenças, e a intoxicação do fim da cena causa 1 a menos de dano",
+              "id": "imunidade"
+            },
+            {
+              "n": "Dose letal",
+              "custo": 3,
+              "d": "uma vez por sessão, um acerto envenena com 2d6 e 1d6 por rodada, por 3 rodadas",
+              "id": "dose-letal"
+            }
+          ]
+        },
+        {
+          "id": "quimico",
+          "n": "Químico",
+          "foco": "utilidade",
+          "habilidades": [
+            {
+              "n": "Mão de laboratório",
+              "d": "Fabricar custa metade do Suprimento e cria 3 bandagens",
+              "id": "mao-de-laboratorio"
+            },
+            {
+              "n": "Ácido forte",
+              "d": "o ácido abre qualquer porta comum e ignora a armadura de infectados",
+              "id": "acido-forte"
+            },
+            {
+              "n": "Garimpo químico",
+              "d": "+1 Suprimento ao saquear um local de lixo ou ferro; uma vez por sessão, Fabricar não gasta Suprimento",
+              "id": "garimpo-quimico"
+            },
+            {
+              "n": "Obra-prima",
+              "custo": 2,
+              "d": "uma vez por sessão, fabrica um item raro (estabilizador forte ou granada especial)",
+              "id": "obra-prima"
+            }
+          ]
+        },
+        {
+          "id": "sanitarista",
+          "n": "Sanitarista",
+          "foco": "doenças",
+          "habilidades": [
+            {
+              "n": "Diagnóstico",
+              "d": "identifica doença, veneno ou infecção em quem você tocar, com vantagem em Medicina com essa pessoa",
+              "id": "diagnostico"
+            },
+            {
+              "n": "Imunizar",
+              "d": "um aliado tem vantagem contra efeitos de infectados por uma cena",
+              "id": "imunizar"
+            },
+            {
+              "n": "Quarentena",
+              "d": "isola uma área de 3 m e impede que a doença passe; os infectados dentro ficam lentos",
+              "id": "quarentena"
+            },
+            {
+              "n": "Vacina",
+              "custo": 2,
+              "d": "uma vez por sessão, baixa 1 de Infecção de um aliado e ele refaz um teste de descontrole",
+              "id": "vacina"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}
